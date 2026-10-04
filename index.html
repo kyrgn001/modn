@@ -6,9 +6,10 @@
 #ui{position:fixed;z-index:10;left:14px;right:14px;top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;pointer-events:none}
 .panel{pointer-events:auto;background:#0d141bee;border:1px solid #1e2a35;border-radius:12px;padding:8px 10px;box-shadow:0 3px 16px #0009;color:#cfd8e0}
 .title{font-weight:750;font-size:15px;color:#e8eef5}.sub,.stats{font-size:11px;color:#7d8a97}
-input,button{font:inherit;color:#cfd8e0}
+input,button,select{font:inherit;color:#cfd8e0}
 input[type=text]{width:180px;padding:8px;border:1px solid #2a3846;border-radius:8px;background:#0a1016}
 input[type=range]{width:150px;vertical-align:middle}
+select{padding:8px;border:1px solid #2a3846;border-radius:8px;background:#0a1016;max-width:240px}
 button{padding:8px 10px;border:1px solid #2a3846;border-radius:8px;background:#111a23;cursor:pointer}
 button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 #info{position:fixed;z-index:12;right:14px;top:72px;width:340px;max-height:calc(100vh - 88px);overflow:auto;display:none}
@@ -29,6 +30,9 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 .route-row:hover{background:#141c26;color:#7fd4ff}
 .route-step{display:inline-block;min-width:44px;font-size:10px;color:#5d6b78}
 .route-name{color:#e8eef5;font-weight:600}
+#suggestBox{position:fixed;z-index:30;background:#0d141bee;border:1px solid #1e2a35;border-radius:8px;box-shadow:0 8px 24px #0009;max-height:320px;overflow:auto;display:none;font-size:12px;color:#cfd8e0;min-width:240px}
+#suggestBox .sug-item{padding:8px 12px;border-bottom:1px solid #1e2a35;cursor:pointer}
+#suggestBox .sug-item:last-child{border-bottom:none}
 #tip{position:fixed;left:14px;bottom:13px;z-index:5;font-size:11px;color:#9fb0bf;background:#0b1116dd;border:1px solid #1e2a35;border-radius:8px;padding:7px 10px;max-width:60vw}
 #routeTip{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:15;background:#0d141bee;border:1px solid #00e5ff;color:#00e5ff;padding:8px 16px;border-radius:10px;display:none;font-size:13px;box-shadow:0 4px 20px #00e5ff33}
 #err{position:fixed;left:0;right:0;bottom:0;z-index:99;background:#7a1e1e;color:#fff;padding:10px;font:12px monospace;display:none;max-height:40vh;overflow:auto;white-space:pre-wrap}
@@ -38,13 +42,18 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 <div id="ui">
  <div class="panel"><div class="title">Родословная 3D</div><div class="sub">клик = облако родства · 🧭 = маршрут</div></div>
  <div class="panel">
-   <input id="search" type="text" placeholder="Найти человека…">
+   <input id="search" type="text" placeholder="Найти человека…" autocomplete="off">
+   <select id="branchFilter"></select>
    <button id="importBtn">📥 Импорт XLSX</button>
    <input id="fileInput" type="file" accept=".xlsx,.xls" style="display:none">
    <button id="routeBtn">🧭 Маршрут родства</button>
+   <button id="pngBtn">📷 Экспорт PNG</button>
    <button id="resetData">Сброс к встроенным</button>
-   <button id="fit">Вписать</button><button id="reset">Сброс вида</button><button id="top">Сверху</button>
-   <button id="save">Сохранить позиции</button><button id="clear">Сброс позиций</button>
+   <button id="fit">Вписать</button>
+   <button id="reset">Сброс вида</button>
+   <button id="top">Сверху</button>
+   <button id="save">Сохранить позиции</button>
+   <button id="clear">Сброс позиций</button>
    <span class="zoomwrap">Масштаб <input id="zoomRange" type="range" min="10" max="300" value="100"><span id="zoomVal">100%</span></span>
  </div>
  <div id="stats" class="panel stats">—</div>
@@ -386,6 +395,8 @@ try{
   let labels=new Map();
   let edgeDefs=[];
   let lineObjects=[];
+  let currentData=[];
+  let activeBranch='__ALL__';
 
   const KEY_DATA="rod_data_v1";
   const KEY_POS ="rod_3d_positions_v9";
@@ -436,7 +447,7 @@ try{
   const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,1,30000);
   camera.position.set(0,700,1600);
 
-  const renderer=new THREE.WebGLRenderer({antialias:true});
+  const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
   renderer.setSize(innerWidth,innerHeight);
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
   document.body.appendChild(renderer.domElement);
@@ -514,7 +525,7 @@ try{
     return Math.max(7,base);
   }
 
-  // ---------- «ЛУКОВИЦА»: СТАРШИЕ В ЦЕНТРЕ, МЛАДШИЕ НАРУЖУ ----------
+  // ---------- «ЛУКОВИЦА» ----------
   function computeLayout(){
     positions=new Map();
 
@@ -707,7 +718,7 @@ try{
     document.getElementById('stats').textContent=P.length+' человек · '+(maxLevel+1)+' поколений · '+edgeDefs.length+' связей';
   }
 
-  // ---------- ПРОСТАЯ ПРЯМАЯ ЛИНИЯ ----------
+  // ---------- КРИВАЯ ЛИНИЯ (как ветвь) ----------
   function createRiverEdge(a,b,type){
     const group=new THREE.Group();
     const col=new THREE.Color(type==='spouse'?0xff6ab0:0x59a9ff);
@@ -716,13 +727,22 @@ try{
     const dir=b.clone().sub(a);
     const len=dir.length();
     if(len<1)return group;
-    const unit=dir.clone().normalize();
 
+    const unit=dir.clone().normalize();
     const R=10;
     const aSurf=a.clone().add(unit.clone().multiplyScalar(R));
     const bSurf=b.clone().sub(unit.clone().multiplyScalar(R));
 
-    const geo=new THREE.BufferGeometry().setFromPoints([aSurf,bSurf]);
+    const mid=aSurf.clone().add(bSurf).multiplyScalar(0.5);
+    const perp=new THREE.Vector3(-unit.z,0,unit.x).normalize();
+    const bend=Math.min(60, len*0.15);
+    mid.add(perp.multiplyScalar(bend*(type==='spouse'?-1:1)));
+    mid.y += (bSurf.y - aSurf.y) * 0.08;
+
+    const curve=new THREE.CatmullRomCurve3([aSurf, mid, bSurf]);
+    const pts=curve.getPoints(type==='spouse'?12:20);
+
+    const geo=new THREE.BufferGeometry().setFromPoints(pts);
     const mat=new THREE.LineBasicMaterial({
       color:col,transparent:true,opacity:opacity,
       blending:THREE.AdditiveBlending,depthWrite:false
@@ -1085,7 +1105,7 @@ try{
     });
   }
 
-  // ---------- МАРШРУТ МЕЖДУ ДВУМЯ ЛЮДЬМИ ----------
+  // ---------- МАРШРУТ ----------
   function buildUndirectedGraph(){
     const adj = new Map();
     P.forEach(p=>{ if(!adj.has(p.ID)) adj.set(p.ID, new Set()); });
@@ -1209,7 +1229,6 @@ try{
     });
   }
 
-  // ---------- СОСТОЯНИЕ МАРШРУТА ----------
   let routeMode = false;
   let routeStart = null;
 
@@ -1484,18 +1503,104 @@ try{
     computeLayout();buildScene();fit();
     toast('Позиции сброшены');
   };
-  document.getElementById('search').oninput=function(){
-    const q=this.value.toLowerCase().trim();if(!q)return;
-    const p=P.find(x=>nm(x).toLowerCase().includes(q)||String(x.ID)===q);
-    if(p){
-      select(p.ID);
-      const pos=positions.get(p.ID);
-      if(pos){controls.target.copy(pos);camera.position.set(pos.x+250,pos.y+200,pos.z+350);controls.update();syncZoomUI()}
-    }
-  };
   document.getElementById('routeBtn').onclick=()=>{
     setRouteMode(!routeMode);
   };
+
+  // ---------- ЭКСПОРТ PNG ----------
+  document.getElementById('pngBtn').onclick=()=>{
+    try{
+      renderer.render(scene,camera);
+      const url = renderer.domElement.toDataURL('image/png');
+      const a = document.createElement('a');
+      const now = new Date();
+      const stamp = now.getFullYear()+'-'+
+        String(now.getMonth()+1).padStart(2,'0')+'-'+
+        String(now.getDate()).padStart(2,'0')+'_'+
+        String(now.getHours()).padStart(2,'0')+
+        String(now.getMinutes()).padStart(2,'0');
+      a.href = url;
+      a.download = 'rodoslovnaya_'+stamp+'.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast('PNG сохранён ✓');
+    }catch(e){
+      toast('Ошибка: '+e.message);
+    }
+  };
+
+  // ---------- ФИЛЬТР ПО ВЕТКЕ ----------
+  document.getElementById('branchFilter').onchange=function(){
+    activeBranch = this.value;
+    const filtered = filterByBranch(currentData, activeBranch);
+    buildGraph(filtered);
+    computeLayout();
+    buildScene();
+    deselect();
+    setTimeout(()=>{fit();syncZoomUI()},60);
+    const label = activeBranch==='__ALL__' ? 'все ветви' : activeBranch;
+    toast('Показано: '+label+' · '+filtered.length+' чел.');
+  };
+
+  // ---------- ПОИСК С АВТОДОПОЛНЕНИЕМ ----------
+  const searchInput = document.getElementById('search');
+  const suggestBox = document.getElementById('suggestBox');
+
+  function hideSuggest(){ suggestBox.style.display='none'; }
+
+  function positionSuggestBox(){
+    const r = searchInput.getBoundingClientRect();
+    suggestBox.style.left = r.left+'px';
+    suggestBox.style.top  = (r.bottom+4)+'px';
+  }
+
+  searchInput.addEventListener('input',()=>{
+    const q = searchInput.value.toLowerCase().trim();
+    if(!q){ hideSuggest(); return; }
+    const matches = P.filter(x=>nm(x).toLowerCase().includes(q)||String(x.ID).includes(q)).slice(0,12);
+    if(!matches.length){ hideSuggest(); return; }
+    positionSuggestBox();
+    suggestBox.innerHTML = matches.map(m=>{
+      const p=M.get(m.ID);
+      const branch = (p['Род / Ветка']||'').trim();
+      const years = (p['Дата рождения']?'★'+p['Дата рождения'].toString().slice(0,4):'') +
+                    (p['Дата смерти']?' †'+p['Дата смерти'].toString().slice(0,4):'');
+      return '<div class="sug-item" data-id="'+p.ID+'">'+
+        '<div style="color:#e8eef5">'+nm(p)+' <span style="color:#5d6b78">('+p.ID+')</span></div>'+
+        '<div style="font-size:10px;color:#7d8a97">'+years+(branch?' · '+branch:'')+'</div>'+
+      '</div>';
+    }).join('');
+    suggestBox.style.display='block';
+    suggestBox.querySelectorAll('.sug-item').forEach(el=>{
+      el.onmouseenter=()=>el.style.background='#141c26';
+      el.onmouseleave=()=>el.style.background='transparent';
+      el.onclick=()=>{
+        const id2 = parseInt(el.dataset.id,10);
+        searchInput.value = nm(M.get(id2));
+        hideSuggest();
+        select(id2);
+        const pos=positions.get(id2);
+        if(pos){
+          controls.target.copy(pos);
+          camera.position.set(pos.x+250,pos.y+200,pos.z+350);
+          controls.update();
+          syncZoomUI();
+        }
+      };
+    });
+  });
+
+  searchInput.addEventListener('blur',()=>{
+    setTimeout(hideSuggest,180);
+  });
+  searchInput.addEventListener('keydown',e=>{
+    if(e.key==='Escape')hideSuggest();
+    if(e.key==='Enter'){
+      const first = suggestBox.querySelector('.sug-item');
+      if(first)first.click();
+    }
+  });
 
   // ---------- ПОЛЗУНОК МАСШТАБА ----------
   const zoomRange=document.getElementById('zoomRange');
@@ -1568,20 +1673,47 @@ try{
     toast('Восстановлены встроенные данные');
   };
 
+  // ---------- ЗАПУСК ----------
+  function filterByBranch(arr, branch){
+    if(!branch || branch==='__ALL__') return arr;
+    return arr.filter(p=>(p['Род / Ветка']||'').trim()===branch);
+  }
+
   function applyData(arr){
-    buildGraph(arr);
+    currentData = arr;
+    const branches = new Set();
+    arr.forEach(p=>{
+      const b = (p['Род / Ветка']||'').trim();
+      if(b) branches.add(b);
+    });
+    const sel = document.getElementById('branchFilter');
+    if(sel){
+      const sorted=[...branches].sort();
+      sel.innerHTML = '<option value="__ALL__">Все ветви ('+arr.length+')</option>' +
+        sorted.map(b=>{
+          const n = arr.filter(x=>(x['Род / Ветка']||'').trim()===b).length;
+          return '<option value="'+b.replace(/"/g,'&quot;')+'">'+b+' ('+n+')</option>';
+        }).join('');
+      if([...sel.options].some(o=>o.value===activeBranch)){
+        sel.value = activeBranch;
+      } else {
+        activeBranch = '__ALL__';
+        sel.value = '__ALL__';
+      }
+    }
+
+    const filtered = filterByBranch(arr, activeBranch);
+    buildGraph(filtered);
     computeLayout();
     buildScene();
     setTimeout(()=>{fit();syncZoomUI()},60);
   }
 
-  // ---------- resize ----------
   addEventListener('resize',()=>{
     camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
     renderer.setSize(innerWidth,innerHeight);
   });
 
-  // ---------- рендер ----------
   function animate(){
     requestAnimationFrame(animate);
     controls.update();
