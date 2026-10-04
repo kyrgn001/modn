@@ -1,9 +1,9 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Родословная 3D</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#292621;background:#05080b}
-#ui{position:fixed;z-index:10;left:14px;right:14px;top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;pointer-events:none}
+#ui{position:fixed;z-index:10;left:14px;right:14px;top:12px;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;pointer-events:none}
 .panel{pointer-events:auto;background:#0d141bee;border:1px solid #1e2a35;border-radius:12px;padding:8px 10px;box-shadow:0 3px 16px #0009;color:#cfd8e0}
 .title{font-weight:750;font-size:15px;color:#e8eef5}.sub,.stats{font-size:11px;color:#7d8a97}
 input,button,select{font:inherit;color:#cfd8e0}
@@ -38,27 +38,47 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 #err{position:fixed;left:0;right:0;bottom:0;z-index:99;background:#7a1e1e;color:#fff;padding:10px;font:12px monospace;display:none;max-height:40vh;overflow:auto;white-space:pre-wrap}
 #toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:20;background:#0d141bee;border:1px solid #1e2a35;color:#cfd8e0;padding:10px 16px;border-radius:10px;display:none;font-size:13px}
 .zoomwrap{display:flex;align-items:center;gap:6px;font-size:11px;color:#7d8a97}
+#ctrlBody{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#togglePanel{display:none;width:100%;margin-bottom:6px;font-weight:bold}
+@media(max-width:800px){
+  #ui{left:8px;right:8px;top:8px;gap:6px}
+  #ui .panel:first-child{display:none}
+  #ctrlPanel{width:100%;padding:6px 8px}
+  #togglePanel{display:block !important}
+  #ctrlBody{display:none}
+  #ctrlBody.open{display:flex !important}
+  #ctrlBody button,#ctrlBody select,#ctrlBody input[type=text]{flex:1 1 auto;min-width:120px;font-size:13px;padding:6px 8px}
+  .zoomwrap{flex:1 1 100%;justify-content:center}
+  #info{left:8px;right:8px;top:auto;bottom:12px;width:auto;max-height:50vh}
+  #tip{display:none}
+  #stats{font-size:10px;padding:6px 8px;margin-left:0}
+  #routeTip{top:auto;bottom:80px;font-size:12px;padding:6px 12px}
+}
 </style></head><body>
 <div id="ui">
  <div class="panel"><div class="title">Родословная 3D</div><div class="sub">клик = облако родства · 🧭 = маршрут</div></div>
- <div class="panel">
-   <input id="search" type="text" placeholder="Найти человека…" autocomplete="off">
-   <select id="branchFilter"></select>
-   <button id="importBtn">📥 Импорт XLSX</button>
-   <input id="fileInput" type="file" accept=".xlsx,.xls" style="display:none">
-   <button id="routeBtn">🧭 Маршрут родства</button>
-   <button id="pngBtn">📷 Экспорт PNG</button>
-   <button id="resetData">Сброс к встроенным</button>
-   <button id="fit">Вписать</button>
-   <button id="reset">Сброс вида</button>
-   <button id="top">Сверху</button>
-   <button id="save">Сохранить позиции</button>
-   <button id="clear">Сброс позиций</button>
-   <span class="zoomwrap">Масштаб <input id="zoomRange" type="range" min="10" max="300" value="100"><span id="zoomVal">100%</span></span>
+ <div class="panel" id="ctrlPanel">
+   <button id="togglePanel">☰ Меню</button>
+   <div id="ctrlBody">
+     <input id="search" type="text" placeholder="Найти человека…" autocomplete="off">
+     <select id="branchFilter"></select>
+     <button id="importBtn">📥 Импорт XLSX</button>
+     <input id="fileInput" type="file" accept=".xlsx,.xls" style="display:none">
+     <button id="routeBtn">🧭 Маршрут родства</button>
+     <button id="pngBtn">📷 Экспорт PNG</button>
+     <button id="resetData">Сброс к встроенным</button>
+     <button id="fit">Вписать</button>
+     <button id="reset">Сброс вида</button>
+     <button id="top">Сверху</button>
+     <button id="save">Сохранить позиции</button>
+     <button id="clear">Сброс позиций</button>
+     <span class="zoomwrap">Масштаб <input id="zoomRange" type="range" min="10" max="300" value="100"><span id="zoomVal">100%</span></span>
+   </div>
  </div>
  <div id="stats" class="panel stats">—</div>
 </div>
 <div id="routeTip"></div>
+<div id="suggestBox"></div>
 <div id="info" class="panel"></div>
 <div id="tip">🖱 ЛКМ по фону — вращение · по шару — тянуть ветку · колесо/ползунок — зум · ПКМ — сдвиг · 🧭 — маршрут между двумя людьми</div>
 <div id="toast"></div>
@@ -397,6 +417,7 @@ try{
   let lineObjects=[];
   let currentData=[];
   let activeBranch='__ALL__';
+  let isMobile = window.innerWidth<=800;
 
   const KEY_DATA="rod_data_v1";
   const KEY_POS ="rod_3d_positions_v9";
@@ -718,7 +739,7 @@ try{
     document.getElementById('stats').textContent=P.length+' человек · '+(maxLevel+1)+' поколений · '+edgeDefs.length+' связей';
   }
 
-  // ---------- КРИВАЯ ЛИНИЯ (как ветвь) ----------
+  // ---------- КРИВАЯ ЛИНИЯ ----------
   function createRiverEdge(a,b,type){
     const group=new THREE.Group();
     const col=new THREE.Color(type==='spouse'?0xff6ab0:0x59a9ff);
@@ -851,6 +872,33 @@ try{
     return P.map(p=>spheres.get(p.ID)).filter(Boolean);
   }
 
+  // ---------- УВЕЛИЧЕННАЯ ТАП-ЗОНА НА МОБИЛЬНОМ ----------
+  function getPickablesArray(){
+    if(!isMobile) return getSpheresArray();
+    // На мобильном добавляем невидимые большие сферы вокруг шаров
+    const arr = [];
+    P.forEach(p=>{
+      const sp = spheres.get(p.ID);
+      if(!sp) return;
+      arr.push(sp);
+      // невидимая сфера-обёртка
+      if(!p._tapZone){
+        const tz = new THREE.Mesh(sphereGeo, new THREE.MeshBasicMaterial({
+          visible:false
+        }));
+        tz.userData.id = p.ID;
+        tz.userData.isTapZone = true;
+        spheresGroup.add(tz);
+        p._tapZone = tz;
+      }
+      const r = radiusOf(p)*2.5;  // в 2.5 раза больше видимого шара
+      p._tapZone.position.copy(sp.position);
+      p._tapZone.scale.set(r,r,r);
+      arr.push(p._tapZone);
+    });
+    return arr;
+  }
+
   const dom=renderer.domElement;
   dom.addEventListener('pointerdown',e=>{
     if(e.button!==0)return;
@@ -884,6 +932,7 @@ try{
         const sp=spheres.get(id);if(sp)sp.position.copy(nv);
         const lb=labels.get(id);if(lb){const r=radiusOf(M.get(id));lb.position.copy(nv.clone().add(new THREE.Vector3(0,r+18,0)))}
         const p=M.get(id);if(p&&p._halo)p._halo.position.copy(nv);
+        if(p&&p._tapZone)p._tapZone.position.copy(nv);
       });
       rebuildEdges();
     }
@@ -896,17 +945,25 @@ try{
     }
     if(downPos&&e){
       const dx=e.clientX-downPos.x,dy=e.clientY-downPos.y;
-      if(dx*dx+dy*dy<25){
+      const maxTap = isMobile ? 12 : 5;   // на мобильном допускаем большее дрожание пальца
+      if(dx*dx+dy*dy < maxTap*maxTap){
         mouse.x=(e.clientX/innerWidth)*2-1;
         mouse.y=-(e.clientY/innerHeight)*2+1;
         raycaster.setFromCamera(mouse,camera);
-        const hits=raycaster.intersectObjects(getSpheresArray(),false);
+        const hits=raycaster.intersectObjects(getPickablesArray(),false);
         if(hits.length){
-          const clickedId = hits[0].object.userData.id;
-          if(routeMode){
-            routeClick(clickedId);
-          } else {
-            select(clickedId);
+          // фильтруем — берём первый, у которого есть настоящий шар
+          let clickedId = null;
+          for(const h of hits){
+            const id = h.object.userData.id;
+            if(spheres.has(id)){ clickedId=id; break; }
+          }
+          if(clickedId!=null){
+            if(routeMode){
+              routeClick(clickedId);
+            } else {
+              select(clickedId);
+            }
           }
         }
         else if(!routeMode){
@@ -920,7 +977,7 @@ try{
   dom.addEventListener('pointercancel',endDrag);
   dom.addEventListener('pointerleave',endDrag);
 
-  // ---------- КОНТРАСТНЫЕ ЦВЕТА ----------
+  // ---------- ЦВЕТА ВЫДЕЛЕНИЯ ----------
   const COLOR = {
     selected:    0xffffff,
     selectedGlow:0xfff2a8,
@@ -947,7 +1004,6 @@ try{
     routeNode:   0xff00ff,
   };
 
-  // ---------- ВЫДЕЛЕНИЕ ----------
   function clearHighlight(){
     spheres.forEach((m,id)=>{
       m.material.color.copy(m.userData.baseColor);
@@ -1503,6 +1559,32 @@ try{
     computeLayout();buildScene();fit();
     toast('Позиции сброшены');
   };
+
+  // ---------- МОБИЛЬНОЕ СВОРАЧИВАНИЕ ПАНЕЛИ ----------
+  (function initMobilePanel(){
+    const body = document.getElementById('ctrlBody');
+    const btn  = document.getElementById('togglePanel');
+    if(!body||!btn)return;
+    if(window.innerWidth<=800){
+      btn.onclick = ()=>{
+        const open = body.classList.toggle('open');
+        btn.textContent = open ? '✕ Скрыть меню' : '☰ Меню';
+      };
+    }
+    window.addEventListener('resize',()=>{
+      isMobile = window.innerWidth<=800;
+      if(window.innerWidth>800){
+        body.style.display='flex';
+        body.classList.remove('open');
+        btn.style.display='none';
+      } else {
+        body.style.display='';
+        btn.style.display='block';
+        if(!body.classList.contains('open'))btn.textContent='☰ Меню';
+      }
+    });
+  })();
+
   document.getElementById('routeBtn').onclick=()=>{
     setRouteMode(!routeMode);
   };
