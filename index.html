@@ -12,7 +12,7 @@ input[type=range]{width:150px;vertical-align:middle}
 select{padding:8px;border:1px solid #2a3846;border-radius:8px;background:#0a1016;max-width:240px}
 button{padding:8px 10px;border:1px solid #2a3846;border-radius:8px;background:#111a23;cursor:pointer}
 button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
-#info{position:fixed;z-index:12;right:14px;top:72px;width:340px;max-height:calc(100vh - 88px);overflow:auto;display:none}
+#info{position:fixed;z-index:12;right:14px;top:72px;width:340px;max-height:calc(100vh - 88px);overflow:auto;display:none;transition:max-height .25s ease}
 #info h2{margin:0 0 6px;font-size:17px;color:#e8eef5}
 .row{font-size:12px;padding:5px 0;border-bottom:1px solid #1e2a35;color:#b9c4cf}
 .row b{display:inline-block;width:92px;color:#7d8a97}
@@ -22,9 +22,13 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 .stat-label{color:#8e9aa6;flex:0 0 auto}
 .stat-value{text-align:right;flex:1 1 auto}
 .stat-total{color:#5d6b78;font-size:10px;margin-left:4px}
-.tree-list{font-size:11px;color:#9fb0bf;max-height:180px;overflow:auto;margin-top:6px;padding-left:6px}
-.tree-list div{padding:2px 0;border-bottom:1px dotted #1e2a35;cursor:pointer}
+.tree-list{font-size:11px;color:#9fb0bf;margin-top:6px;padding-left:6px}
+.tree-list div{padding:4px 0;border-bottom:1px dotted #1e2a35;cursor:pointer;display:flex;justify-content:space-between;gap:6px;align-items:baseline}
 .tree-list div:hover{color:#7fd4ff}
+.tree-list .rel-label{font-size:10px;color:#8a95a3;flex:0 0 auto;font-style:italic}
+.tree-list .person-name{flex:1 1 auto}
+.tree-list .show-more{color:#7fd4ff;font-size:10px;text-align:center;border-bottom:none;padding:6px;cursor:pointer}
+.tree-list .show-more:hover{background:#141c26;border-radius:6px}
 .route-list{max-height:340px;overflow:auto;margin-top:6px;padding-left:2px}
 .route-row{padding:6px 8px;border-bottom:1px dotted #1e2a35;cursor:pointer;font-size:12px;color:#cfd8e0;line-height:1.4}
 .route-row:hover{background:#141c26;color:#7fd4ff}
@@ -37,9 +41,15 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 #routeTip{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:15;background:#0d141bee;border:1px solid #00e5ff;color:#00e5ff;padding:8px 16px;border-radius:10px;display:none;font-size:13px;box-shadow:0 4px 20px #00e5ff33}
 #err{position:fixed;left:0;right:0;bottom:0;z-index:99;background:#7a1e1e;color:#fff;padding:10px;font:12px monospace;display:none;max-height:40vh;overflow:auto;white-space:pre-wrap}
 #toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:20;background:#0d141bee;border:1px solid #1e2a35;color:#cfd8e0;padding:10px 16px;border-radius:10px;display:none;font-size:13px}
+#loading{position:fixed;inset:0;z-index:80;background:#02060acc;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+#loading .spinner{width:44px;height:44px;border:4px solid #1e2a35;border-top-color:#00e5ff;border-radius:50%;animation:spin 1s linear infinite}
+#loading .msg{color:#cfd8e0;font-size:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
 .zoomwrap{display:flex;align-items:center;gap:6px;font-size:11px;color:#7d8a97}
 #ctrlBody{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 #togglePanel{display:none;width:100%;margin-bottom:6px;font-weight:bold}
+#infoHeader{display:none;padding:6px 0 8px;border-bottom:1px solid #1e2a35;margin-bottom:6px;cursor:pointer;user-select:none}
+#infoHeader .toggle{color:#7fd4ff;font-size:11px}
 @media(max-width:800px){
   #ui{left:8px;right:8px;top:8px;gap:6px}
   #ui .panel:first-child{display:none}
@@ -49,7 +59,9 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
   #ctrlBody.open{display:flex !important}
   #ctrlBody button,#ctrlBody select,#ctrlBody input[type=text]{flex:1 1 auto;min-width:120px;font-size:13px;padding:6px 8px}
   .zoomwrap{flex:1 1 100%;justify-content:center}
-  #info{left:8px;right:8px;top:auto;bottom:12px;width:auto;max-height:50vh}
+  #info{left:8px;right:8px;top:auto;bottom:12px;width:auto;max-height:45vh;padding:6px 10px}
+  #info.collapsed{max-height:60px;overflow:hidden}
+  #infoHeader{display:block}
   #tip{display:none}
   #stats{font-size:10px;padding:6px 8px;margin-left:0}
   #routeTip{top:auto;bottom:80px;font-size:12px;padding:6px 12px}
@@ -62,7 +74,7 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
    <div id="ctrlBody">
      <input id="search" type="text" placeholder="Найти человека…" autocomplete="off">
      <select id="branchFilter"></select>
-     <button id="importBtn">📥 Импорт XLSX</button>
+     <button id="importBtn" style="display:none">📥 Импорт XLSX</button>
      <input id="fileInput" type="file" accept=".xlsx,.xls" style="display:none">
      <button id="routeBtn">🧭 Маршрут родства</button>
      <button id="pngBtn">📷 Экспорт PNG</button>
@@ -82,6 +94,7 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 <div id="info" class="panel"></div>
 <div id="tip">🖱 ЛКМ по фону — вращение · по шару — тянуть ветку · колесо/ползунок — зум · ПКМ — сдвиг · 🧭 — маршрут между двумя людьми</div>
 <div id="toast"></div>
+<div id="loading"><div class="spinner"></div><div class="msg" id="loadingMsg">Загрузка…</div></div>
 <div id="err"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -96,6 +109,14 @@ function toast(msg,ms){
   const t=document.getElementById('toast');
   t.textContent=msg;t.style.display='block';
   clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',ms||2500);
+}
+function showLoading(msg){
+  const l=document.getElementById('loading');
+  document.getElementById('loadingMsg').textContent=msg||'Загрузка…';
+  l.style.display='flex';
+}
+function hideLoading(){
+  document.getElementById('loading').style.display='none';
 }
 </script>
 
@@ -406,6 +427,16 @@ try{
   if(typeof THREE==='undefined')throw new Error('Three.js не загрузился');
   if(!THREE.OrbitControls)throw new Error('OrbitControls не загрузился');
   if(typeof XLSX==='undefined')console.warn('SheetJS не загрузился — импорт XLSX не будет работать');
+
+  // ---------- ПРОВЕРКА "АДМИНА" ----------
+  // Импорт XLSX доступен: локально (file://) или при ?admin=1 в URL
+  const isLocalFile = location.protocol==='file:';
+  const urlParams = new URLSearchParams(location.search);
+  const isAdmin = isLocalFile || urlParams.get('admin')==='1';
+  if(isAdmin){
+    const btn = document.getElementById('importBtn');
+    if(btn) btn.style.display='';
+  }
 
   // ---------- ГЛОБАЛЬНЫЕ ----------
   let P=[],M=new Map(),CH=new Map(),L=new Map();
@@ -800,11 +831,155 @@ try{
     });
   }
 
+  // ---------- РОДСТВО: ПОДПИСЬ ОТНОСИТЕЛЬНО ЦЕНТРА ----------
+  // Определяет, кем person является для центрального
+  function relationLabel(centerId, otherId){
+    const c = M.get(centerId);
+    const o = M.get(otherId);
+    if(!c||!o) return '';
+    if(centerId===otherId) return 'это он(а)';
+
+    // прямые родители
+    if(o.ID===c.father) return 'отец';
+    if(o.ID===c.mother) return 'мать';
+
+    // прямые дети
+    if(c.father===o.ID||c.mother===o.ID) return ''; // отловим через sex ниже
+    const cKids = CH.get(c.ID)||[];
+    if(cKids.includes(o.ID)) return o.Пол==='М'?'сын':'дочь';
+
+    // супруг(а) — через общих детей
+    const cKidsSet = new Set(cKids);
+    const oKids = CH.get(o.ID)||[];
+    let shared = false;
+    oKids.forEach(k=>{if(cKidsSet.has(k))shared=true});
+    if(shared) return o.Пол==='М'?'муж':'жена';
+
+    // Предки выше 1-го уровня
+    const anc = ancestors(centerId);
+    if(anc.has(otherId)){
+      // посчитаем расстояние вверх
+      let depth = 0, cur = c;
+      const pathUp = [];
+      while(cur){
+        let found = false;
+        const parents = [cur.father,cur.mother].filter(x=>x!=null&&M.has(x));
+        for(const p of parents){
+          pathUp.push(p);
+          if(p===o.ID){found=true;break}
+        }
+        if(found){depth=pathUp.length;break}
+        // вверх шагаем всеми ветками — упрощённо пройдём по первой (если это не родитель — считаем по BFS)
+        break;
+      }
+      // проще: посчитаем минимальное расстояние через BFS вверх
+      let minUp = null;
+      const q = [{id:centerId, d:0}];
+      const seen = new Set();
+      while(q.length){
+        const {id,d} = q.shift();
+        if(seen.has(id))continue;
+        seen.add(id);
+        if(id===otherId){minUp=d;break}
+        const p = M.get(id);if(!p)continue;
+        [p.father,p.mother].forEach(x=>{if(x!=null&&M.has(x))q.push({id:x,d:d+1})});
+      }
+      if(minUp){
+        const male = o.Пол==='М';
+        if(minUp===2)return male?'дед':'бабушка';
+        if(minUp===3)return male?'прадед':'прабабушка';
+        if(minUp===4)return male?'прапрадед':'прапрабабушка';
+        return (male?'предок':'предок')+' ('+minUp+' покол.)';
+      }
+    }
+
+    // Потомки ниже 1-го уровня
+    const desc = descendants(centerId);
+    if(desc.has(otherId)){
+      let minDown = null;
+      const q = [{id:centerId, d:0}];
+      const seen = new Set();
+      while(q.length){
+        const {id,d} = q.shift();
+        if(seen.has(id))continue;
+        seen.add(id);
+        if(id===otherId){minDown=d;break}
+        (CH.get(id)||[]).forEach(x=>q.push({id:x,d:d+1}));
+      }
+      if(minDown){
+        const male = o.Пол==='М';
+        if(minDown===2)return male?'внук':'внучка';
+        if(minDown===3)return male?'правнук':'правнучка';
+        if(minDown===4)return male?'праправнук':'праправнучка';
+        return (male?'потомок':'потомок')+' ('+minDown+' покол.)';
+      }
+    }
+
+    // Брат/сестра
+    const cParents = [c.father,c.mother].filter(x=>x!=null);
+    const oParents = [o.father,o.mother].filter(x=>x!=null);
+    if(cParents.some(p=>oParents.includes(p))){
+      return o.Пол==='М'?'брат':'сестра';
+    }
+
+    // Дядя/тётя — sibling of parent
+    for(const pid of cParents){
+      const sib = [M.get(pid)?.father, M.get(pid)?.mother].filter(x=>x!=null);
+      // родители моего родителя — дед/бабка уже отловлены
+    }
+    // Быстрая проверка: o — брат/сестра одного из моих родителей
+    for(const pid of cParents){
+      const parP = M.get(pid);if(!parP)continue;
+      const pParents = [parP.father,parP.mother].filter(x=>x!=null);
+      if(pParents.some(pp=>oParents.includes(pp))){
+        return o.Пол==='М'?'дядя':'тётя';
+      }
+    }
+
+    // Племянник/племянница — ребёнок моего брата/сестры
+    for(const kid of (CH.get(c.ID)||[])){ /* это прямые дети, уже отловлены */ }
+    // ребёнок брата/сестры
+    for(const pid of cParents){
+      const sibKids = CH.get(pid)||[];
+      // не совсем то — нам нужны братья/сёстры. Пропустим.
+    }
+    // Найдём братьев/сестёр — у кого общий родитель со мной
+    const sibs = new Set();
+    P.forEach(x=>{
+      if(x.ID===c.ID)return;
+      const xP = [x.father,x.mother].filter(y=>y!=null);
+      if(xP.some(p=>cParents.includes(p)))sibs.add(x.ID);
+    });
+    if(sibs.size){
+      for(const sid of sibs){
+        if((CH.get(sid)||[]).includes(otherId)){
+          return o.Пол==='М'?'племянник':'племянница';
+        }
+      }
+    }
+
+    // Свойственники (вторые родители моих детей)
+    const inLaw = inLawCloud(centerId);
+    if(inLaw.has(otherId)){
+      // супруг/супруга сына или дочери → тесть/тёща/свёкор/свекровь — сложно,
+      // упрощённо:
+      return o.Пол==='М'?'свойственник':'свойственница';
+    }
+    const lawAnc = inLawAncestors(centerId);
+    if(lawAnc.has(otherId)){
+      const male = o.Пол==='М';
+      return male?'предок свойственника':'предок свойственницы';
+    }
+
+    return 'родственник';
+  }
+
   // ---------- DRAG / CLICK ----------
   const raycaster=new THREE.Raycaster();
   const mouse=new THREE.Vector2();
   let downPos=null,dragState=null;
   const plane=new THREE.Plane();
+  let lastTapTime = 0;
 
   function descendants(id){
     const out=new Set(),q=[id];
@@ -872,26 +1047,21 @@ try{
     return P.map(p=>spheres.get(p.ID)).filter(Boolean);
   }
 
-  // ---------- УВЕЛИЧЕННАЯ ТАП-ЗОНА НА МОБИЛЬНОМ ----------
   function getPickablesArray(){
     if(!isMobile) return getSpheresArray();
-    // На мобильном добавляем невидимые большие сферы вокруг шаров
     const arr = [];
     P.forEach(p=>{
       const sp = spheres.get(p.ID);
       if(!sp) return;
       arr.push(sp);
-      // невидимая сфера-обёртка
       if(!p._tapZone){
-        const tz = new THREE.Mesh(sphereGeo, new THREE.MeshBasicMaterial({
-          visible:false
-        }));
+        const tz = new THREE.Mesh(sphereGeo, new THREE.MeshBasicMaterial({visible:false}));
         tz.userData.id = p.ID;
         tz.userData.isTapZone = true;
         spheresGroup.add(tz);
         p._tapZone = tz;
       }
-      const r = radiusOf(p)*2.5;  // в 2.5 раза больше видимого шара
+      const r = radiusOf(p)*2.5;
       p._tapZone.position.copy(sp.position);
       p._tapZone.scale.set(r,r,r);
       arr.push(p._tapZone);
@@ -945,14 +1115,17 @@ try{
     }
     if(downPos&&e){
       const dx=e.clientX-downPos.x,dy=e.clientY-downPos.y;
-      const maxTap = isMobile ? 12 : 5;   // на мобильном допускаем большее дрожание пальца
+      const maxTap = isMobile ? 12 : 5;
       if(dx*dx+dy*dy < maxTap*maxTap){
+        const now = Date.now();
+        const dblTap = (now - lastTapTime) < 300;
+        lastTapTime = now;
+
         mouse.x=(e.clientX/innerWidth)*2-1;
         mouse.y=-(e.clientY/innerHeight)*2+1;
         raycaster.setFromCamera(mouse,camera);
         const hits=raycaster.intersectObjects(getPickablesArray(),false);
         if(hits.length){
-          // фильтруем — берём первый, у которого есть настоящий шар
           let clickedId = null;
           for(const h of hits){
             const id = h.object.userData.id;
@@ -967,7 +1140,11 @@ try{
           }
         }
         else if(!routeMode){
-          deselect();
+          // тап по пустому месту
+          if(dblTap){
+            // двойной тап — закрыть карточку
+            deselect();
+          }
         }
       }
     }
@@ -1404,6 +1581,7 @@ try{
       '<br><button id="closeInfo">Закрыть</button>';
 
     b.style.display='block';
+    b.classList.remove('collapsed');
     document.getElementById('closeInfo').onclick=()=>{
       deselect();
     };
@@ -1422,13 +1600,18 @@ try{
 
   function deselect(){
     clearHighlight();
-    document.getElementById('info').style.display='none';
+    const info = document.getElementById('info');
+    info.style.display='none';
+    info.classList.remove('collapsed');
   }
 
   // ---------- КАРТОЧКА ЧЕЛОВЕКА ----------
   function select(id){
     highlightSubtree(id);
     const p=M.get(id);if(!p)return;
+
+    // URL: обновляем hash, чтобы можно было поделиться ссылкой
+    try{ history.replaceState(null,'','#id='+id); }catch(_){}
 
     function statsFor(setIds){
       let males=0, females=0, unknown=0;
@@ -1490,11 +1673,30 @@ try{
         (lawAncStats.total ? statLine('Предки свойственников', lawAncStats) : '')+
       '</div>';
 
-    function listBlock(title,arr){
+    // Список с подписями родства и сворачиванием (первые 5 + показать все)
+    function listBlock(title, arr, kind){
       if(!arr.length)return '';
-      return '<div style="margin-top:8px;font-size:11px;color:#7d8a97">'+title+' ('+arr.length+'):</div><div class="tree-list">'+
-        arr.map(d=>'<div data-id="'+d.ID+'">• '+nm(d)+' <span style="color:#5d6b78">('+d.ID+')</span></div>').join('')+
+      const id0 = id;
+      const PREVIEW = 5;
+      const preview = arr.slice(0,PREVIEW);
+      const rest = arr.slice(PREVIEW);
+      const relColor = kind==='anc'?'#ffcc33':kind==='desc'?'#33ffb0':kind==='law'?'#ffa04d':kind==='lawAnc'?'#d18cff':'#9fb0bf';
+      const makeRow = (d)=> {
+        const rel = relationLabel(id0, d.ID);
+        return '<div data-id="'+d.ID+'">'+
+          '<span class="person-name">• '+nm(d)+' <span style="color:#5d6b78">('+d.ID+')</span></span>'+
+          '<span class="rel-label" style="color:'+relColor+'">'+rel+'</span>'+
         '</div>';
+      };
+      let html = '<div style="margin-top:8px;font-size:11px;color:#7d8a97">'+title+' ('+arr.length+'):</div>';
+      html += '<div class="tree-list" data-kind="'+kind+'">';
+      html += preview.map(makeRow).join('');
+      if(rest.length){
+        html += '<div class="show-more" data-more="1">▾ Показать ещё '+rest.length+'</div>';
+        html += '<div class="hidden-rows" style="display:none">'+rest.map(makeRow).join('')+'</div>';
+      }
+      html += '</div>';
+      return html;
     }
     const ancList     = [...ancSet].map(i=>M.get(i)).filter(Boolean);
     const descList    = [...descSet].map(i=>M.get(i)).filter(Boolean);
@@ -1502,22 +1704,81 @@ try{
     const lawAncList  = [...lawAncSet].map(i=>M.get(i)).filter(Boolean);
 
     const treeHtml =
-      listBlock('Предки', ancList)+
-      listBlock('Потомки', descList)+
-      listBlock('Свойственники', inLawList)+
-      listBlock('Предки свойственника', lawAncList);
+      listBlock('Предки', ancList, 'anc')+
+      listBlock('Потомки', descList, 'desc')+
+      listBlock('Свойственники', inLawList, 'law')+
+      listBlock('Предки свойственника', lawAncList, 'lawAnc');
 
     const b=document.getElementById('info');
+    const linkUrl = location.origin+location.pathname+'#id='+id;
     b.innerHTML =
+      '<div id="infoHeader">'+
+        '<span style="color:#e8eef5;font-weight:650">'+nm(p)+'</span>'+
+        ' <span class="toggle">▾ Развернуть</span>'+
+      '</div>'+
       '<h2>'+nm(p)+'</h2>'+
       rows.map(r=>'<div class="row"><b>'+r[0]+'</b>'+r[1]+'</div>').join('')+
+      '<div style="margin-top:8px;font-size:11px">'+
+        '<button id="copyLink" style="padding:6px 10px;font-size:11px">🔗 Скопировать ссылку</button>'+
+      '</div>'+
       statsHtml+
       treeHtml+
       '<br><button id="closeInfo">Закрыть</button>';
     b.style.display='block';
 
+    // На мобильном — карточка изначально свёрнута (видно только шапку)
+    if(isMobile){
+      b.classList.add('collapsed');
+      const toggle = b.querySelector('#infoHeader .toggle');
+      if(toggle)toggle.textContent = '▴ Развернуть';
+    } else {
+      b.classList.remove('collapsed');
+    }
+
+    // Сворачивание карточки на мобильном
+    const header = b.querySelector('#infoHeader');
+    if(header){
+      header.onclick = ()=>{
+        const collapsed = b.classList.toggle('collapsed');
+        const t = b.querySelector('#infoHeader .toggle');
+        if(t)t.textContent = collapsed ? '▴ Развернуть' : '▾ Свернуть';
+      };
+    }
+
+    // Показать ещё N
+    b.querySelectorAll('.show-more').forEach(el=>{
+      el.onclick = ()=>{
+        const hidden = el.parentElement.querySelector('.hidden-rows');
+        if(hidden){
+          hidden.style.display='block';
+          el.style.display='none';
+        }
+      };
+    });
+
     document.getElementById('closeInfo').onclick=deselect;
-    b.querySelectorAll('.tree-list div').forEach(el=>{
+
+    // Копирование ссылки
+    const copyBtn = b.querySelector('#copyLink');
+    if(copyBtn){
+      copyBtn.onclick = ()=>{
+        try{
+          navigator.clipboard.writeText(linkUrl).then(
+            ()=>toast('Ссылка скопирована ✓'),
+            ()=>{
+              // fallback
+              const ta=document.createElement('textarea');
+              ta.value=linkUrl;document.body.appendChild(ta);
+              ta.select();document.execCommand('copy');
+              document.body.removeChild(ta);
+              toast('Ссылка скопирована ✓');
+            }
+          );
+        }catch(e){toast('Ошибка: '+e.message)}
+      };
+    }
+
+    b.querySelectorAll('.tree-list div[data-id]').forEach(el=>{
       el.onclick=()=>{
         const id2=parseInt(el.dataset.id,10);
         select(id2);
@@ -1709,14 +1970,14 @@ try{
   });
   dom.addEventListener('wheel',()=>{setTimeout(syncZoomUI,50)});
 
-  // ---------- ИМПОРТ XLSX ----------
+  // ---------- ИМПОРТ XLSX (только для админа) ----------
   document.getElementById('importBtn').onclick=()=>document.getElementById('fileInput').click();
   document.getElementById('fileInput').addEventListener('change',async function(){
     const file=this.files&&this.files[0];
     if(!file)return;
     if(typeof XLSX==='undefined'){toast('SheetJS не загрузился');return}
     try{
-      toast('Читаю файл…',1500);
+      showLoading('Читаю файл…');
       const buf=await file.arrayBuffer();
       const wb=XLSX.read(buf,{type:'array',cellDates:true});
       const sheetName=wb.SheetNames[0];
@@ -1737,10 +1998,13 @@ try{
           if(o[k]&&o[k].length>10)o[k]=o[k].slice(0,10);
         });
       });
+      showLoading('Применяю '+mapped.length+' человек…');
       localStorage.setItem(KEY_DATA,JSON.stringify(mapped));
       applyData(mapped);
+      hideLoading();
       toast('Импортировано: '+mapped.length+' человек из «'+sheetName+'»');
     }catch(err){
+      hideLoading();
       console.error(err);
       toast('Ошибка импорта: '+(err.message||err),4000);
       const el=document.getElementById('err');el.style.display='block';
@@ -1788,7 +2052,23 @@ try{
     buildGraph(filtered);
     computeLayout();
     buildScene();
-    setTimeout(()=>{fit();syncZoomUI()},60);
+    setTimeout(()=>{
+      fit();syncZoomUI();
+      // если в URL есть #id=..., открываем этого человека
+      const m = location.hash.match(/#id=(\d+)/);
+      if(m){
+        const targetId = parseInt(m[1],10);
+        if(M.has(targetId)){
+          select(targetId);
+          const pos = positions.get(targetId);
+          if(pos){
+            controls.target.copy(pos);
+            camera.position.set(pos.x+250,pos.y+200,pos.z+350);
+            controls.update();
+          }
+        }
+      }
+    },120);
   }
 
   addEventListener('resize',()=>{
