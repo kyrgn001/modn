@@ -12,33 +12,25 @@ input[type=range]{width:150px;vertical-align:middle}
 select{padding:8px;border:1px solid #2a3846;border-radius:8px;background:#0a1016;max-width:240px}
 button{padding:8px 10px;border:1px solid #2a3846;border-radius:8px;background:#111a23;cursor:pointer}
 button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
-#info{position:fixed;z-index:12;right:14px;top:72px;width:340px;max-height:calc(100vh - 88px);overflow:auto;display:none;transition:max-height .25s ease}
+#info{position:fixed;z-index:12;right:14px;top:72px;width:340px;max-height:calc(100vh - 88px);overflow:auto;display:none}
 #info h2{margin:0 0 6px;font-size:17px;color:#e8eef5}
 .row{font-size:12px;padding:5px 0;border-bottom:1px solid #1e2a35;color:#b9c4cf}
 .row b{display:inline-block;width:92px;color:#7d8a97}
 .stats-block{margin-top:10px;padding-top:8px;border-top:1px solid #1e2a35;font-size:12px}
 .stats-title{font-size:11px;color:#7d8a97;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
-.stat-line{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:3px 0;line-height:1.3}
-.stat-label{color:#8e9aa6;flex:0 0 auto}
-.stat-value{text-align:right;flex:1 1 auto}
-.stat-total{color:#5d6b78;font-size:10px;margin-left:4px}
+.stat-line{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:3px 0}
+.stat-label{color:#8e9aa6}.stat-value{text-align:right}.stat-total{color:#5d6b78;font-size:10px;margin-left:4px}
 .tree-list{font-size:11px;color:#9fb0bf;margin-top:6px;padding-left:6px}
-.tree-list div{padding:4px 0;border-bottom:1px dotted #1e2a35;cursor:pointer;display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+.tree-list div{padding:4px 0;border-bottom:1px dotted #1e2a35;cursor:pointer;display:flex;justify-content:space-between;gap:6px}
 .tree-list div:hover{color:#7fd4ff}
-.tree-list .rel-label{font-size:10px;color:#8a95a3;flex:0 0 auto;font-style:italic}
-.tree-list .person-name{flex:1 1 auto}
-.tree-list .show-more{color:#7fd4ff;font-size:10px;text-align:center;border-bottom:none;padding:6px;cursor:pointer}
+.tree-list .rel-label{font-size:10px;color:#8a95a3;font-style:italic}
+.tree-list .show-more{color:#7fd4ff;font-size:10px;text-align:center;padding:6px;cursor:pointer}
 .tree-list .show-more:hover{background:#141c26;border-radius:6px}
-.route-list{max-height:340px;overflow:auto;margin-top:6px;padding-left:2px}
-.route-row{padding:6px 8px;border-bottom:1px dotted #1e2a35;cursor:pointer;font-size:12px;color:#cfd8e0;line-height:1.4}
-.route-row:hover{background:#141c26;color:#7fd4ff}
-.route-step{display:inline-block;min-width:44px;font-size:10px;color:#5d6b78}
-.route-name{color:#e8eef5;font-weight:600}
 #suggestBox{position:fixed;z-index:30;background:#0d141bee;border:1px solid #1e2a35;border-radius:8px;box-shadow:0 8px 24px #0009;max-height:320px;overflow:auto;display:none;font-size:12px;color:#cfd8e0;min-width:240px}
 #suggestBox .sug-item{padding:8px 12px;border-bottom:1px solid #1e2a35;cursor:pointer}
 #suggestBox .sug-item:last-child{border-bottom:none}
 #tip{position:fixed;left:14px;bottom:13px;z-index:5;font-size:11px;color:#9fb0bf;background:#0b1116dd;border:1px solid #1e2a35;border-radius:8px;padding:7px 10px;max-width:60vw}
-#routeTip{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:15;background:#0d141bee;border:1px solid #00e5ff;color:#00e5ff;padding:8px 16px;border-radius:10px;display:none;font-size:13px;box-shadow:0 4px 20px #00e5ff33}
+#routeTip{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:15;background:#0d141bee;border:1px solid #00e5ff;color:#00e5ff;padding:8px 16px;border-radius:10px;display:none;font-size:13px}
 #err{position:fixed;left:0;right:0;bottom:0;z-index:99;background:#7a1e1e;color:#fff;padding:10px;font:12px monospace;display:none;max-height:40vh;overflow:auto;white-space:pre-wrap}
 #toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:20;background:#0d141bee;border:1px solid #1e2a35;color:#cfd8e0;padding:10px 16px;border-radius:10px;display:none;font-size:13px}
 #loading{position:fixed;inset:0;z-index:80;background:#02060acc;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px}
@@ -48,13 +40,29 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 .zoomwrap{display:flex;align-items:center;gap:6px;font-size:11px;color:#7d8a97}
 #ctrlBody{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 #togglePanel{display:none;width:100%;margin-bottom:6px;font-weight:bold}
-#infoHeader{display:none;padding:6px 0 8px;border-bottom:1px solid #1e2a35;margin-bottom:6px;cursor:pointer;user-select:none}
+#infoHeader{display:none;padding:6px 0 8px;border-bottom:1px solid #1e2a35;margin-bottom:6px;cursor:pointer}
 #infoHeader .toggle{color:#7fd4ff;font-size:11px}
-#treeView{position:fixed;inset:0;z-index:20;background:transparent;display:none;touch-action:none}
-#treeView canvas{display:block;width:100%;height:100%}
-#treeBar{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:22;background:#0d141bee;border:1px solid #1e2a35;border-radius:12px;padding:8px 12px;color:#cfd8e0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* ---------- Дерево ---------- */
+#treeView{position:fixed;inset:0;z-index:20;display:none;touch-action:none}
+#treeView svg{display:block;width:100%;height:100%;background:rgba(2,6,10,0.85)}
+#treeBar{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:22;background:#0d141bee;border:1px solid #1e2a35;border-radius:12px;padding:8px 12px;color:#cfd8e0;display:none;gap:8px;align-items:center;flex-wrap:wrap;max-width:95vw}
 #treeBar .ttl{font-weight:650;color:#e8eef5;font-size:13px}
 #treeBar .hint{font-size:11px;color:#7d8a97}
+.root-tabs{display:flex;gap:4px;flex-wrap:wrap;max-width:100%;overflow:auto;margin-top:6px}
+.root-tab{padding:5px 9px;border:1px solid #2a3846;border-radius:8px;background:#111a23;color:#cfd8e0;cursor:pointer;font-size:11px;white-space:nowrap}
+.root-tab:hover{background:#1a2733;border-color:#3a4d5e}
+.root-tab.active{background:#0a4a6b;border-color:#00e5ff;color:#00e5ff}
+.root-menu{position:fixed;inset:0;z-index:25;background:#02060acc;display:none;align-items:center;justify-content:center;padding:20px}
+.root-menu-inner{background:#0d141b;border:1px solid #1e2a35;border-radius:14px;padding:20px;max-width:600px;width:100%;max-height:80vh;overflow:auto;color:#cfd8e0}
+.root-menu-inner h2{margin:0 0 12px;font-size:18px;color:#e8eef5}
+.root-item{padding:10px 12px;border:1px solid #1e2a35;border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.root-item:hover{background:#141c26;border-color:#00e5ff}
+.root-item .ri-name{font-weight:650;color:#e8eef5;font-size:14px}
+.root-item .ri-path{font-size:11px;color:#7d8a97;margin-top:3px}
+.root-item .ri-count{color:#7fd4ff;font-size:11px;margin-top:3px}
+.root-menu-inner .close-btn{margin-top:10px;padding:8px 16px;width:100%}
+
 @media(max-width:800px){
   #ui{left:8px;right:8px;top:8px;gap:6px}
   #ui .panel:first-child{display:none}
@@ -74,7 +82,7 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 }
 </style></head><body>
 <div id="ui">
- <div class="panel"><div class="title">Родословная 3D</div><div class="sub">клик = облако родства · 🧭 = маршрут · 🌳 = плоское дерево</div></div>
+ <div class="panel"><div class="title">Родословная 3D</div><div class="sub">клик = облако родства · 🧭 = маршрут · 🌳 = древо от предка</div></div>
  <div class="panel" id="ctrlPanel">
    <button id="togglePanel">☰ Меню</button>
    <div id="ctrlBody">
@@ -98,16 +106,29 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 <div id="routeTip"></div>
 <div id="suggestBox"></div>
 <div id="info" class="panel"></div>
-<div id="tip">🖱 ЛКМ по фону — вращение · по шару — тянуть ветку · колесо/ползунок — зум · ПКМ — сдвиг · 🧭 — маршрут · 🌳 (в карточке) — плоское дерево</div>
+<div id="tip">🖱 ЛКМ — вращение · по шару — тянуть · колесо — зум · ПКМ — сдвиг · 🌳 (в карточке) — древо от предка</div>
 <div id="toast"></div>
 <div id="loading"><div class="spinner"></div><div class="msg" id="loadingMsg">Загрузка…</div></div>
-<div id="treeView"><canvas id="treeCanvas"></canvas></div>
-<div id="treeBar" style="display:none">
-  <span class="ttl" id="treeTitle">🌳 Дерево</span>
-  <span class="hint" id="treeHint">колесо/пинч — зум · перетаскивание — панорама · тап — открыть</span>
-  <button id="treeBack">◀ Назад к облаку</button>
-  <button id="treePng">📷 Экспорт A4</button>
+
+<div id="treeView">
+  <svg id="treeSvg" xmlns="http://www.w3.org/2000/svg"></svg>
 </div>
+<div id="treeBar">
+  <span class="ttl" id="treeTitle">🌳 Древо</span>
+  <span class="hint">колесо — зум · перетаскивание — панорама · клик — карточка</span>
+  <button id="treePng">📄 Экспорт PNG</button>
+  <button id="treeBack">◀ Назад</button>
+  <div class="root-tabs" id="rootTabs"></div>
+</div>
+
+<div id="rootMenu" class="root-menu">
+  <div class="root-menu-inner">
+    <h2>Выберите древо от предка</h2>
+    <div id="rootMenuList"></div>
+    <button class="close-btn" id="rootMenuClose">Отмена</button>
+  </div>
+</div>
+
 <div id="err"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -128,15 +149,11 @@ function showLoading(msg){
   document.getElementById('loadingMsg').textContent=msg||'Загрузка…';
   l.style.display='flex';
 }
-function hideLoading(){
-  document.getElementById('loading').style.display='none';
-}
+function hideLoading(){document.getElementById('loading').style.display='none'}
 </script>
 
 <script>
-// ============================================================
-//  ДАННЫЕ (326 человек, обновлено)
-// ============================================================
+// ============ ДАННЫЕ (326 человек) ============
 const BUILTIN_P=[
 {"ID":1,"Фамилия":"","Имя":"Маҗр","Отчество":"","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
 {"ID":2,"Фамилия":"Маджаров","Имя":"Санҗ","Отчество":"","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"1","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
@@ -468,48 +485,36 @@ const BUILTIN_P=[
 </script>
 
 <script>
-// ============================================================
-//  ОСНОВНАЯ ЛОГИКА
-// ============================================================
+// ============ ОСНОВНАЯ ЛОГИКА ============
 (function(){
 try{
   if(typeof THREE==='undefined')throw new Error('Three.js не загрузился');
   if(!THREE.OrbitControls)throw new Error('OrbitControls не загрузился');
 
-  // ---------- ПРОВЕРКА "АДМИНА" ----------
   const isLocalFile = location.protocol==='file:';
   const urlParams = new URLSearchParams(location.search);
   const isAdmin = isLocalFile || urlParams.get('admin')==='1';
-  if(isAdmin){
-    const btn = document.getElementById('importBtn');
-    if(btn) btn.style.display='';
-  }
+  if(isAdmin){const b=document.getElementById('importBtn');if(b)b.style.display=''}
 
-  // ---------- ГЛОБАЛЬНЫЕ ----------
   let P=[],M=new Map(),CH=new Map(),L=new Map();
   let maxLevel=0;
-  let positions=new Map();
-  let spheres=new Map();
-  let labels=new Map();
-  let edgeDefs=[];
-  let lineObjects=[];
-  let currentData=[];
-  let activeBranch='__ALL__';
-  let isMobile = window.innerWidth<=800;
+  let positions=new Map(),spheres=new Map(),labels=new Map(),edgeDefs=[],lineObjects=[];
+  let currentData=[],activeBranch='__ALL__';
+  let isMobile=window.innerWidth<=800;
 
-  const KEY_DATA="rod_data_v1";
-  const KEY_POS ="rod_3d_positions_v10";
+  const KEY_DATA='rod_data_v1';
+  const KEY_POS ='rod_3d_positions_v11';
   let savedPositions={};
-  try{savedPositions=JSON.parse(localStorage.getItem(KEY_POS)||"{}")}catch(e){}
+  try{savedPositions=JSON.parse(localStorage.getItem(KEY_POS)||'{}')}catch(e){}
 
-  const nm=p=>[p.Фамилия,p.Имя,p.Отчество].filter(Boolean).join(" ")||("ID "+p.ID);
+  const nm=p=>[p.Фамилия,p.Имя,p.Отчество].filter(Boolean).join(' ')||('ID '+p.ID);
   const par=p=>[p.father,p.mother].filter(x=>x!=null&&M.has(x));
 
   function buildGraph(arr){
     P=arr.map(p=>({...p,
       ID:parseInt(p.ID,10),
-      father:p["ID Отца"]?parseInt(p["ID Отца"],10):null,
-      mother:p["ID Матери"]?parseInt(p["ID Матери"],10):null
+      father:p['ID Отца']?parseInt(p['ID Отца'],10):null,
+      mother:p['ID Матери']?parseInt(p['ID Матери'],10):null
     })).filter(p=>!isNaN(p.ID));
     M=new Map();P.forEach(p=>M.set(p.ID,p));
     CH=new Map();
@@ -538,27 +543,22 @@ try{
     maxLevel=Math.max(...[...L.values()],0);
   }
 
-  // ---------- сцена ----------
+  // ---------- 3D сцена ----------
   const scene=new THREE.Scene();
   scene.background=new THREE.Color(0x02060a);
   scene.fog=new THREE.FogExp2(0x02060a,0.00022);
-
   const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,1,30000);
   camera.position.set(0,700,1600);
-
   const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
   renderer.setSize(innerWidth,innerHeight);
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
   document.body.appendChild(renderer.domElement);
-
   const controls=new THREE.OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true;controls.dampingFactor=0.08;
   controls.maxDistance=20000;controls.minDistance=60;
-
   scene.add(new THREE.AmbientLight(0xffffff,0.8));
   const dl=new THREE.DirectionalLight(0xffffff,0.6);dl.position.set(600,1200,800);scene.add(dl);
   const dl2=new THREE.DirectionalLight(0x86b7ff,0.35);dl2.position.set(-600,600,-800);scene.add(dl2);
-
   const sphereGeo=new THREE.SphereGeometry(1,20,16);
   const haloCanvas=document.createElement('canvas');
   haloCanvas.width=128;haloCanvas.height=128;
@@ -570,22 +570,15 @@ try{
     grad.addColorStop(1,'rgba(255,255,255,0)');
     g.fillStyle=grad;g.fillRect(0,0,128,128);
   }
-  const haloTex=new THREE.CanvasTexture(haloCanvas);
-  haloTex.minFilter=THREE.LinearFilter;
-
-  let spheresGroup=new THREE.Group();
-  let labelsGroup=new THREE.Group();
-  let edgesGroup=new THREE.Group();
-  let starsGroup=new THREE.Group();
+  const haloTex=new THREE.CanvasTexture(haloCanvas);haloTex.minFilter=THREE.LinearFilter;
+  let spheresGroup=new THREE.Group(),labelsGroup=new THREE.Group(),edgesGroup=new THREE.Group(),starsGroup=new THREE.Group();
   scene.add(spheresGroup);scene.add(labelsGroup);scene.add(edgesGroup);scene.add(starsGroup);
 
-  // ---------- ЗВЁЗДНЫЙ ФОН ----------
   function buildStars(){
     while(starsGroup.children.length){
       const c=starsGroup.children.pop();
       if(c.geometry&&c.geometry!==sphereGeo)c.geometry.dispose();
-      if(c.material)c.material.dispose();
-      starsGroup.remove(c);
+      if(c.material)c.material.dispose();starsGroup.remove(c);
     }
     const N=900;
     for(let i=0;i<N;i++){
@@ -599,20 +592,17 @@ try{
       const c=new THREE.Color().setHSL(0.62,0.05,0.55+Math.random()*0.35);
       const mat=new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:0.5+Math.random()*0.5});
       const m=new THREE.Mesh(sphereGeo,mat);
-      m.scale.set(size,size,size);
-      m.position.set(x,y,z);
-      starsGroup.add(m);
+      m.scale.set(size,size,size);m.position.set(x,y,z);starsGroup.add(m);
     }
   }
   buildStars();
 
-  // ---------- ЦВЕТА / РАЗМЕРЫ ----------
   function sphereColor(p){
     const lv=L.get(p.ID)||0;
     const t=maxLevel?lv/maxLevel:0;
     const c=new THREE.Color();
-    if(p.Пол==="М")c.setHSL(0.58-t*0.08,0.75,0.58-t*0.08);
-    else if(p.Пол==="Ж")c.setHSL(0.92-t*0.06,0.75,0.60-t*0.08);
+    if(p.Пол==='М')c.setHSL(0.58-t*0.08,0.75,0.58-t*0.08);
+    else if(p.Пол==='Ж')c.setHSL(0.92-t*0.06,0.75,0.60-t*0.08);
     else c.setHSL(0.10,0.30,0.60-t*0.05);
     return c;
   }
@@ -624,442 +614,229 @@ try{
     return Math.max(7,base);
   }
 
-  // ---------- «ЛУКОВИЦА» ----------
   function computeLayout(){
     positions=new Map();
-
-    const RX = 1300;
-    const RY = 900;
-    const RZ = 900;
-    const CORE_R = 0.15;
-
-    const totalLevels = maxLevel + 1;
-
+    const RX=1300,RY=900,RZ=900,CORE_R=0.15;
+    const totalLevels=maxLevel+1;
     const byLevel=new Map();
-    P.forEach(p=>{
-      const lv=L.get(p.ID)||0;
-      if(!byLevel.has(lv))byLevel.set(lv,[]);
-      byLevel.get(lv).push(p);
-    });
-
-    function radiusFactor(lv){
-      if(totalLevels<=1)return 1;
-      const t = lv/(totalLevels-1);
-      return CORE_R + (1 - CORE_R)*t;
-    }
-
+    P.forEach(p=>{const lv=L.get(p.ID)||0;if(!byLevel.has(lv))byLevel.set(lv,[]);byLevel.get(lv).push(p)});
+    function radiusFactor(lv){if(totalLevels<=1)return 1;const t=lv/(totalLevels-1);return CORE_R+(1-CORE_R)*t}
     const placedPos=new Map();
     const levelsSorted=[...byLevel.keys()].sort((a,b)=>a-b);
-
     levelsSorted.forEach(lv=>{
       const arr=byLevel.get(lv).slice();
-
       arr.forEach(p=>{
         const parents=[p.father,p.mother].filter(x=>x!=null&&placedPos.has(x));
         if(parents.length){
           let sx=0,sy=0,sz=0;
           parents.forEach(pid=>{const v=placedPos.get(pid);sx+=v.x;sy+=v.y;sz+=v.z});
           const v=new THREE.Vector3(sx,sy,sz).normalize();
-          p._dirX=v.x;p._dirY=v.y;p._dirZ=v.z;
-          p._hasDir=true;
-        } else {
-          p._hasDir=false;
-        }
+          p._dirX=v.x;p._dirY=v.y;p._dirZ=v.z;p._hasDir=true;
+        } else {p._hasDir=false}
       });
-
       const N=arr.length;
-      const RING_CAP = Math.max(20, Math.ceil(N/3));
-
+      const RING_CAP=Math.max(20,Math.ceil(N/3));
       arr.sort((a,b)=>{
         if(!a._hasDir&&!b._hasDir)return a.ID-b.ID;
-        if(!a._hasDir)return 1;
-        if(!b._hasDir)return -1;
-        const fa=Math.atan2(a._dirZ,a._dirX);
-        const fb=Math.atan2(b._dirZ,b._dirX);
+        if(!a._hasDir)return 1;if(!b._hasDir)return -1;
+        const fa=Math.atan2(a._dirZ,a._dirX),fb=Math.atan2(b._dirZ,b._dirX);
         if(Math.abs(fa-fb)>0.01)return fa-fb;
         return a._dirY-b._dirY;
       });
-
       const rings=[];
       for(let i=0;i<N;i+=RING_CAP)rings.push(arr.slice(i,i+RING_CAP));
-
       rings.forEach((ring,ri)=>{
         const baseFactor=radiusFactor(lv);
-        const ringFactor=Math.min(1, baseFactor + (ri*0.06)/Math.max(1,totalLevels));
-
-        const rx=RX*ringFactor;
-        const ry=RY*ringFactor;
-        const rz=RZ*ringFactor;
-
+        const ringFactor=Math.min(1,baseFactor+(ri*0.06)/Math.max(1,totalLevels));
+        const rx=RX*ringFactor,ry=RY*ringFactor,rz=RZ*ringFactor;
         const n=ring.length;
         ring.forEach((p,i)=>{
-          const phi = (i/Math.max(1,n))*Math.PI*2 + lv*0.7 + ri*1.3;
-          const t = ((i*2654435761)>>>0)/4294967296;
-          const theta = (t-0.5)*1.2;
-
+          const phi=(i/Math.max(1,n))*Math.PI*2+lv*0.7+ri*1.3;
+          const t=((i*2654435761)>>>0)/4294967296;
+          const theta=(t-0.5)*1.2;
           let px=rx*Math.cos(theta)*Math.cos(phi);
           let py=ry*Math.sin(theta);
           let pz=rz*Math.cos(theta)*Math.sin(phi);
-
           if(p._hasDir){
             const pull=0.35;
-            px=px*(1-pull) + (p._dirX*RX*ringFactor)*pull;
-            py=py*(1-pull) + (p._dirY*RY*ringFactor)*pull;
-            pz=pz*(1-pull) + (p._dirZ*RZ*ringFactor)*pull;
+            px=px*(1-pull)+(p._dirX*RX*ringFactor)*pull;
+            py=py*(1-pull)+(p._dirY*RY*ringFactor)*pull;
+            pz=pz*(1-pull)+(p._dirZ*RZ*ringFactor)*pull;
           }
-
-          const jx=(Math.random()-0.5)*60;
-          const jy=(Math.random()-0.5)*60;
-          const jz=(Math.random()-0.5)*60;
-
-          const v=new THREE.Vector3(px+jx, py+jy, pz+jz);
-          positions.set(p.ID, v);
-          placedPos.set(p.ID, v);
+          const jx=(Math.random()-0.5)*60,jy=(Math.random()-0.5)*60,jz=(Math.random()-0.5)*60;
+          const v=new THREE.Vector3(px+jx,py+jy,pz+jz);
+          positions.set(p.ID,v);placedPos.set(p.ID,v);
         });
       });
     });
-
-    P.forEach(p=>{
-      if(!positions.has(p.ID)){
-        const v=new THREE.Vector3(
-          (Math.random()-0.5)*RX,
-          (Math.random()-0.5)*RY,
-          (Math.random()-0.5)*RZ
-        );
-        positions.set(p.ID, v);
-      }
-    });
-
-    P.forEach(p=>{
-      const s=savedPositions[p.ID];
-      if(s&&typeof s.x==="number")positions.set(p.ID,new THREE.Vector3(s.x,s.y,s.z));
-    });
-
+    P.forEach(p=>{if(!positions.has(p.ID))positions.set(p.ID,new THREE.Vector3((Math.random()-0.5)*RX,(Math.random()-0.5)*RY,(Math.random()-0.5)*RZ))});
+    P.forEach(p=>{const s=savedPositions[p.ID];if(s&&typeof s.x==='number')positions.set(p.ID,new THREE.Vector3(s.x,s.y,s.z))});
     let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity,minZ=Infinity,maxZ=-Infinity;
-    positions.forEach(v=>{
-      minX=Math.min(minX,v.x);maxX=Math.max(maxX,v.x);
-      minY=Math.min(minY,v.y);maxY=Math.max(maxY,v.y);
-      minZ=Math.min(minZ,v.z);maxZ=Math.max(maxZ,v.z);
-    });
-    const cx=(minX+maxX)/2, cy=(minY+maxY)/2, cz=(minZ+maxZ)/2;
+    positions.forEach(v=>{minX=Math.min(minX,v.x);maxX=Math.max(maxX,v.x);minY=Math.min(minY,v.y);maxY=Math.max(maxY,v.y);minZ=Math.min(minZ,v.z);maxZ=Math.max(maxZ,v.z)});
+    const cx=(minX+maxX)/2,cy=(minY+maxY)/2,cz=(minZ+maxZ)/2;
     positions.forEach(v=>{v.x-=cx;v.y-=cy;v.z-=cz});
   }
 
-  // ---------- СЦЕНА: ШАРЫ ----------
   function buildScene(){
     [spheresGroup,labelsGroup,edgesGroup].forEach(g=>{
       while(g.children.length){
         const c=g.children.pop();
         if(c.geometry&&c.geometry!==sphereGeo)c.geometry.dispose();
         if(c.material&&c.material.map&&c.material.map!==haloTex)c.material.map.dispose();
-        if(c.material)c.material.dispose();
-        g.remove(c);
+        if(c.material)c.material.dispose();g.remove(c);
       }
     });
     spheres=new Map();labels=new Map();lineObjects=[];
-
     P.forEach(p=>{
       const pos=positions.get(p.ID);if(!pos)return;
       const r=radiusOf(p);
       const col=sphereColor(p);
-      const mat=new THREE.MeshPhongMaterial({
-        color:col,
-        emissive:col.clone().multiplyScalar(0.35),
-        shininess:40,
-        transparent:false
-      });
+      const mat=new THREE.MeshPhongMaterial({color:col,emissive:col.clone().multiplyScalar(0.35),shininess:40,transparent:false});
       const m=new THREE.Mesh(sphereGeo,mat);
       m.scale.set(r,r,r);m.position.copy(pos);
-      m.userData.id=p.ID;m.userData.baseScale=r;
-      m.userData.baseColor=col.clone();
+      m.userData.id=p.ID;m.userData.baseScale=r;m.userData.baseColor=col.clone();
       spheresGroup.add(m);spheres.set(p.ID,m);
-
-      const cvs=document.createElement('canvas');
-      cvs.width=512;cvs.height=64;
+      const cvs=document.createElement('canvas');cvs.width=512;cvs.height=64;
       const ctx=cvs.getContext('2d');
-      ctx.font='bold 26px -apple-system,Segoe UI,Arial';
-      ctx.fillStyle='#ffffff';ctx.textBaseline='middle';
-      const full=nm(p);
-      ctx.fillText(full.length>28?full.slice(0,27)+'…':full,8,32);
-      const tex=new THREE.CanvasTexture(cvs);
-      tex.minFilter=THREE.LinearFilter;
+      ctx.font='bold 26px -apple-system,Segoe UI,Arial';ctx.fillStyle='#ffffff';ctx.textBaseline='middle';
+      const full=nm(p);ctx.fillText(full.length>28?full.slice(0,27)+'…':full,8,32);
+      const tex=new THREE.CanvasTexture(cvs);tex.minFilter=THREE.LinearFilter;
       const smat=new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false,depthWrite:false,opacity:0.85});
-      const spr=new THREE.Sprite(smat);
-      spr.scale.set(110,14,1);
+      const spr=new THREE.Sprite(smat);spr.scale.set(110,14,1);
       spr.position.copy(pos.clone().add(new THREE.Vector3(0,r+18,0)));
-      spr.userData.id=p.ID;
-      labelsGroup.add(spr);labels.set(p.ID,spr);
-
-      const hmat=new THREE.SpriteMaterial({
-        map:haloTex,color:col.clone().multiplyScalar(1.4),
-        transparent:true,opacity:0.55,
-        blending:THREE.AdditiveBlending,depthWrite:false
-      });
-      const hs=new THREE.Sprite(hmat);
-      hs.scale.set(r*6,r*6,1);
-      hs.position.copy(pos);
-      hs.userData.id=p.ID;
-      p._halo=hs;
-      spheresGroup.add(hs);
+      spr.userData.id=p.ID;labelsGroup.add(spr);labels.set(p.ID,spr);
+      const hmat=new THREE.SpriteMaterial({map:haloTex,color:col.clone().multiplyScalar(1.4),transparent:true,opacity:0.55,blending:THREE.AdditiveBlending,depthWrite:false});
+      const hs=new THREE.Sprite(hmat);hs.scale.set(r*6,r*6,1);hs.position.copy(pos);hs.userData.id=p.ID;
+      p._halo=hs;spheresGroup.add(hs);
     });
-
     edgeDefs=[];
     P.forEach(c=>{par(c).forEach(pid=>edgeDefs.push({from:pid,to:c.ID,type:'parent'}))});
     const spouseSet=new Set();
     P.forEach(c=>{
       if(c.father&&c.mother){
-        const k=Math.min(c.father,c.mother)+"_"+Math.max(c.father,c.mother);
+        const k=Math.min(c.father,c.mother)+'_'+Math.max(c.father,c.mother);
         if(!spouseSet.has(k)){spouseSet.add(k);edgeDefs.push({from:c.father,to:c.mother,type:'spouse'})}
       }
     });
     rebuildEdges();
-
     document.getElementById('stats').textContent=P.length+' человек · '+(maxLevel+1)+' поколений · '+edgeDefs.length+' связей';
   }
 
-  // ---------- КРИВАЯ ЛИНИЯ ----------
   function createRiverEdge(a,b,type){
     const group=new THREE.Group();
     const col=new THREE.Color(type==='spouse'?0xff6ab0:0x59a9ff);
     const opacity=type==='spouse'?0.35:0.5;
-
     const dir=b.clone().sub(a);
-    const len=dir.length();
-    if(len<1)return group;
-
+    const len=dir.length();if(len<1)return group;
     const unit=dir.clone().normalize();
     const R=10;
     const aSurf=a.clone().add(unit.clone().multiplyScalar(R));
     const bSurf=b.clone().sub(unit.clone().multiplyScalar(R));
-
     const mid=aSurf.clone().add(bSurf).multiplyScalar(0.5);
     const perp=new THREE.Vector3(-unit.z,0,unit.x).normalize();
-    const bend=Math.min(60, len*0.15);
+    const bend=Math.min(60,len*0.15);
     mid.add(perp.multiplyScalar(bend*(type==='spouse'?-1:1)));
-    mid.y += (bSurf.y - aSurf.y) * 0.08;
-
-    const curve=new THREE.CatmullRomCurve3([aSurf, mid, bSurf]);
+    mid.y+=(bSurf.y-aSurf.y)*0.08;
+    const curve=new THREE.CatmullRomCurve3([aSurf,mid,bSurf]);
     const pts=curve.getPoints(type==='spouse'?12:20);
-
     const geo=new THREE.BufferGeometry().setFromPoints(pts);
-    const mat=new THREE.LineBasicMaterial({
-      color:col,transparent:true,opacity:opacity,
-      blending:THREE.AdditiveBlending,depthWrite:false
-    });
-    const line=new THREE.Line(geo,mat);
-    group.add(line);
-
-    return group;
+    const mat=new THREE.LineBasicMaterial({color:col,transparent:true,opacity:opacity,blending:THREE.AdditiveBlending,depthWrite:false});
+    const line=new THREE.Line(geo,mat);group.add(line);return group;
   }
-
   function rebuildEdges(){
     while(edgesGroup.children.length){
       const c=edgesGroup.children.pop();
-      c.traverse(o=>{
-        if(o.geometry)o.geometry.dispose();
-        if(o.material)o.material.dispose();
-      });
+      c.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()});
       edgesGroup.remove(c);
     }
     lineObjects=[];
     edgeDefs.forEach(def=>{
-      const a=positions.get(def.from),b=positions.get(def.to);
-      if(!a||!b)return;
+      const a=positions.get(def.from),b=positions.get(def.to);if(!a||!b)return;
       const g=createRiverEdge(a.clone(),b.clone(),def.type);
       g.userData={def};
-      g.traverse(o=>{
-        if(o.material){
-          o.userData._baseColor=o.material.color.clone();
-          o.userData._baseOpacity=o.material.opacity;
-        }
-      });
-      edgesGroup.add(g);
-      lineObjects.push(g);
+      g.traverse(o=>{if(o.material){o.userData._baseColor=o.material.color.clone();o.userData._baseOpacity=o.material.opacity}});
+      edgesGroup.add(g);lineObjects.push(g);
     });
   }
 
-  // ---------- РОДСТВО: ПОДПИСЬ ----------
-  function relationLabel(centerId, otherId){
-    const c = M.get(centerId), o = M.get(otherId);
-    if(!c||!o) return '';
-    if(centerId===otherId) return 'это он(а)';
-    if(o.ID===c.father) return 'отец';
-    if(o.ID===c.mother) return 'мать';
-    if(c.father===o.ID||c.mother===o.ID) return o.Пол==='М'?'сын':'дочь';
-    const cKids = CH.get(c.ID)||[];
-    if(cKids.includes(o.ID)) return o.Пол==='М'?'сын':'дочь';
-    const cKidsSet = new Set(cKids);
-    let shared = false;
-    (CH.get(o.ID)||[]).forEach(k=>{if(cKidsSet.has(k))shared=true});
-    if(shared) return o.Пол==='М'?'муж':'жена';
-    const anc = ancestors(centerId);
+  // ---------- РОДСТВО ----------
+  function descendants(id){const out=new Set(),q=[id];while(q.length){const x=q.pop();(CH.get(x)||[]).forEach(k=>{if(!out.has(k)){out.add(k);q.push(k)}})}return out}
+  function ancestors(id){const out=new Set(),q=[id];while(q.length){const x=q.pop();const p=M.get(x);if(!p)continue;[p.father,p.mother].forEach(pp=>{if(pp!=null&&M.has(pp)&&!out.has(pp)){out.add(pp);q.push(pp)}})}return out}
+  function bloodCloud(id){const s=new Set([id]);ancestors(id).forEach(a=>s.add(a));descendants(id).forEach(d=>s.add(d));return s}
+  function inLawCloud(id){const cloud=bloodCloud(id);const inLaws=new Set();(CH.get(id)||[]).forEach(k=>{const kp=M.get(k);if(!kp)return;[kp.father,kp.mother].forEach(pp=>{if(pp!=null&&M.has(pp)&&!cloud.has(pp))inLaws.add(pp)})});return inLaws}
+  function inLawAncestors(id){const inLaws=inLawCloud(id);const out=new Set();inLaws.forEach(lawId=>{ancestors(lawId).forEach(a=>{if(!out.has(a))out.add(a)})});const ownBlood=new Set([id,...ancestors(id),...descendants(id),...inLaws]);const filtered=new Set();out.forEach(a=>{if(!ownBlood.has(a))filtered.add(a)});return filtered}
+
+  function relationLabel(centerId,otherId){
+    const c=M.get(centerId),o=M.get(otherId);if(!c||!o)return '';
+    if(centerId===otherId)return 'это он(а)';
+    if(o.ID===c.father)return 'отец';if(o.ID===c.mother)return 'мать';
+    const cKids=CH.get(c.ID)||[];
+    if(cKids.includes(o.ID))return o.Пол==='М'?'сын':'дочь';
+    const cKidsSet=new Set(cKids);let shared=false;(CH.get(o.ID)||[]).forEach(k=>{if(cKidsSet.has(k))shared=true});
+    if(shared)return o.Пол==='М'?'муж':'жена';
+    const anc=ancestors(centerId);
     if(anc.has(otherId)){
-      let minUp = null;
-      const q = [{id:centerId, d:0}], seen = new Set();
-      while(q.length){
-        const {id,d} = q.shift();
-        if(seen.has(id))continue; seen.add(id);
-        if(id===otherId){minUp=d;break}
-        const p = M.get(id);if(!p)continue;
-        [p.father,p.mother].forEach(x=>{if(x!=null&&M.has(x))q.push({id:x,d:d+1})});
-      }
-      if(minUp){
-        const male = o.Пол==='М';
-        if(minUp===2)return male?'дед':'бабушка';
-        if(minUp===3)return male?'прадед':'прабабушка';
-        if(minUp===4)return male?'прапрадед':'прапрабабушка';
-        return (male?'предок':'предок')+' ('+minUp+' покол.)';
-      }
+      let minUp=null;const q=[{id:centerId,d:0}],seen=new Set();
+      while(q.length){const {id,d}=q.shift();if(seen.has(id))continue;seen.add(id);if(id===otherId){minUp=d;break}const p=M.get(id);if(!p)continue;[p.father,p.mother].forEach(x=>{if(x!=null&&M.has(x))q.push({id:x,d:d+1})})}
+      if(minUp){const male=o.Пол==='М';if(minUp===2)return male?'дед':'бабушка';if(minUp===3)return male?'прадед':'прабабушка';if(minUp===4)return male?'прапрадед':'прапрабабушка';return male?'предок':'предок'}
     }
-    const desc = descendants(centerId);
+    const desc=descendants(centerId);
     if(desc.has(otherId)){
-      let minDown = null;
-      const q = [{id:centerId, d:0}], seen = new Set();
-      while(q.length){
-        const {id,d} = q.shift();
-        if(seen.has(id))continue; seen.add(id);
-        if(id===otherId){minDown=d;break}
-        (CH.get(id)||[]).forEach(x=>q.push({id:x,d:d+1}));
-      }
-      if(minDown){
-        const male = o.Пол==='М';
-        if(minDown===2)return male?'внук':'внучка';
-        if(minDown===3)return male?'правнук':'правнучка';
-        if(minDown===4)return male?'праправнук':'праправнучка';
-        return (male?'потомок':'потомок')+' ('+minDown+' покол.)';
-      }
+      let minDown=null;const q=[{id:centerId,d:0}],seen=new Set();
+      while(q.length){const {id,d}=q.shift();if(seen.has(id))continue;seen.add(id);if(id===otherId){minDown=d;break}(CH.get(id)||[]).forEach(x=>q.push({id:x,d:d+1}))}
+      if(minDown){const male=o.Пол==='М';if(minDown===2)return male?'внук':'внучка';if(minDown===3)return male?'правнук':'правнучка';if(minDown===4)return male?'праправнук':'праправнучка';return male?'потомок':'потомок'}
     }
-    const cParents = [c.father,c.mother].filter(x=>x!=null);
-    const oParents = [o.father,o.mother].filter(x=>x!=null);
-    if(cParents.some(p=>oParents.includes(p))) return o.Пол==='М'?'брат':'сестра';
-    for(const pid of cParents){
-      const parP = M.get(pid);if(!parP)continue;
-      const pParents = [parP.father,parP.mother].filter(x=>x!=null);
-      if(pParents.some(pp=>oParents.includes(pp))) return o.Пол==='М'?'дядя':'тётя';
-    }
-    const sibs = new Set();
-    P.forEach(x=>{
-      if(x.ID===c.ID)return;
-      const xP = [x.father,x.mother].filter(y=>y!=null);
-      if(xP.some(p=>cParents.includes(p)))sibs.add(x.ID);
-    });
-    for(const sid of sibs){
-      if((CH.get(sid)||[]).includes(otherId)) return o.Пол==='М'?'племянник':'племянница';
-    }
-    const inLaw = inLawCloud(centerId);
-    if(inLaw.has(otherId)) return o.Пол==='М'?'свойственник':'свойственница';
-    const lawAnc = inLawAncestors(centerId);
-    if(lawAnc.has(otherId)) return o.Пол==='М'?'предок свойственника':'предок свойственницы';
+    const cParents=[c.father,c.mother].filter(x=>x!=null);
+    const oParents=[o.father,o.mother].filter(x=>x!=null);
+    if(cParents.some(p=>oParents.includes(p)))return o.Пол==='М'?'брат':'сестра';
+    for(const pid of cParents){const parP=M.get(pid);if(!parP)continue;const pParents=[parP.father,parP.mother].filter(x=>x!=null);if(pParents.some(pp=>oParents.includes(pp)))return o.Пол==='М'?'дядя':'тётя'}
+    const sibs=new Set();
+    P.forEach(x=>{if(x.ID===c.ID)return;const xP=[x.father,x.mother].filter(y=>y!=null);if(xP.some(p=>cParents.includes(p)))sibs.add(x.ID)});
+    for(const sid of sibs){if((CH.get(sid)||[]).includes(otherId))return o.Пол==='М'?'племянник':'племянница'}
     return 'родственник';
   }
 
-  // ---------- DRAG / CLICK ----------
+  // ---------- Клик / Drag ----------
   const raycaster=new THREE.Raycaster();
   const mouse=new THREE.Vector2();
   let downPos=null,dragState=null;
   const plane=new THREE.Plane();
-  let lastTapTime = 0;
-
-  function descendants(id){
-    const out=new Set(),q=[id];
-    while(q.length){
-      const x=q.pop();
-      (CH.get(x)||[]).forEach(k=>{if(!out.has(k)){out.add(k);q.push(k)}});
-    }
-    return out;
-  }
-  function ancestors(id){
-    const out=new Set(),q=[id];
-    while(q.length){
-      const x=q.pop();const p=M.get(x);if(!p)continue;
-      [p.father,p.mother].forEach(pp=>{
-        if(pp!=null&&M.has(pp)&&!out.has(pp)){out.add(pp);q.push(pp)}
-      });
-    }
-    return out;
-  }
-  function bloodCloud(id){
-    const s=new Set([id]);
-    ancestors(id).forEach(a=>s.add(a));
-    descendants(id).forEach(d=>s.add(d));
-    return s;
-  }
-  function inLawCloud(id){
-    const cloud=bloodCloud(id);
-    const inLaws=new Set();
-    (CH.get(id)||[]).forEach(k=>{
-      const kp=M.get(k);if(!kp)return;
-      [kp.father,kp.mother].forEach(pp=>{
-        if(pp!=null&&M.has(pp)&&!cloud.has(pp))inLaws.add(pp);
-      });
-    });
-    return inLaws;
-  }
-  function inLawAncestors(id){
-    const inLaws = inLawCloud(id);
-    const out = new Set();
-    inLaws.forEach(lawId=>{
-      ancestors(lawId).forEach(a=>{
-        if(!out.has(a)) out.add(a);
-      });
-    });
-    const ownBlood = new Set([id, ...ancestors(id), ...descendants(id), ...inLaws]);
-    const filtered = new Set();
-    out.forEach(a=>{
-      if(!ownBlood.has(a)) filtered.add(a);
-    });
-    return filtered;
-  }
+  let lastTapTime=0;
 
   function rayToPlaneScreen(px,py,point){
-    mouse.x=(px/innerWidth)*2-1;
-    mouse.y=-(py/innerHeight)*2+1;
+    mouse.x=(px/innerWidth)*2-1;mouse.y=-(py/innerHeight)*2+1;
     raycaster.setFromCamera(mouse,camera);
-    const camDir=new THREE.Vector3();
-    camera.getWorldDirection(camDir);
+    const camDir=new THREE.Vector3();camera.getWorldDirection(camDir);
     plane.setFromNormalAndCoplanarPoint(camDir,point);
     const hit=new THREE.Vector3();
     return raycaster.ray.intersectPlane(plane,hit)?hit:null;
   }
-
-  function getSpheresArray(){
-    return P.map(p=>spheres.get(p.ID)).filter(Boolean);
-  }
-
+  function getSpheresArray(){return P.map(p=>spheres.get(p.ID)).filter(Boolean)}
   function getPickablesArray(){
-    if(!isMobile) return getSpheresArray();
-    const arr = [];
+    if(!isMobile)return getSpheresArray();
+    const arr=[];
     P.forEach(p=>{
-      const sp = spheres.get(p.ID);
-      if(!sp) return;
+      const sp=spheres.get(p.ID);if(!sp)return;
       arr.push(sp);
       if(!p._tapZone){
-        const tz = new THREE.Mesh(sphereGeo, new THREE.MeshBasicMaterial({visible:false}));
-        tz.userData.id = p.ID;
-        tz.userData.isTapZone = true;
-        spheresGroup.add(tz);
-        p._tapZone = tz;
+        const tz=new THREE.Mesh(sphereGeo,new THREE.MeshBasicMaterial({visible:false}));
+        tz.userData.id=p.ID;spheresGroup.add(tz);p._tapZone=tz;
       }
-      const r = radiusOf(p)*2.5;
-      p._tapZone.position.copy(sp.position);
-      p._tapZone.scale.set(r,r,r);
+      const r=radiusOf(p)*2.5;
+      p._tapZone.position.copy(sp.position);p._tapZone.scale.set(r,r,r);
       arr.push(p._tapZone);
     });
     return arr;
   }
 
   const dom=renderer.domElement;
-  dom.addEventListener('pointerdown',e=>{
-    if(e.button!==0)return;
-    downPos={x:e.clientX,y:e.clientY};
-  });
+  dom.addEventListener('pointerdown',e=>{if(e.button!==0)return;downPos={x:e.clientX,y:e.clientY}});
   dom.addEventListener('pointermove',e=>{
     if(!downPos)return;
     const moved=Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y);
     if(!dragState){
       if(moved<4)return;
-      mouse.x=(downPos.x/innerWidth)*2-1;
-      mouse.y=-(downPos.y/innerHeight)*2+1;
+      mouse.x=(downPos.x/innerWidth)*2-1;mouse.y=-(downPos.y/innerHeight)*2+1;
       raycaster.setFromCamera(mouse,camera);
       const hits=raycaster.intersectObjects(getSpheresArray(),false);
       if(hits.length){
@@ -1067,17 +844,14 @@ try{
         const ids=[id,...descendants(id)];
         const base=new Map();
         ids.forEach(i=>{if(positions.has(i))base.set(i,positions.get(i).clone())});
-        dragState={ids,base,start:positions.get(id).clone()};
-        controls.enabled=false;
+        dragState={ids,base,start:positions.get(id).clone()};controls.enabled=false;
       } else {downPos=null;return}
     }
     if(dragState){
-      const hit=rayToPlaneScreen(e.clientX,e.clientY,dragState.start);
-      if(!hit)return;
+      const hit=rayToPlaneScreen(e.clientX,e.clientY,dragState.start);if(!hit)return;
       const offset=hit.clone().sub(dragState.start);
       dragState.base.forEach((v,id)=>{
-        const nv=v.clone().add(offset);
-        positions.get(id).copy(nv);
+        const nv=v.clone().add(offset);positions.get(id).copy(nv);
         const sp=spheres.get(id);if(sp)sp.position.copy(nv);
         const lb=labels.get(id);if(lb){const r=radiusOf(M.get(id));lb.position.copy(nv.clone().add(new THREE.Vector3(0,r+18,0)))}
         const p=M.get(id);if(p&&p._halo)p._halo.position.copy(nv);
@@ -1094,29 +868,20 @@ try{
     }
     if(downPos&&e){
       const dx=e.clientX-downPos.x,dy=e.clientY-downPos.y;
-      const maxTap = isMobile ? 12 : 5;
-      if(dx*dx+dy*dy < maxTap*maxTap){
-        const now = Date.now();
-        const dblTap = (now - lastTapTime) < 300;
-        lastTapTime = now;
-        mouse.x=(e.clientX/innerWidth)*2-1;
-        mouse.y=-(e.clientY/innerHeight)*2+1;
+      const maxTap=isMobile?12:5;
+      if(dx*dx+dy*dy<maxTap*maxTap){
+        const now=Date.now();const dblTap=(now-lastTapTime)<300;lastTapTime=now;
+        mouse.x=(e.clientX/innerWidth)*2-1;mouse.y=-(e.clientY/innerHeight)*2+1;
         raycaster.setFromCamera(mouse,camera);
         const hits=raycaster.intersectObjects(getPickablesArray(),false);
         if(hits.length){
-          let clickedId = null;
-          for(const h of hits){
-            const id = h.object.userData.id;
-            if(spheres.has(id)){ clickedId=id; break; }
-          }
+          let clickedId=null;
+          for(const h of hits){const id=h.object.userData.id;if(spheres.has(id)){clickedId=id;break}}
           if(clickedId!=null){
-            if(routeMode){ routeClick(clickedId); }
-            else { select(clickedId); }
+            if(routeMode)routeClick(clickedId);else select(clickedId);
           }
         }
-        else if(!routeMode){
-          if(dblTap){ deselect(); }
-        }
+        else if(!routeMode&&dblTap){deselect()}
       }
     }
     downPos=null;
@@ -1125,98 +890,54 @@ try{
   dom.addEventListener('pointercancel',endDrag);
   dom.addEventListener('pointerleave',endDrag);
 
-  // ---------- ЦВЕТА ВЫДЕЛЕНИЯ ----------
-  const COLOR = {
-    selected:0xffffff, selectedGlow:0xfff2a8,
-    ancGlow:0xffb000, ancEmissive:0xff9900,
-    descGlow:0x00ff9d, descEmissive:0x00e080,
-    lawGlow:0xff8a3d, lawEmissive:0xff6a00,
-    lawAncGlow:0xc77dff, lawAncEmissive:0xa852ff,
-    lineAnc:0xffcc33, lineDesc:0x33ffb0, lineLaw:0xffa04d, lineLawAnc:0xd18cff,
-    lineTransAnc:0xffe680, lineTransDesc:0xa0ffd4, lineTransLaw:0xffc48a, lineTransLawAnc:0xe0b8ff,
-    lineFaded:0x222222, routeLine:0x00e5ff, routeGlow:0x00ffff, routeEmissive:0x00ccff, routeNode:0xff00ff,
+  // ---------- Цвета выделения ----------
+  const COLOR={
+    selected:0xffffff,selectedGlow:0xfff2a8,
+    ancGlow:0xffb000,ancEmissive:0xff9900,
+    descGlow:0x00ff9d,descEmissive:0x00e080,
+    lawGlow:0xff8a3d,lawEmissive:0xff6a00,
+    lawAncGlow:0xc77dff,lawAncEmissive:0xa852ff,
+    lineAnc:0xffcc33,lineDesc:0x33ffb0,lineLaw:0xffa04d,lineLawAnc:0xd18cff,
+    lineTransAnc:0xffe680,lineTransDesc:0xa0ffd4,lineTransLaw:0xffc48a,lineTransLawAnc:0xe0b8ff,
+    lineFaded:0x222222,routeLine:0x00e5ff,routeGlow:0x00ffff,routeEmissive:0x00ccff,routeNode:0xff00ff,
   };
 
   function clearHighlight(){
     spheres.forEach((m,id)=>{
       m.material.color.copy(m.userData.baseColor);
       m.material.emissive.copy(m.userData.baseColor.clone().multiplyScalar(0.35));
-      m.material.emissiveIntensity=1;
-      m.material.opacity=1;m.material.transparent=false;
+      m.material.emissiveIntensity=1;m.material.opacity=1;m.material.transparent=false;
       const s=m.userData.baseScale;m.scale.set(s,s,s);
       const lb=labels.get(id);if(lb)lb.material.opacity=0.85;
       const p=M.get(id);if(p&&p._halo){p._halo.material.opacity=0.55;p._halo.material.color.copy(p.userData_baseHalo||p._halo.material.color)}
     });
-    lineObjects.forEach(g=>{
-      g.traverse(o=>{
-        if(o.material&&o.userData._baseColor){
-          o.material.color.copy(o.userData._baseColor);
-          o.material.opacity=o.userData._baseOpacity;
-        }
-      });
-    });
+    lineObjects.forEach(g=>{g.traverse(o=>{if(o.material&&o.userData._baseColor){o.material.color.copy(o.userData._baseColor);o.material.opacity=o.userData._baseOpacity}})});
   }
 
   function highlightSubtree(id){
     clearHighlight();
-    const anc=ancestors(id), desc=descendants(id), inLaws=inLawCloud(id), lawAnc=inLawAncestors(id);
-    const all = new Set([id, ...anc, ...desc, ...inLaws, ...lawAnc]);
+    const anc=ancestors(id),desc=descendants(id),inLaws=inLawCloud(id),lawAnc=inLawAncestors(id);
+    const all=new Set([id,...anc,...desc,...inLaws,...lawAnc]);
+    spheres.forEach((m,mid)=>{const p=M.get(mid);if(p&&p._halo&&!p.userData_baseHalo)p.userData_baseHalo=p._halo.material.color.clone()});
     spheres.forEach((m,mid)=>{
-      const p=M.get(mid);
-      if(p&&p._halo&&!p.userData_baseHalo)p.userData_baseHalo=p._halo.material.color.clone();
-    });
-    spheres.forEach((m,mid)=>{
-      const p=M.get(mid);
-      const halo=p&&p._halo;
-      if(mid===id){
-        m.material.color.set(COLOR.selected);m.material.emissive.set(COLOR.selectedGlow);
-        m.material.emissiveIntensity=1.6;
-        const s=m.userData.baseScale;m.scale.set(s*1.6,s*1.6,s*1.6);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=1;
-        if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.selectedGlow)}
-      } else if(anc.has(mid)){
-        m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.ancEmissive);
-        m.material.emissiveIntensity=1.1;
-        const s=m.userData.baseScale;m.scale.set(s*1.18,s*1.18,s*1.18);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=1;
-        if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.ancGlow)}
-      } else if(desc.has(mid)){
-        m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.descEmissive);
-        m.material.emissiveIntensity=1.1;
-        const s=m.userData.baseScale;m.scale.set(s*1.28,s*1.28,s*1.28);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=1;
-        if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.descGlow)}
-      } else if(inLaws.has(mid)){
-        m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.lawEmissive);
-        m.material.emissiveIntensity=1.0;
-        const s=m.userData.baseScale;m.scale.set(s*1.15,s*1.15,s*1.15);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=1;
-        if(halo){halo.material.opacity=0.95;halo.material.color.set(COLOR.lawGlow)}
-      } else if(lawAnc.has(mid)){
-        m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.lawAncEmissive);
-        m.material.emissiveIntensity=0.95;
-        const s=m.userData.baseScale;m.scale.set(s*1.1,s*1.1,s*1.1);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=0.98;
-        if(halo){halo.material.opacity=0.9;halo.material.color.set(COLOR.lawAncGlow)}
-      } else {
-        m.material.color.copy(m.userData.baseColor);
-        m.material.emissive.copy(m.userData.baseColor.clone().multiplyScalar(0.03));
-        m.material.emissiveIntensity=1;m.material.transparent=true;m.material.opacity=0.07;
-        const s=m.userData.baseScale;m.scale.set(s,s,s);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=0.08;
-        if(halo)halo.material.opacity=0.02;
-      }
+      const p=M.get(mid);const halo=p&&p._halo;
+      if(mid===id){m.material.color.set(COLOR.selected);m.material.emissive.set(COLOR.selectedGlow);m.material.emissiveIntensity=1.6;const s=m.userData.baseScale;m.scale.set(s*1.6,s*1.6,s*1.6);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.selectedGlow)}}
+      else if(anc.has(mid)){m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.ancEmissive);m.material.emissiveIntensity=1.1;const s=m.userData.baseScale;m.scale.set(s*1.18,s*1.18,s*1.18);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.ancGlow)}}
+      else if(desc.has(mid)){m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.descEmissive);m.material.emissiveIntensity=1.1;const s=m.userData.baseScale;m.scale.set(s*1.28,s*1.28,s*1.28);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.descGlow)}}
+      else if(inLaws.has(mid)){m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.lawEmissive);m.material.emissiveIntensity=1.0;const s=m.userData.baseScale;m.scale.set(s*1.15,s*1.15,s*1.15);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=0.95;halo.material.color.set(COLOR.lawGlow)}}
+      else if(lawAnc.has(mid)){m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.lawAncEmissive);m.material.emissiveIntensity=0.95;const s=m.userData.baseScale;m.scale.set(s*1.1,s*1.1,s*1.1);const lb=labels.get(mid);if(lb)lb.material.opacity=0.98;if(halo){halo.material.opacity=0.9;halo.material.color.set(COLOR.lawAncGlow)}}
+      else {m.material.color.copy(m.userData.baseColor);m.material.emissive.copy(m.userData.baseColor.clone().multiplyScalar(0.03));m.material.emissiveIntensity=1;m.material.transparent=true;m.material.opacity=0.07;const s=m.userData.baseScale;m.scale.set(s,s,s);const lb=labels.get(mid);if(lb)lb.material.opacity=0.08;if(halo)halo.material.opacity=0.02}
     });
     lineObjects.forEach(g=>{
       const {from,to,type}=g.userData.def;
-      const inCloud = all.has(from)&&all.has(to);
+      const inCloud=all.has(from)&&all.has(to);
       g.traverse(o=>{
         if(!o.material||!o.userData._baseColor)return;
         if(!inCloud){o.material.color.set(COLOR.lineFaded);o.material.opacity=0.04;return}
         if(from===id||to===id){o.material.color.set(0xffffff);o.material.opacity=1;return}
         if(type==='spouse'){o.material.color.set(0xff66b8);o.material.opacity=1;return}
-        const fromAnc=anc.has(from), toAnc=anc.has(to), fromDesc=desc.has(from), toDesc=desc.has(to);
-        const fromLaw=inLaws.has(from)||lawAnc.has(from), toLaw=inLaws.has(to)||lawAnc.has(to);
+        const fromAnc=anc.has(from),toAnc=anc.has(to),fromDesc=desc.has(from),toDesc=desc.has(to);
+        const fromLaw=inLaws.has(from)||lawAnc.has(from),toLaw=inLaws.has(to)||lawAnc.has(to);
         if(fromAnc&&toAnc){o.material.color.set(COLOR.lineAnc);o.material.opacity=1}
         else if(fromDesc&&toDesc){o.material.color.set(COLOR.lineDesc);o.material.opacity=1}
         else if(fromLaw&&toLaw){o.material.color.set(COLOR.lineLawAnc);o.material.opacity=1}
@@ -1228,1086 +949,722 @@ try{
     });
   }
 
-  // ---------- МАРШРУТ ----------
+  // ---------- Маршрут ----------
+  let routeMode=false,routeStart=null;
   function buildUndirectedGraph(){
-    const adj = new Map();
-    P.forEach(p=>{ if(!adj.has(p.ID)) adj.set(p.ID, new Set()); });
+    const adj=new Map();
+    P.forEach(p=>{if(!adj.has(p.ID))adj.set(p.ID,new Set())});
     P.forEach(p=>{
-      [p.father,p.mother].forEach(pid=>{
-        if(pid!=null&&M.has(pid)){
-          adj.get(p.ID).add(pid);
-          adj.get(pid).add(p.ID);
-        }
-      });
-      if(p.father&&p.mother&&M.has(p.father)&&M.has(p.mother)){
-        adj.get(p.father).add(p.mother);
-        adj.get(p.mother).add(p.father);
-      }
+      [p.father,p.mother].forEach(pid=>{if(pid!=null&&M.has(pid)){adj.get(p.ID).add(pid);adj.get(pid).add(p.ID)}});
+      if(p.father&&p.mother&&M.has(p.father)&&M.has(p.mother)){adj.get(p.father).add(p.mother);adj.get(p.mother).add(p.father)}
     });
     return adj;
   }
-  function findPath(startId, endId){
-    if(startId===endId) return [startId];
-    const adj = buildUndirectedGraph();
-    if(!adj.has(startId)||!adj.has(endId)) return null;
-    const prev = new Map();prev.set(startId, null);
-    const queue = [startId];
-    while(queue.length){
-      const cur = queue.shift();
-      if(cur===endId) break;
-      const neigh = adj.get(cur)||new Set();
-      for(const n of neigh){
-        if(!prev.has(n)){prev.set(n, cur);queue.push(n)}
-      }
-    }
-    if(!prev.has(endId)) return null;
-    const path = [];
-    let x = endId;
-    while(x!=null){path.unshift(x);x = prev.get(x)}
-    return path;
+  function findPath(s,e){
+    if(s===e)return[s];
+    const adj=buildUndirectedGraph();if(!adj.has(s)||!adj.has(e))return null;
+    const prev=new Map();prev.set(s,null);const q=[s];
+    while(q.length){const c=q.shift();if(c===e)break;const n=adj.get(c)||new Set();for(const x of n){if(!prev.has(x)){prev.set(x,c);q.push(x)}}}
+    if(!prev.has(e))return null;
+    const p=[];let x=e;while(x!=null){p.unshift(x);x=prev.get(x)}return p;
   }
-  function describeStep(aId, bId){
-    const a = M.get(aId), b = M.get(bId);
-    if(!a||!b) return '';
-    if(b.father===aId||b.mother===aId) return 'родитель →';
-    if(a.father===bId||a.mother===bId) return '← ребёнок';
-    const kidsA = new Set(CH.get(aId)||[]);
-    let shared = false;
-    (CH.get(bId)||[]).forEach(k=>{if(kidsA.has(k))shared=true});
-    if(shared) return 'супруг(а)';
-    return '—';
-  }
-
-  function highlightRoute(pathIds){
-    clearHighlight();
-    if(!pathIds||!pathIds.length) return;
-    const routeSet = new Set(pathIds);
-    const startId = pathIds[0], endId = pathIds[pathIds.length-1];
-    spheres.forEach((m,mid)=>{
-      const p=M.get(mid);const halo=p&&p._halo;
-      if(mid===startId||mid===endId){
-        m.material.color.set(COLOR.routeNode);m.material.emissive.set(COLOR.routeEmissive);
-        m.material.emissiveIntensity=1.8;
-        const s=m.userData.baseScale;m.scale.set(s*1.6,s*1.6,s*1.6);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=1;
-        if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.routeGlow)}
-      } else if(routeSet.has(mid)){
-        m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.routeEmissive);
-        m.material.emissiveIntensity=1.3;
-        const s=m.userData.baseScale;m.scale.set(s*1.3,s*1.3,s*1.3);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=1;
-        if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.routeGlow)}
-      } else {
-        m.material.color.copy(m.userData.baseColor);
-        m.material.emissive.copy(m.userData.baseColor.clone().multiplyScalar(0.03));
-        m.material.emissiveIntensity=1;m.material.transparent=true;m.material.opacity=0.06;
-        const s=m.userData.baseScale;m.scale.set(s,s,s);
-        const lb=labels.get(mid);if(lb)lb.material.opacity=0.06;
-        if(halo)halo.material.opacity=0.02;
-      }
-    });
-    const pairs = new Set();
-    for(let i=0;i<pathIds.length-1;i++){
-      const a=pathIds[i], b=pathIds[i+1];
-      pairs.add(a+'_'+b);pairs.add(b+'_'+a);
-    }
-    lineObjects.forEach(g=>{
-      const {from,to}=g.userData.def;
-      const onRoute = pairs.has(from+'_'+to)||pairs.has(to+'_'+from);
-      g.traverse(o=>{
-        if(!o.material||!o.userData._baseColor)return;
-        if(onRoute){o.material.color.set(COLOR.routeLine);o.material.opacity=1}
-        else {o.material.color.set(COLOR.lineFaded);o.material.opacity=0.03}
-      });
-    });
-  }
-
-  let routeMode = false;
-  let routeStart = null;
+  function describeStep(a,b){const A=M.get(a),B=M.get(b);if(!A||!B)return '';if(B.father===a||B.mother===a)return 'родитель →';if(A.father===b||A.mother===b)return '← ребёнок';const kA=new Set(CH.get(a)||[]);let sh=false;(CH.get(b)||[]).forEach(k=>{if(kA.has(k))sh=true});if(sh)return 'супруг(а)';return '—'}
 
   function setRouteMode(on){
-    routeMode = !!on;routeStart = null;
-    const btn = document.getElementById('routeBtn');
-    if(btn){
-      btn.textContent = routeMode ? '🧭 Маршрут: выбери первого' : '🧭 Маршрут родства';
-      btn.style.background = routeMode ? '#0a4a6b' : '#111a23';
-      btn.style.borderColor = routeMode ? '#00e5ff' : '#2a3846';
-      btn.style.color = routeMode ? '#00e5ff' : '#cfd8e0';
-    }
-    const tipEl = document.getElementById('routeTip');
-    if(tipEl){
-      tipEl.style.display = routeMode ? 'block' : 'none';
-      tipEl.textContent = routeMode ? (routeStart ? 'Кликни по второму шару' : 'Кликни по первому шару') : '';
-    }
-    if(!routeMode) deselect();
+    routeMode=!!on;routeStart=null;
+    const btn=document.getElementById('routeBtn');
+    if(btn){btn.textContent=routeMode?'🧭 Маршрут: выбери первого':'🧭 Маршрут родства';btn.style.background=routeMode?'#0a4a6b':'#111a23';btn.style.borderColor=routeMode?'#00e5ff':'#2a3846';btn.style.color=routeMode?'#00e5ff':'#cfd8e0'}
+    const tp=document.getElementById('routeTip');
+    if(tp){tp.style.display=routeMode?'block':'none';tp.textContent=routeMode?(routeStart?'Кликни по второму шару':'Кликни по первому шару'):''}
+    if(!routeMode)deselect();
   }
-
   function routeClick(id){
-    if(!routeMode) return false;
-    if(routeStart==null){
-      routeStart = id;
-      const btn = document.getElementById('routeBtn');
-      if(btn) btn.textContent = '🧭 Маршрут: выбери второго';
-      const tipEl = document.getElementById('routeTip');
-      if(tipEl) tipEl.textContent = 'Кликни по второму шару';
-      highlightRoute([id]);
-      return true;
-    } else {
-      const startId = routeStart, endId = id;
-      routeStart = null;
-      const btn = document.getElementById('routeBtn');
-      if(btn) btn.textContent = '🧭 Маршрут: выбери первого';
-      const tipEl = document.getElementById('routeTip');
-      if(tipEl) tipEl.textContent = 'Кликни по первому шару';
-      const path = findPath(startId, endId);
-      if(!path){toast('Путь между этими людьми не найден');deselect();return true}
-      highlightRoute(path);showRouteCard(path);return true;
-    }
+    if(!routeMode)return false;
+    if(routeStart==null){routeStart=id;const btn=document.getElementById('routeBtn');if(btn)btn.textContent='🧭 Маршрут: выбери второго';const tp=document.getElementById('routeTip');if(tp)tp.textContent='Кликни по второму шару';highlightRoute([id]);return true}
+    else{const s=routeStart,e=id;routeStart=null;const btn=document.getElementById('routeBtn');if(btn)btn.textContent='🧭 Маршрут: выбери первого';const tp=document.getElementById('routeTip');if(tp)tp.textContent='Кликни по первому шару';const p=findPath(s,e);if(!p){toast('Путь не найден');deselect();return true}highlightRoute(p);showRouteCard(p);return true}
   }
-
+  function highlightRoute(pathIds){
+    clearHighlight();if(!pathIds||!pathIds.length)return;
+    const rs=new Set(pathIds);const s=pathIds[0],e=pathIds[pathIds.length-1];
+    spheres.forEach((m,mid)=>{
+      const p=M.get(mid);const halo=p&&p._halo;
+      if(mid===s||mid===e){m.material.color.set(COLOR.routeNode);m.material.emissive.set(COLOR.routeEmissive);m.material.emissiveIntensity=1.8;const sc=m.userData.baseScale;m.scale.set(sc*1.6,sc*1.6,sc*1.6);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.routeGlow)}}
+      else if(rs.has(mid)){m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.routeEmissive);m.material.emissiveIntensity=1.3;const sc=m.userData.baseScale;m.scale.set(sc*1.3,sc*1.3,sc*1.3);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.routeGlow)}}
+      else {m.material.color.copy(m.userData.baseColor);m.material.emissive.copy(m.userData.baseColor.clone().multiplyScalar(0.03));m.material.emissiveIntensity=1;m.material.transparent=true;m.material.opacity=0.06;const sc=m.userData.baseScale;m.scale.set(sc,sc,sc);const lb=labels.get(mid);if(lb)lb.material.opacity=0.06;if(halo)halo.material.opacity=0.02}
+    });
+    const pairs=new Set();
+    for(let i=0;i<pathIds.length-1;i++){const a=pathIds[i],b=pathIds[i+1];pairs.add(a+'_'+b);pairs.add(b+'_'+a)}
+    lineObjects.forEach(g=>{
+      const {from,to}=g.userData.def;
+      const on=pairs.has(from+'_'+to)||pairs.has(to+'_'+from);
+      g.traverse(o=>{if(!o.material||!o.userData._baseColor)return;if(on){o.material.color.set(COLOR.routeLine);o.material.opacity=1}else{o.material.color.set(COLOR.lineFaded);o.material.opacity=0.03}});
+    });
+  }
   function showRouteCard(pathIds){
-    function personRow(pid, idx){
-      const p = M.get(pid);const name = p?nm(p):('ID '+pid);
-      const stepHtml = idx===0 ? '<span style="color:#ff00ff;font-weight:bold">старт</span>'
-        : (idx===pathIds.length-1 ? '<span style="color:#ff00ff;font-weight:bold">финиш</span>' : '<span style="color:#00e5ff">шаг '+idx+'</span>');
-      const rel = idx>0 ? describeStep(pathIds[idx-1], pid) : '';
-      const relHtml = rel ? '<span style="color:#8a95a3;font-size:10px"> '+rel+'</span>' : '';
-      return '<div class="route-row" data-id="'+pid+'"><span class="route-step">'+stepHtml+'</span> <span class="route-name">'+name+'</span> <span style="color:#5d6b78">('+pid+')</span>'+relHtml+'</div>';
+    function row(pid,idx){
+      const p=M.get(pid);const name=p?nm(p):('ID '+pid);
+      const step=idx===0?'<span style="color:#ff00ff;font-weight:bold">старт</span>':(idx===pathIds.length-1?'<span style="color:#ff00ff;font-weight:bold">финиш</span>':'<span style="color:#00e5ff">шаг '+idx+'</span>');
+      const rel=idx>0?describeStep(pathIds[idx-1],pid):'';
+      const relH=rel?'<span style="color:#8a95a3;font-size:10px"> '+rel+'</span>':'';
+      return '<div class="route-row" data-id="'+pid+'"><span class="route-step">'+step+'</span> <span class="route-name">'+name+'</span> <span style="color:#5d6b78">('+pid+')</span>'+relH+'</div>';
     }
-    const chainHtml = pathIds.map((pid,i)=>personRow(pid,i)).join('');
-    const startP = M.get(pathIds[0]), endP = M.get(pathIds[pathIds.length-1]);
-    const relKind = (()=>{
-      const n = pathIds.length;
-      if(n===1) return 'это один и тот же человек';
-      if(n===2){
-        const a=M.get(pathIds[0]), b=M.get(pathIds[1]);
-        if(b.father===a.ID) return 'отец → ребёнок';
-        if(b.mother===a.ID) return 'мать → ребёнок';
-        if(a.father===b.ID) return 'ребёнок → отец';
-        if(a.mother===b.ID) return 'ребёнок → мать';
-        const kidsA=new Set(CH.get(a.ID)||[]);
-        let shared=false;(CH.get(b.ID)||[]).forEach(k=>{if(kidsA.has(k))shared=true});
-        if(shared) return 'супруги';
-        return 'прямая связь';
-      }
-      let up=0,down=0,spouse=0;
-      for(let i=0;i<pathIds.length-1;i++){
-        const a=M.get(pathIds[i]), b=M.get(pathIds[i+1]);
-        if(b.father===a.ID||b.mother===a.ID) up++;
-        else if(a.father===b.ID||a.mother===b.ID) down++;
-        else spouse++;
-      }
-      const parts=[];
-      if(up)     parts.push(up+' вверх по роду');
-      if(down)   parts.push(down+' вниз');
-      if(spouse) parts.push(spouse+' через брак');
-      return parts.join(', ');
-    })();
+    const chain=pathIds.map((pid,i)=>row(pid,i)).join('');
+    const sp=M.get(pathIds[0]),ep=M.get(pathIds[pathIds.length-1]);
+    let up=0,down=0,spouse=0;
+    for(let i=0;i<pathIds.length-1;i++){const a=M.get(pathIds[i]),b=M.get(pathIds[i+1]);if(b.father===a.ID||b.mother===a.ID)up++;else if(a.father===b.ID||a.mother===b.ID)down++;else spouse++}
+    const parts=[];if(up)parts.push(up+' вверх');if(down)parts.push(down+' вниз');if(spouse)parts.push(spouse+' через брак');
     const b=document.getElementById('info');
-    b.innerHTML =
-      '<h2 style="color:#00e5ff">🧭 Маршрут родства</h2>'+
+    b.innerHTML='<h2 style="color:#00e5ff">🧭 Маршрут родства</h2>'+
       '<div style="font-size:12px;color:#b9c4cf;padding:4px 0 8px">'+
-        '<b style="color:#8e9aa6">Между:</b> '+(startP?nm(startP):'?')+' <span style="color:#5d6b78">('+pathIds[0]+')</span>'+
-        ' <span style="color:#00e5ff">⇢</span> '+(endP?nm(endP):'?')+' <span style="color:#5d6b78">('+pathIds[pathIds.length-1]+')</span></div>'+
-      '<div style="font-size:11px;color:#7d8a97;padding-bottom:4px">Цепочка ('+(pathIds.length)+'): '+relKind+'</div>'+
-      '<div class="route-list">'+chainHtml+'</div><br><button id="closeInfo">Закрыть</button>';
+        '<b style="color:#8e9aa6">Между:</b> '+(sp?nm(sp):'?')+' <span style="color:#5d6b78">('+pathIds[0]+')</span> <span style="color:#00e5ff">⇢</span> '+(ep?nm(ep):'?')+' <span style="color:#5d6b78">('+pathIds[pathIds.length-1]+')</span></div>'+
+      '<div style="font-size:11px;color:#7d8a97;padding-bottom:4px">Цепочка ('+pathIds.length+'): '+parts.join(', ')+'</div>'+
+      '<div class="route-list">'+chain+'</div><br><button id="closeInfo">Закрыть</button>';
     b.style.display='block';b.classList.remove('collapsed');
-    document.getElementById('closeInfo').onclick=()=>{deselect()};
-    b.querySelectorAll('.route-row').forEach(el=>{
-      el.onclick=()=>{
-        const id2=parseInt(el.dataset.id,10);
-        const pos=positions.get(id2);
-        if(pos){controls.target.copy(pos);camera.position.set(pos.x+200,pos.y+180,pos.z+300);controls.update()}
-      };
-    });
+    document.getElementById('closeInfo').onclick=()=>deselect();
+    b.querySelectorAll('.route-row').forEach(el=>{el.onclick=()=>{const id2=parseInt(el.dataset.id,10);const pos=positions.get(id2);if(pos){controls.target.copy(pos);camera.position.set(pos.x+200,pos.y+180,pos.z+300);controls.update()}}});
   }
-
-  function deselect(){
-    clearHighlight();
-    const info = document.getElementById('info');
-    info.style.display='none';
-    info.classList.remove('collapsed');
-  }
+  function deselect(){clearHighlight();const i=document.getElementById('info');i.style.display='none';i.classList.remove('collapsed')}
 
   // ============================================================
-  //  ПЛОСКОЕ ДЕРЕВО
+  //  ПЛОСКОЕ ДЕРЕВО ОТ КОРНЯ (только кровные)
   // ============================================================
-  const treeView = document.getElementById('treeView');
-  const treeCanvas = document.getElementById('treeCanvas');
-  const treeBar = document.getElementById('treeBar');
-  let treeState = null;
-  let treeActive = false;
+  const treeView=document.getElementById('treeView');
+  const treeSvg=document.getElementById('treeSvg');
+  const treeBar=document.getElementById('treeBar');
+  const rootMenu=document.getElementById('rootMenu');
+  const rootMenuList=document.getElementById('rootMenuList');
+  let treeState=null;
+  let treeActive=false;
+  let treeCenterId=null;
+  let treeRootId=null;
+  let allRoots=[];
 
-  // Собираем всё кровное облако: центр + все предки + все потомки + боковые братья/сёстры и их потомки
-  function collectBloodTree(centerId){
-    const include = new Set([centerId]);
-    // прямые предки и потомки
-    ancestors(centerId).forEach(a=>include.add(a));
-    descendants(centerId).forEach(d=>include.add(d));
-    // боковые: для каждого предка — его дети (кроме уже входящих) — это братья/сёстры этого предка и т.д.
-    // проще: для каждого уже включённого узла добавить всех его детей и обоих родителей,
-    // и повторять, пока множество растёт — так получим всё кровное связное облако.
-    let changed = true;
-    let iter = 0;
-    while(changed && iter<20){
-      changed = false;iter++;
-      const snapshot = [...include];
-      snapshot.forEach(id=>{
-        const p = M.get(id);if(!p)return;
-        [p.father,p.mother].forEach(x=>{
-          if(x!=null&&M.has(x)&&!include.has(x)){include.add(x);changed=true}
-        });
-        (CH.get(id)||[]).forEach(k=>{
-          if(M.has(k)&&!include.has(k)){include.add(k);changed=true}
-        });
-      });
+  // Собираем всех кровных потомков корня (без свойственников)
+  function getBloodDescendants(rootId){
+    const out=new Set();
+    const q=[rootId];
+    while(q.length){
+      const x=q.shift();
+      if(out.has(x))continue;
+      out.add(x);
+      const kids=CH.get(x)||[];
+      for(const k of kids){
+        if(M.has(k)&&!out.has(k))q.push(k);
+      }
     }
-    return include;
+    return out;
   }
 
-  function openTreeView(centerId){
-    if(!M.has(centerId)){toast('Человек не найден');return}
-    const include = collectBloodTree(centerId);
-    // уровни: depth = длина пути от «корня рода» (без родителей) до узла
-    // Но чтобы центр оказался ровно посередине — пересчитаем от центра вверх/вниз
-    // Определим «уровень относительно центра»:
-    //   ancestors глубина 1..N → -1,-2..-N
-    //   center → 0
-    //   потомки глубина 1..N → 1,2..N
-    // Для боковых: минимальное расстояние от общего предка + 1 — сложно,
-    // поэтому просто используем глобальный L (уровень от «прародителя»), а центр сдвинем.
-    const ancList = ancestors(centerId);
-    const descList = descendants(centerId);
+  // Путь от корня до выбранного (кровный)
+  function findBloodPath(rootId,targetId){
+    // BFS вниз только по кровным
+    const prev=new Map();
+    prev.set(rootId,null);
+    const q=[rootId];
+    while(q.length){
+      const c=q.shift();
+      if(c===targetId)break;
+      const kids=CH.get(c)||[];
+      for(const k of kids){
+        if(M.has(k)&&!prev.has(k)){prev.set(k,c);q.push(k)}
+      }
+    }
+    if(!prev.has(targetId))return null;
+    const path=[];let x=targetId;
+    while(x!=null){path.unshift(x);x=prev.get(x)}
+    return path;
+  }
 
-    // global level from L
-    let minL = Infinity, maxL = -Infinity;
-    include.forEach(id=>{
-      const lv = L.get(id);if(lv==null)return;
-      if(lv<minL)minL=lv;
-      if(lv>maxL)maxL=lv;
+  // Находим все корни выбранного — все предки, у которых нет известных родителей
+  function findAllRoots(id){
+    const roots=new Set();
+    const seen=new Set();
+    const stack=[id];
+    while(stack.length){
+      const x=stack.pop();
+      if(seen.has(x))continue;
+      seen.add(x);
+      const p=M.get(x);
+      if(!p)continue;
+      const hasF=p.father!=null&&M.has(p.father);
+      const hasM=p.mother!=null&&M.has(p.mother);
+      if(!hasF&&!hasM){
+        roots.add(x);
+      } else {
+        if(hasF)stack.push(p.father);
+        if(hasM)stack.push(p.mother);
+      }
+    }
+    return [...roots];
+  }
+
+  function openRootMenu(centerId){
+    treeCenterId=centerId;
+    allRoots=findAllRoots(centerId);
+    if(!allRoots.length){toast('У этого человека нет известных предков');return}
+    rootMenuList.innerHTML='';
+    // Сортируем корни по «расстоянию» до выбранного
+    allRoots.forEach(rid=>{
+      const path=findBloodPath(rid,centerId);
+      const desc=getBloodDescendants(rid);
+      const pathStr=path?path.map(i=>M.get(i)?(M.get(i).Имя||'ID '+i):i).join(' → '):'—';
+      const div=document.createElement('div');
+      div.className='root-item';
+      div.innerHTML='<div class="ri-name">'+nm(M.get(rid))+' <span style="color:#5d6b78">('+rid+')</span></div>'+
+        '<div class="ri-count">Потомков: '+desc.size+'</div>'+
+        '<div class="ri-path">'+pathStr+'</div>';
+      div.onclick=()=>{rootMenu.style.display='none';openTreeView(centerId,rid)};
+      rootMenuList.appendChild(div);
     });
-    const centerL = L.get(centerId)||0;
+    rootMenu.style.display='flex';
+  }
 
-    // Группируем по уровню L
-    const byLv = new Map();
+  function openTreeView(centerId,rootId){
+    if(!M.has(centerId)||!M.has(rootId)){toast('Не найдено');return}
+    treeCenterId=centerId;
+    treeRootId=rootId;
+
+    const include=getBloodDescendants(rootId);
+    // Группируем по глобальному уровню L
+    const byLv=new Map();
     include.forEach(id=>{
-      const lv = L.get(id)||0;
+      const lv=L.get(id)||0;
       if(!byLv.has(lv))byLv.set(lv,[]);
       byLv.get(lv).push(id);
     });
-    const lvKeys = [...byLv.keys()].sort((a,b)=>a-b);
+    const lvKeys=[...byLv.keys()].sort((a,b)=>a-b);
 
-    // Ширина узла/высота
-    const horizontal = isMobile;
-    const NODE_W = horizontal ? 120 : 110;    // ширина эллипса
-    const NODE_H = horizontal ? 44  : 40;     // высота эллипса
-    const GAP_X  = horizontal ? 50  : 30;     // зазор между узлами по «ширине ряда»
-    const GAP_Y  = horizontal ? 60  : 80;     // зазор между рядами
-    const MAX_ROW_W = horizontal ? 1800 : 2200;  // макс. ширина ряда
+    // Путь от корня до выбранного
+    const pathToCenter=findBloodPath(rootId,centerId)||[];
+    const pathSet=new Set(pathToCenter);
 
-    // Для каждого уровня — сортируем так, чтобы дети были рядом с родителями
-    // Для этого: средний X родителей (если уже размещены), иначе по ID
-    // Обрабатываем уровни по возрастанию L (сверху вниз)
-    const nodePos = new Map();      // id -> {row, col, x, y}
+    // Размеры узлов
+    const NODE_W=110,NODE_H=32;
+    const GAP_X=8,GAP_Y=42;
+    const MAX_ROW_W=window.innerWidth>1000?2000:1400;
 
-    // Для уровней выше центра — сортируем по родителям (L-1)
-    // Уровень 0 — корни, без родителей
-    // Проходим все уровни по порядку; выше центра — сначала, ниже — потом
-    const levelsOrdered = lvKeys.slice().sort((a,b)=>a-b);
-
-    // Хелпер: средний X родителей
+    const nodePos=new Map();
     function avgParentX(id){
-      const p = M.get(id);if(!p)return null;
-      const xs = [];
-      [p.father,p.mother].forEach(x=>{
-        if(x!=null&&nodePos.has(x))xs.push(nodePos.get(x).x);
-      });
+      const p=M.get(id);if(!p)return null;
+      const xs=[];
+      [p.father,p.mother].forEach(x=>{if(x!=null&&nodePos.has(x))xs.push(nodePos.get(x).x)});
       if(!xs.length)return null;
       return xs.reduce((a,b)=>a+b,0)/xs.length;
     }
 
-    // Слой за слоем раскладываем
-    let currentY = 0;
-    levelsOrdered.forEach(lv=>{
-      let arr = byLv.get(lv).slice();
-      // Сортировка: по среднему X родителей
+    let currentY=0;
+    lvKeys.forEach(lv=>{
+      const arr=byLv.get(lv).slice();
+      // Сортируем: кровные (включая выбранного и путь) — по родителю; остальные в конец
       arr.forEach(id=>{
-        const avg = avgParentX(id);
-        // если нет родителя — по ID
-        if(avg==null){
-          id._sort = 1e9 + id; // в конец
-        } else {
-          id._sort = avg;
-        }
+        const avg=avgParentX(id);
+        id._sort = (avg==null) ? (1e9 + id*10) : avg;
       });
       arr.sort((a,b)=>a._sort-b._sort);
 
-      // Разбиваем на подстроки по MAX_ROW_W
-      const rows = [];
-      let cur = [], curW = 0;
+      // Разбиение на подстроки
+      const rows=[];
+      let cur=[],curW=0;
       arr.forEach(id=>{
-        const w = NODE_W + GAP_X;
-        if(cur.length && curW+w > MAX_ROW_W){
-          rows.push(cur);cur=[];curW=0;
-        }
+        const w=NODE_W+GAP_X;
+        if(cur.length && curW+w>MAX_ROW_W){rows.push(cur);cur=[];curW=0}
         cur.push(id);curW+=w;
       });
       if(cur.length)rows.push(cur);
 
       rows.forEach((row,ri)=>{
-        const rowW = row.length*(NODE_W+GAP_X) - GAP_X;
-        const startX = -rowW/2;
+        const rowW=row.length*(NODE_W+GAP_X)-GAP_X;
+        const startX=-rowW/2;
         row.forEach((id,i)=>{
-          const x = startX + i*(NODE_W+GAP_X) + NODE_W/2;
-          const y = currentY + ri*(NODE_H+GAP_Y);
-          nodePos.set(id,{x, y, lv, isCenter: id===centerId});
+          const x=startX+i*(NODE_W+GAP_X)+NODE_W/2;
+          const y=currentY+ri*(NODE_H+GAP_Y);
+          nodePos.set(id,{x,y,lv,isCenter:id===centerId,isRoot:id===rootId,onPath:pathSet.has(id)});
         });
       });
-      currentY += rows.length*(NODE_H+GAP_Y) + GAP_Y*0.6;
+      currentY += rows.length*(NODE_H+GAP_Y)+GAP_Y*0.5;
     });
 
-    // Считаем все связи родитель→ребёнок внутри include
-    const edges = [];
+    // Рёбра: только кровные (отец→ребёнок, мать→ребёнок)
+    const edges=[];
     include.forEach(id=>{
-      const p = M.get(id);if(!p)return;
+      const p=M.get(id);if(!p)return;
       [p.father,p.mother].forEach(par=>{
         if(par!=null&&include.has(par)&&nodePos.has(par)&&nodePos.has(id)){
-          edges.push({from:par, to:id});
+          edges.push({from:par,to:id,onPath:pathSet.has(par)&&pathSet.has(id)});
         }
       });
     });
 
-    // Bounding box
+    // Bbox
     let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
     nodePos.forEach(n=>{
-      minX=Math.min(minX, n.x-NODE_W/2);
-      maxX=Math.max(maxX, n.x+NODE_W/2);
-      minY=Math.min(minY, n.y-NODE_H/2);
-      maxY=Math.max(maxY, n.y+NODE_H/2);
+      minX=Math.min(minX,n.x-NODE_W/2);maxX=Math.max(maxX,n.x+NODE_W/2);
+      minY=Math.min(minY,n.y-NODE_H/2);maxY=Math.max(maxY,n.y+NODE_H/2);
     });
+    const pad=40;minX-=pad;maxX+=pad;minY-=pad;maxY+=pad;
 
-    // Padding
-    const pad = 60;
-    minX-=pad;maxX+=pad;minY-=pad;maxY+=pad;
-
-    treeState = {
-      centerId, include, nodePos, edges,
-      bbox: {minX,maxX,minY,maxY},
-      nodeW: NODE_W, nodeH: NODE_H,
-      // viewport (pan/zoom)
-      panX: 0, panY: 0, scale: 1
-    };
+    treeState={include,nodePos,edges,bbox:{minX,maxX,minY,maxY},nodeW:NODE_W,nodeH:NODE_H,panX:0,panY:0,scale:1,pathSet};
 
     // Показать
     treeView.style.display='block';
     treeBar.style.display='flex';
-    treeActive = true;
-    document.getElementById('treeTitle').textContent = '🌳 Дерево: '+nm(M.get(centerId));
-    document.getElementById('treeHint').textContent = horizontal
-      ? 'пинч/колесо — зум · перетаскивание — панорама · тап — открыть'
-      : 'колесо — зум · перетаскивание — панорама · клик — открыть';
-    resizeTreeCanvas();
-    // Начальный подгон под размер
-    setTimeout(()=>{ fitTreeView(); },50);
-
-    // Скрыть 3D UI-мешающее?
-    // Оставляем 3D под низом — оно будет видно сквозь полупрозрачный canvas
-    // Уменьшим непрозрачность 3D-мира, чтобы он стал «фоновым водяным знаком»
-    scene.background = new THREE.Color(0x02060a);
-    // уменьшаем видимость 3D-элементов:
-    if(renderer && renderer.domElement){
-      renderer.domElement.style.opacity = '0.22';
-      renderer.domElement.style.transition = 'opacity .3s';
-    }
+    treeActive=true;
+    document.getElementById('treeTitle').textContent='🌳 Древо от '+nm(M.get(rootId));
+    renderTree();
+    setTimeout(fitTree,30);
+    // 3D-фон
+    if(renderer&&renderer.domElement){renderer.domElement.style.opacity='0.2';renderer.domElement.style.transition='opacity .3s'}
   }
 
   function closeTreeView(){
     treeView.style.display='none';
     treeBar.style.display='none';
-    treeActive = false;
-    treeState = null;
-    if(renderer && renderer.domElement){
-      renderer.domElement.style.opacity = '1';
-    }
+    treeActive=false;treeState=null;
+    if(renderer&&renderer.domElement)renderer.domElement.style.opacity='1';
   }
 
-  function resizeTreeCanvas(){
-    const w = window.innerWidth, h = window.innerHeight;
-    treeCanvas.width = w*devicePixelRatio;
-    treeCanvas.height = h*devicePixelRatio;
-    treeCanvas.style.width = w+'px';
-    treeCanvas.style.height = h+'px';
-    drawTree();
+  function fitTree(){
+    if(!treeState)return;
+    const st=treeState;
+    const w=treeView.clientWidth,h=treeView.clientHeight;
+    const bw=st.bbox.maxX-st.bbox.minX,bh=st.bbox.maxY-st.bbox.minY;
+    const s=Math.min((w-60)/bw,(h-160)/bh,2.0);
+    st.scale=s;
+    const cx=(st.bbox.minX+st.bbox.maxX)/2,cy=(st.bbox.minY+st.bbox.maxY)/2;
+    st.panX=w/2-cx*s;st.panY=(h+60)/2-cy*s;
+    renderTree();
   }
 
-  function fitTreeView(){
-    if(!treeState) return;
-    const st = treeState;
-    const w = window.innerWidth, h = window.innerHeight;
-    const bw = st.bbox.maxX - st.bbox.minX;
-    const bh = st.bbox.maxY - st.bbox.minY;
-    const s = Math.min((w-40)/bw, (h-120)/bh, 1.5);
-    st.scale = s;
-    // центрируем относительно центра bbox, размещаем чуть ниже верхней панели
-    const cx = (st.bbox.minX+st.bbox.maxX)/2;
-    const cy = (st.bbox.minY+st.bbox.maxY)/2;
-    st.panX = w/2 - cx*s;
-    st.panY = (h+50)/2 - cy*s;   // смещение для верхнего отступа
-    drawTree();
-  }
+  function renderTree(){
+    if(!treeState)return;
+    const st=treeState;
+    treeSvg.setAttribute('viewBox','0 0 '+treeView.clientWidth+' '+treeView.clientHeight);
+    treeSvg.innerHTML='';
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('transform','translate('+st.panX+','+st.panY+') scale('+st.scale+')');
+    treeSvg.appendChild(g);
 
-  function drawTree(){
-    if(!treeState) return;
-    const st = treeState;
-    const ctx = treeCanvas.getContext('2d');
-    const W = treeCanvas.width, H = treeCanvas.height;
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.clearRect(0,0,W,H);
-    ctx.save();
-    ctx.scale(devicePixelRatio, devicePixelRatio);
-    ctx.translate(st.panX, st.panY);
-    ctx.scale(st.scale, st.scale);
-
-    // Связи родитель→ребёнок
+    // Рёбра
     st.edges.forEach(e=>{
-      const a = st.nodePos.get(e.from);
-      const b = st.nodePos.get(e.to);
+      const a=st.nodePos.get(e.from),b=st.nodePos.get(e.to);
       if(!a||!b)return;
-      // ортогональная линия: вниз от родителя, потом горизонтально к ребёнку
-      const x1=a.x, y1=a.y+st.nodeH/2;
-      const x2=b.x, y2=b.y-st.nodeH/2;
-      const yMid = (y1+y2)/2;
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x1, yMid);
-      ctx.lineTo(x2, yMid);
-      ctx.lineTo(x2, y2);
-      ctx.strokeStyle = '#6f8296';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
+      const x1=a.x,y1=a.y+st.nodeH/2;
+      const x2=b.x,y2=b.y-st.nodeH/2;
+      const yMid=(y1+y2)/2;
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d','M'+x1+','+y1+' L'+x1+','+yMid+' L'+x2+','+yMid+' L'+x2+','+y2);
+      path.setAttribute('fill','none');
+      if(e.onPath){
+        path.setAttribute('stroke','#ffb733');
+        path.setAttribute('stroke-width','2.5');
+      } else {
+        path.setAttribute('stroke','#6f8296');
+        path.setAttribute('stroke-width','1.2');
+      }
+      g.appendChild(path);
     });
 
     // Узлы
-    st.nodePos.forEach((n, id)=>{
-      const p = M.get(id);if(!p)return;
-      const x=n.x, y=n.y, w=st.nodeW, h=st.nodeH;
-      // фон эллипса
-      ctx.beginPath();
-      ctx.ellipse(x, y, w/2, h/2, 0, 0, Math.PI*2);
-      if(n.isCenter){
-        ctx.fillStyle = '#ffffff';
-        ctx.strokeStyle = '#00e5ff';
-        ctx.lineWidth = 2.5;
-      } else if(p.Пол==='М'){
-        ctx.fillStyle = '#dbe9f4';
-        ctx.strokeStyle = '#5a6b7a';
-        ctx.lineWidth = 1.4;
-      } else if(p.Пол==='Ж'){
-        ctx.fillStyle = '#f6dde3';
-        ctx.strokeStyle = '#7a5a65';
-        ctx.lineWidth = 1.4;
-      } else {
-        ctx.fillStyle = '#eeeae5';
-        ctx.strokeStyle = '#7a7168';
-        ctx.lineWidth = 1.4;
-      }
-      ctx.fill();
-      ctx.stroke();
+    st.nodePos.forEach((n,id)=>{
+      const p=M.get(id);if(!p)return;
+      const x=n.x,y=n.y,w=st.nodeW,h=st.nodeH;
+      let fill='#eeeae5',stroke='#7a7168';
+      if(n.isCenter){fill='#ffffff';stroke='#00e5ff'}
+      else if(n.isRoot){fill='#ffd966';stroke='#a87000'}
+      else if(n.onPath){fill='#ffeebb';stroke='#c89000'}
+      else if(p.Пол==='М'){fill='#dbe9f4';stroke='#5a6b7a'}
+      else if(p.Пол==='Ж'){fill='#f6dde3';stroke='#7a5a65'}
+      const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x',x-w/2);rect.setAttribute('y',y-h/2);
+      rect.setAttribute('width',w);rect.setAttribute('height',h);
+      rect.setAttribute('rx','6');rect.setAttribute('ry','6');
+      rect.setAttribute('fill',fill);rect.setAttribute('stroke',stroke);
+      rect.setAttribute('stroke-width',n.isCenter?2:1.2);
+      rect.style.cursor='pointer';
+      rect.onclick=()=>{select(id)};
+      g.appendChild(rect);
 
-      // Текст: имя (в 2 строки при необходимости)
-      ctx.fillStyle = n.isCenter ? '#0a0a0a' : '#1f1c18';
-      ctx.font = (n.isCenter?'bold ':'')+'11px -apple-system,Segoe UI,Arial';
-      ctx.textAlign='center';
-      ctx.textBaseline='middle';
-      const name = nm(p);
-      // уместим в 20 символов, иначе — 2 строки
-      if(name.length<=22){
-        ctx.fillText(name, x, y);
-      } else {
-        // Разбиваем по словам
-        const words = name.split(' ');
-        let l1='', l2='';
-        words.forEach(w=>{
-          if((l1+' '+w).trim().length<=22 && !l2) l1=(l1+' '+w).trim();
-          else l2=(l2+' '+w).trim();
-        });
-        ctx.fillText(l1, x, y-6);
-        ctx.fillText(l2, x, y+6);
+      // Имя
+      const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t1.setAttribute('x',x);t1.setAttribute('y',y-(p['Дата рождения']||p['Дата смерти']?3:h/2-11));
+      t1.setAttribute('text-anchor','middle');
+      t1.setAttribute('font-size','10');
+      t1.setAttribute('font-family','-apple-system,Segoe UI,Arial');
+      t1.setAttribute('fill','#1f1c18');
+      if(n.isCenter)t1.setAttribute('font-weight','bold');
+      t1.style.pointerEvents='none';
+      let name=nm(p);
+      if(name.length>18)name=name.slice(0,17)+'…';
+      t1.textContent=name;
+      g.appendChild(t1);
+
+      // Годы
+      const b=(p['Дата рождения']||'').toString().slice(0,4);
+      const d=(p['Дата смерти']||'').toString().slice(0,4);
+      if(b||d){
+        const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
+        t2.setAttribute('x',x);t2.setAttribute('y',y+10);
+        t2.setAttribute('text-anchor','middle');
+        t2.setAttribute('font-size','8');
+        t2.setAttribute('font-family','-apple-system,Segoe UI,Arial');
+        t2.setAttribute('fill','#5c554d');
+        t2.style.pointerEvents='none';
+        t2.textContent=b+(d?'–'+d:'');
+        g.appendChild(t2);
       }
     });
-
-    ctx.restore();
   }
 
-  // Pan / Zoom дерева
+  // Панорама и зум в SVG-дереве
   (function initTreeInteractions(){
-    let dragging=false, lastX=0, lastY=0;
-    let pinchDist=0;
-
-    treeCanvas.addEventListener('pointerdown',e=>{
+    let dragging=false,lastX=0,lastY=0;
+    treeSvg.addEventListener('pointerdown',e=>{
       if(!treeActive)return;
-      if(e.pointerType==='touch' && e.touches===2)return;
-      dragging=true;
-      lastX=e.clientX;lastY=e.clientY;
-      treeCanvas.setPointerCapture(e.pointerId);
+      dragging=true;lastX=e.clientX;lastY=e.clientY;
+      treeSvg.setPointerCapture(e.pointerId);
     });
-    treeCanvas.addEventListener('pointermove',e=>{
+    treeSvg.addEventListener('pointermove',e=>{
       if(!dragging||!treeState)return;
-      const dx=e.clientX-lastX, dy=e.clientY-lastY;
+      const dx=e.clientX-lastX,dy=e.clientY-lastY;
       lastX=e.clientX;lastY=e.clientY;
       treeState.panX+=dx;treeState.panY+=dy;
-      drawTree();
+      renderTree();
     });
-    treeCanvas.addEventListener('pointerup',e=>{
-      dragging=false;
-    });
-    treeCanvas.addEventListener('pointercancel',()=>{dragging=false});
-
-    treeCanvas.addEventListener('wheel',e=>{
+    treeSvg.addEventListener('pointerup',()=>dragging=false);
+    treeSvg.addEventListener('pointercancel',()=>dragging=false);
+    treeSvg.addEventListener('wheel',e=>{
       if(!treeState)return;
       e.preventDefault();
-      const factor = e.deltaY<0 ? 1.12 : 0.9;
-      const rect = treeCanvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      // масштабируем относительно точки курсора
-      treeState.panX = mx - (mx - treeState.panX)*factor;
-      treeState.panY = my - (my - treeState.panY)*factor;
-      treeState.scale *= factor;
-      drawTree();
+      const f=e.deltaY<0?1.12:0.9;
+      const rect=treeSvg.getBoundingClientRect();
+      const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+      treeState.panX=mx-(mx-treeState.panX)*f;
+      treeState.panY=my-(my-treeState.panY)*f;
+      treeState.scale*=f;
+      renderTree();
     },{passive:false});
-
-    // Клик по узлу — открыть карточку человека
-    treeCanvas.addEventListener('click',e=>{
-      if(!treeActive||!treeState)return;
-      const rect = treeCanvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      // в мировые координаты
-      const wx = (mx - treeState.panX)/treeState.scale;
-      const wy = (my - treeState.panY)/treeState.scale;
-      for(const [id, n] of treeState.nodePos){
-        const dx = Math.abs(wx - n.x);
-        const dy = Math.abs(wy - n.y);
-        if(dx <= treeState.nodeW/2 && dy <= treeState.nodeH/2){
-          select(id);
-          return;
-        }
-      }
-    });
   })();
 
   // Кнопки дерева
-  document.getElementById('treeBack').onclick = ()=>closeTreeView();
-  document.getElementById('treePng').onclick = ()=>exportTreeA4();
+  document.getElementById('treeBack').onclick=()=>closeTreeView();
+  document.getElementById('treePng').onclick=()=>exportTreePNG();
 
-  // Экспорт A4
-  function exportTreeA4(){
+  function exportTreePNG(){
     if(!treeState){toast('Дерево не открыто');return}
-    const st = treeState;
-    // A4 вертикальный: 210×297 мм → берём 1:1.414
-    // Сделаем canvas 2480×3508 (300 dpi A4) — но это много. Возьмём 1240×1754 (150 dpi).
-    const W = 1240, H = 1754;
-    const cnv = document.createElement('canvas');
-    cnv.width = W;cnv.height = H;
-    const c = cnv.getContext('2d');
-    // фон
-    c.fillStyle = '#ffffff';
-    c.fillRect(0,0,W,H);
-
-    // Фоновое 3D — вставляем как есть
+    const st=treeState;
+    // A4 вертикальный 150 dpi
+    const W=1240,H=1754;
+    const cnv=document.createElement('canvas');
+    cnv.width=W;cnv.height=H;
+    const c=cnv.getContext('2d');
+    c.fillStyle='#ffffff';c.fillRect(0,0,W,H);
+    // Фон 3D
     try{
       renderer.render(scene,camera);
-      const three = renderer.domElement;
-      c.globalAlpha = 0.18;
-      c.drawImage(three, 0, 0, W, H);
-      c.globalAlpha = 1;
+      c.globalAlpha=0.15;
+      c.drawImage(renderer.domElement,0,0,W,H);
+      c.globalAlpha=1;
     }catch(_){}
 
-    // Подгон под A4
-    const bw = st.bbox.maxX - st.bbox.minX;
-    const bh = st.bbox.maxY - st.bbox.minY;
-    const s = Math.min((W-80)/bw, (H-160)/bh, 1.6);
-    const cx = (st.bbox.minX+st.bbox.maxX)/2;
-    const cy = (st.bbox.minY+st.bbox.maxY)/2;
-    const panX = W/2 - cx*s;
-    const panY = H/2 - cy*s;
-
+    const bw=st.bbox.maxX-st.bbox.minX,bh=st.bbox.maxY-st.bbox.minY;
+    const s=Math.min((W-80)/bw,(H-160)/bh,2.5);
+    const cx=(st.bbox.minX+st.bbox.maxX)/2,cy=(st.bbox.minY+st.bbox.maxY)/2;
+    const panX=W/2-cx*s,panY=H/2-cy*s;
     // Заголовок
-    c.fillStyle = '#111';
-    c.font = 'bold 28px -apple-system,Segoe UI,Arial';
-    c.textAlign = 'center';
-    c.fillText('Дерево: '+nm(M.get(st.centerId)), W/2, 50);
-    c.font = '14px -apple-system,Segoe UI,Arial';
-    c.fillStyle = '#666';
-    c.fillText('Всего: '+st.include.size+' человек · '+new Date().toLocaleDateString('ru-RU'), W/2, 76);
+    c.fillStyle='#111';c.font='bold 26px -apple-system,Segoe UI,Arial';c.textAlign='center';
+    c.fillText('Древо от '+nm(M.get(treeRootId)),W/2,42);
+    c.font='13px -apple-system,Segoe UI,Arial';c.fillStyle='#666';
+    c.fillText('Всего: '+st.include.size+' человек · '+new Date().toLocaleDateString('ru-RU'),W/2,64);
 
-    // Рисуем дерево
     c.save();
-    c.translate(panX, panY+40);
-    c.scale(s, s);
+    c.translate(panX,panY+40);
+    c.scale(s,s);
 
-    // Связи
+    // Рёбра
     st.edges.forEach(e=>{
-      const a = st.nodePos.get(e.from);
-      const b = st.nodePos.get(e.to);
-      if(!a||!b)return;
-      const x1=a.x, y1=a.y+st.nodeH/2;
-      const x2=b.x, y2=b.y-st.nodeH/2;
-      const yMid = (y1+y2)/2;
-      c.beginPath();
-      c.moveTo(x1, y1);
-      c.lineTo(x1, yMid);
-      c.lineTo(x2, yMid);
-      c.lineTo(x2, y2);
-      c.strokeStyle = '#8899aa';
-      c.lineWidth = 1.2;
+      const a=st.nodePos.get(e.from),b=st.nodePos.get(e.to);if(!a||!b)return;
+      const x1=a.x,y1=a.y+st.nodeH/2,x2=b.x,y2=b.y-st.nodeH/2,yMid=(y1+y2)/2;
+      c.beginPath();c.moveTo(x1,y1);c.lineTo(x1,yMid);c.lineTo(x2,yMid);c.lineTo(x2,y2);
+      if(e.onPath){c.strokeStyle='#c88a00';c.lineWidth=2.4}else{c.strokeStyle='#8899aa';c.lineWidth=1.2}
       c.stroke();
     });
 
     // Узлы
-    st.nodePos.forEach((n, id)=>{
-      const p = M.get(id);if(!p)return;
-      const x=n.x, y=n.y, w=st.nodeW, h=st.nodeH;
+    st.nodePos.forEach((n,id)=>{
+      const p=M.get(id);if(!p)return;
+      const x=n.x,y=n.y,w=st.nodeW,h=st.nodeH;
+      let fill='#eeeae5',stroke='#7a7168';
+      if(n.isCenter){fill='#ffffff';stroke='#0099cc'}
+      else if(n.isRoot){fill='#ffd966';stroke='#a87000'}
+      else if(n.onPath){fill='#ffeebb';stroke='#c89000'}
+      else if(p.Пол==='М'){fill='#dbe9f4';stroke='#5a6b7a'}
+      else if(p.Пол==='Ж'){fill='#f6dde3';stroke='#7a5a65'}
+      // Скруглённый прямоугольник
+      const rr=6;
       c.beginPath();
-      c.ellipse(x, y, w/2, h/2, 0, 0, Math.PI*2);
-      if(n.isCenter){
-        c.fillStyle = '#ffffff';c.strokeStyle = '#0099cc';c.lineWidth = 2.2;
-      } else if(p.Пол==='М'){
-        c.fillStyle = '#dbe9f4';c.strokeStyle = '#5a6b7a';c.lineWidth = 1.2;
-      } else if(p.Пол==='Ж'){
-        c.fillStyle = '#f6dde3';c.strokeStyle = '#7a5a65';c.lineWidth = 1.2;
-      } else {
-        c.fillStyle = '#eeeae5';c.strokeStyle = '#7a7168';c.lineWidth = 1.2;
-      }
-      c.fill();c.stroke();
-
-      c.fillStyle = '#1f1c18';
-      c.font = '11px -apple-system,Segoe UI,Arial';
-      c.textAlign='center';c.textBaseline='middle';
-      const name = nm(p);
-      if(name.length<=22){c.fillText(name,x,y)}
-      else{
-        const words = name.split(' ');
-        let l1='',l2='';
-        words.forEach(w=>{
-          if((l1+' '+w).trim().length<=22 && !l2) l1=(l1+' '+w).trim();
-          else l2=(l2+' '+w).trim();
-        });
-        c.fillText(l1,x,y-6);c.fillText(l2,x,y+6);
+      c.moveTo(x-w/2+rr,y-h/2);
+      c.arcTo(x+w/2,y-h/2,x+w/2,y+h/2,rr);
+      c.arcTo(x+w/2,y+h/2,x-w/2,y+h/2,rr);
+      c.arcTo(x-w/2,y+h/2,x-w/2,y-h/2,rr);
+      c.arcTo(x-w/2,y-h/2,x+w/2,y-h/2,rr);
+      c.closePath();
+      c.fillStyle=fill;c.fill();
+      c.strokeStyle=stroke;c.lineWidth=n.isCenter?2:1.2;c.stroke();
+      // Имя
+      c.fillStyle='#1f1c18';c.font='10px -apple-system,Segoe UI,Arial';c.textAlign='center';c.textBaseline='middle';
+      let name=nm(p);if(name.length>18)name=name.slice(0,17)+'…';
+      c.fillText(name,x,y-3);
+      // Годы
+      const b=(p['Дата рождения']||'').toString().slice(0,4);
+      const d=(p['Дата смерти']||'').toString().slice(0,4);
+      if(b||d){
+        c.fillStyle='#5c554d';c.font='8px -apple-system,Segoe UI,Arial';
+        c.fillText(b+(d?'–'+d:''),x,y+11);
       }
     });
     c.restore();
 
-    // Скачать
-    const url = cnv.toDataURL('image/png');
-    const a = document.createElement('a');
-    const stamp = new Date().toISOString().slice(0,10);
-    a.href = url;
-    a.download = 'tree_A4_'+stamp+'.png';
+    const url=cnv.toDataURL('image/png');
+    const a=document.createElement('a');
+    const stamp=new Date().toISOString().slice(0,10);
+    a.href=url;a.download='tree_A4_'+stamp+'.png';
     document.body.appendChild(a);a.click();document.body.removeChild(a);
-    toast('A4 PNG сохранён ✓');
+    toast('PNG A4 сохранён ✓');
   }
 
-  // ============================================================
+  document.getElementById('rootMenuClose').onclick=()=>{rootMenu.style.display='none'};
 
-  // ---------- КАРТОЧКА ЧЕЛОВЕКА ----------
+  // ============================================================
+  //  КАРТОЧКА ЧЕЛОВЕКА
+  // ============================================================
   function select(id){
     highlightSubtree(id);
     const p=M.get(id);if(!p)return;
-    try{ history.replaceState(null,'','#id='+id); }catch(_){}
+    try{history.replaceState(null,'','#id='+id)}catch(_){}
 
     function statsFor(setIds){
-      let males=0, females=0, unknown=0;
-      setIds.forEach(mid=>{
-        const q=M.get(mid);if(!q)return;
-        if(q.Пол==='М')males++;
-        else if(q.Пол==='Ж')females++;
-        else unknown++;
-      });
-      return {males, females, unknown, total:males+females+unknown};
+      let males=0,females=0,unknown=0;
+      setIds.forEach(mid=>{const q=M.get(mid);if(!q)return;if(q.Пол==='М')males++;else if(q.Пол==='Ж')females++;else unknown++});
+      return {males,females,unknown,total:males+females+unknown};
     }
-    const ancSet=ancestors(id), descSet=descendants(id), inLawSet=inLawCloud(id), lawAncSet=inLawAncestors(id);
-    const ancStats=statsFor(ancSet), descStats=statsFor(descSet), inLawStats=statsFor(inLawSet), lawAncStats=statsFor(lawAncSet);
-    const allSet = new Set([id, ...ancSet, ...descSet, ...inLawSet, ...lawAncSet]);
-    const allStats = statsFor(allSet);
+    const ancSet=ancestors(id),descSet=descendants(id),inLawSet=inLawCloud(id),lawAncSet=inLawAncestors(id);
+    const ancStats=statsFor(ancSet),descStats=statsFor(descSet),inLawStats=statsFor(inLawSet),lawAncStats=statsFor(lawAncSet);
+    const allSet=new Set([id,...ancSet,...descSet,...inLawSet,...lawAncSet]);
+    const allStats=statsFor(allSet);
 
     const parn=x=>x&&M.has(x)?nm(M.get(x)):'';
     const allRows=[
-      ['ID',p.ID],['ФИО',nm(p)],['Пол',p.Пол||''],['Род / ветка',p["Род / Ветка"]||''],
+      ['ID',p.ID],['ФИО',nm(p)],['Пол',p.Пол||''],['Род / ветка',p['Род / Ветка']||''],
       ['Отец',parn(p.father)],['Мать',parn(p.mother)],
-      ['Рождение',(p["Дата рождения"]||'').toString().slice(0,10)],
-      ['Место',p["Место рождения"]||''],
-      ['Смерть',(p["Дата смерти"]||'').toString().slice(0,10)],
-      ['Y-DNA',p["Y-DNA (Гаплогруппа)"]||''],['mtDNA',p.mtDNA||'']
+      ['Рождение',(p['Дата рождения']||'').toString().slice(0,10)],
+      ['Место',p['Место рождения']||''],
+      ['Смерть',(p['Дата смерти']||'').toString().slice(0,10)]
     ];
     const rows=allRows.filter(r=>r[1]!==undefined&&r[1]!==null&&String(r[1]).trim()!=='');
 
-    function statLine(label, s){
+    function statLine(label,s){
       const parts=[];
-      if(s.males)  parts.push('<span style="color:#7fd4ff">♂ '+s.males+'</span>');
+      if(s.males)parts.push('<span style="color:#7fd4ff">♂ '+s.males+'</span>');
       if(s.females)parts.push('<span style="color:#ff9ecb">♀ '+s.females+'</span>');
       if(s.unknown)parts.push('<span style="color:#b8b0a5">? '+s.unknown+'</span>');
       return '<div class="stat-line"><span class="stat-label">'+label+'</span><span class="stat-value">'+parts.join(' · ')+' <span class="stat-total">(всего '+s.total+')</span></span></div>';
     }
-    const statsHtml =
-      '<div class="stats-block"><div class="stats-title">Статистика облака</div>'+
-        statLine('Облако', allStats)+
-        (ancStats.total    ? statLine('Предки', ancStats)          : '')+
-        (descStats.total   ? statLine('Потомки', descStats)        : '')+
-        (inLawStats.total  ? statLine('Свойственники', inLawStats) : '')+
-        (lawAncStats.total ? statLine('Предки свойственников', lawAncStats) : '')+
-      '</div>';
+    const statsHtml='<div class="stats-block"><div class="stats-title">Статистика облака</div>'+
+      statLine('Облако',allStats)+
+      (ancStats.total?statLine('Предки',ancStats):'')+
+      (descStats.total?statLine('Потомки',descStats):'')+
+      (inLawStats.total?statLine('Свойственники',inLawStats):'')+
+      (lawAncStats.total?statLine('Предки свойственников',lawAncStats):'')+'</div>';
 
-    function listBlock(title, arr, kind){
+    function listBlock(title,arr,kind){
       if(!arr.length)return '';
-      const id0 = id;
-      const PREVIEW = 5;
-      const preview = arr.slice(0,PREVIEW);
-      const rest = arr.slice(PREVIEW);
-      const relColor = kind==='anc'?'#ffcc33':kind==='desc'?'#33ffb0':kind==='law'?'#ffa04d':kind==='lawAnc'?'#d18cff':'#9fb0bf';
-      const makeRow = (d)=> {
-        const rel = relationLabel(id0, d.ID);
-        return '<div data-id="'+d.ID+'">'+
-          '<span class="person-name">• '+nm(d)+' <span style="color:#5d6b78">('+d.ID+')</span></span>'+
-          '<span class="rel-label" style="color:'+relColor+'">'+rel+'</span>'+
-        '</div>';
+      const PREVIEW=5,preview=arr.slice(0,PREVIEW),rest=arr.slice(PREVIEW);
+      const relColor=kind==='anc'?'#ffcc33':kind==='desc'?'#33ffb0':kind==='law'?'#ffa04d':kind==='lawAnc'?'#d18cff':'#9fb0bf';
+      const row=d=>{
+        const rel=relationLabel(id,d.ID);
+        return '<div data-id="'+d.ID+'"><span>• '+nm(d)+' <span style="color:#5d6b78">('+d.ID+')</span></span><span class="rel-label" style="color:'+relColor+'">'+rel+'</span></div>';
       };
-      let html = '<div style="margin-top:8px;font-size:11px;color:#7d8a97">'+title+' ('+arr.length+'):</div>';
-      html += '<div class="tree-list">';
-      html += preview.map(makeRow).join('');
-      if(rest.length){
-        html += '<div class="show-more">▾ Показать ещё '+rest.length+'</div>';
-        html += '<div class="hidden-rows" style="display:none">'+rest.map(makeRow).join('')+'</div>';
-      }
-      html += '</div>';
+      let html='<div style="margin-top:8px;font-size:11px;color:#7d8a97">'+title+' ('+arr.length+'):</div><div class="tree-list">';
+      html+=preview.map(row).join('');
+      if(rest.length){html+='<div class="show-more">▾ Показать ещё '+rest.length+'</div><div class="hidden-rows" style="display:none">'+rest.map(row).join('')+'</div>'}
+      html+='</div>';
       return html;
     }
     const ancList=[...ancSet].map(i=>M.get(i)).filter(Boolean);
     const descList=[...descSet].map(i=>M.get(i)).filter(Boolean);
     const inLawList=[...inLawSet].map(i=>M.get(i)).filter(Boolean);
     const lawAncList=[...lawAncSet].map(i=>M.get(i)).filter(Boolean);
-    const treeHtml =
-      listBlock('Предки', ancList, 'anc')+
-      listBlock('Потомки', descList, 'desc')+
-      listBlock('Свойственники', inLawList, 'law')+
-      listBlock('Предки свойственника', lawAncList, 'lawAnc');
+    const treeHtml=
+      listBlock('Предки',ancList,'anc')+
+      listBlock('Потомки',descList,'desc')+
+      listBlock('Свойственники',inLawList,'law')+
+      listBlock('Предки свойственника',lawAncList,'lawAnc');
 
     const b=document.getElementById('info');
-    const linkUrl = location.origin+location.pathname+'#id='+id;
-    b.innerHTML =
+    const linkUrl=location.origin+location.pathname+'#id='+id;
+    b.innerHTML=
       '<div id="infoHeader"><span style="color:#e8eef5;font-weight:650">'+nm(p)+'</span> <span class="toggle">▾ Развернуть</span></div>'+
       '<h2>'+nm(p)+'</h2>'+
       rows.map(r=>'<div class="row"><b>'+r[0]+'</b>'+r[1]+'</div>').join('')+
       '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+
-        '<button id="treeOpen" style="padding:6px 10px;font-size:11px">🌳 Дерево</button>'+
+        '<button id="treeOpen" style="padding:6px 10px;font-size:11px">🌳 Древо</button>'+
         '<button id="copyLink" style="padding:6px 10px;font-size:11px">🔗 Ссылка</button>'+
       '</div>'+
       statsHtml+treeHtml+
       '<br><button id="closeInfo">Закрыть</button>';
     b.style.display='block';
 
-    if(isMobile){
-      b.classList.add('collapsed');
-      const t = b.querySelector('#infoHeader .toggle');
-      if(t)t.textContent = '▴ Развернуть';
-    } else {
-      b.classList.remove('collapsed');
-    }
-    const header = b.querySelector('#infoHeader');
-    if(header){
-      header.onclick = ()=>{
-        const collapsed = b.classList.toggle('collapsed');
-        const t = b.querySelector('#infoHeader .toggle');
-        if(t)t.textContent = collapsed ? '▴ Развернуть' : '▾ Свернуть';
-      };
-    }
-    b.querySelectorAll('.show-more').forEach(el=>{
-      el.onclick = ()=>{
-        const hidden = el.parentElement.querySelector('.hidden-rows');
-        if(hidden){hidden.style.display='block';el.style.display='none'}
-      };
-    });
+    if(isMobile){b.classList.add('collapsed');const t=b.querySelector('#infoHeader .toggle');if(t)t.textContent='▴ Развернуть'}
+    else b.classList.remove('collapsed');
+    const hd=b.querySelector('#infoHeader');
+    if(hd)hd.onclick=()=>{const c=b.classList.toggle('collapsed');const t=b.querySelector('#infoHeader .toggle');if(t)t.textContent=c?'▴ Развернуть':'▾ Свернуть'};
+    b.querySelectorAll('.show-more').forEach(el=>{el.onclick=()=>{const h=el.parentElement.querySelector('.hidden-rows');if(h){h.style.display='block';el.style.display='none'}}});
     document.getElementById('closeInfo').onclick=deselect;
-
-    const copyBtn = b.querySelector('#copyLink');
-    if(copyBtn){
-      copyBtn.onclick = ()=>{
-        try{
-          navigator.clipboard.writeText(linkUrl).then(()=>toast('Ссылка скопирована ✓'),()=>{
-            const ta=document.createElement('textarea');ta.value=linkUrl;
-            document.body.appendChild(ta);ta.select();document.execCommand('copy');
-            document.body.removeChild(ta);toast('Ссылка скопирована ✓');
-          });
-        }catch(e){toast('Ошибка: '+e.message)}
-      };
-    }
-    const treeBtn = b.querySelector('#treeOpen');
-    if(treeBtn){
-      treeBtn.onclick = ()=>{ openTreeView(id); };
-    }
-
+    const cBtn=b.querySelector('#copyLink');
+    if(cBtn)cBtn.onclick=()=>{try{navigator.clipboard.writeText(linkUrl).then(()=>toast('Ссылка скопирована ✓'),()=>{const ta=document.createElement('textarea');ta.value=linkUrl;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('Ссылка скопирована ✓')})}catch(e){toast('Ошибка: '+e.message)}};
+    const tBtn=b.querySelector('#treeOpen');
+    if(tBtn)tBtn.onclick=()=>{openRootMenu(id)};
     b.querySelectorAll('.tree-list div[data-id]').forEach(el=>{
-      el.onclick=()=>{
-        const id2=parseInt(el.dataset.id,10);
-        select(id2);
-        const pos=positions.get(id2);
-        if(pos){controls.target.copy(pos);camera.position.set(pos.x+200,pos.y+180,pos.z+300);controls.update()}
-      };
+      el.onclick=()=>{const id2=parseInt(el.dataset.id,10);select(id2);const pos=positions.get(id2);if(pos){controls.target.copy(pos);camera.position.set(pos.x+200,pos.y+180,pos.z+300);controls.update()}};
     });
   }
 
-  // ---------- КНОПКИ / UI ----------
+  // ---------- Кнопки UI ----------
   function fit(){
     if(!positions.size)return;
-    const box=new THREE.Box3();
-    positions.forEach(v=>box.expandByPoint(v));
-    const c=box.getCenter(new THREE.Vector3());
-    const size=box.getSize(new THREE.Vector3());
-    const maxDim=Math.max(size.x,size.y,size.z,200);
-    const dist=maxDim*1.7;
-    controls.target.copy(c);
-    camera.position.set(c.x+dist*0.35,c.y+dist*0.35,c.z+dist*0.85);
-    controls.update();
-    syncZoomUI();
+    const box=new THREE.Box3();positions.forEach(v=>box.expandByPoint(v));
+    const c=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
+    const maxDim=Math.max(size.x,size.y,size.z,200);const dist=maxDim*1.7;
+    controls.target.copy(c);camera.position.set(c.x+dist*0.35,c.y+dist*0.35,c.z+dist*0.85);
+    controls.update();syncZoomUI();
   }
   document.getElementById('fit').onclick=fit;
   document.getElementById('reset').onclick=()=>{controls.target.set(0,0,0);camera.position.set(0,700,1600);controls.update();syncZoomUI()};
   document.getElementById('top').onclick=()=>{controls.target.set(0,0,0);camera.position.set(0,2400,1);controls.update();syncZoomUI()};
-  document.getElementById('save').onclick=()=>{
-    const dump={};positions.forEach((v,k)=>{dump[k]={x:v.x,y:v.y,z:v.z}});
-    try{localStorage.setItem(KEY_POS,JSON.stringify(dump));toast('Позиции сохранены ✓')}catch(e){toast('Ошибка: '+e)}
-  };
-  document.getElementById('clear').onclick=()=>{
-    if(!confirm('Сбросить ручные позиции?'))return;
-    try{localStorage.removeItem(KEY_POS)}catch(_){}
-    savedPositions={};
-    computeLayout();buildScene();fit();
-    toast('Позиции сброшены');
-  };
+  document.getElementById('save').onclick=()=>{const d={};positions.forEach((v,k)=>{d[k]={x:v.x,y:v.y,z:v.z}});try{localStorage.setItem(KEY_POS,JSON.stringify(d));toast('Позиции сохранены ✓')}catch(e){toast('Ошибка: '+e.message)}};
+  document.getElementById('clear').onclick=()=>{if(!confirm('Сбросить позиции?'))return;try{localStorage.removeItem(KEY_POS)}catch(_){}savedPositions={};computeLayout();buildScene();fit();toast('Позиции сброшены')};
 
-  // Мобильное сворачивание панели
   (function initMobilePanel(){
-    const body = document.getElementById('ctrlBody');
-    const btn  = document.getElementById('togglePanel');
+    const body=document.getElementById('ctrlBody'),btn=document.getElementById('togglePanel');
     if(!body||!btn)return;
-    if(window.innerWidth<=800){
-      btn.onclick = ()=>{
-        const open = body.classList.toggle('open');
-        btn.textContent = open ? '✕ Скрыть меню' : '☰ Меню';
-      };
-    }
+    if(window.innerWidth<=800){btn.onclick=()=>{const o=body.classList.toggle('open');btn.textContent=o?'✕ Скрыть меню':'☰ Меню'}}
     window.addEventListener('resize',()=>{
-      isMobile = window.innerWidth<=800;
-      if(treeActive) resizeTreeCanvas();
-      if(window.innerWidth>800){
-        body.style.display='flex';
-        body.classList.remove('open');
-        btn.style.display='none';
-      } else {
-        body.style.display='';
-        btn.style.display='block';
-        if(!body.classList.contains('open'))btn.textContent='☰ Меню';
-      }
+      isMobile=window.innerWidth<=800;
+      if(treeActive){renderTree();fitTree()}
+      if(window.innerWidth>800){body.style.display='flex';body.classList.remove('open');btn.style.display='none'}
+      else {body.style.display='';btn.style.display='block';if(!body.classList.contains('open'))btn.textContent='☰ Меню'}
     });
   })();
 
-  document.getElementById('routeBtn').onclick=()=>{ setRouteMode(!routeMode); };
-
-  // Экспорт PNG (3D)
+  document.getElementById('routeBtn').onclick=()=>setRouteMode(!routeMode);
   document.getElementById('pngBtn').onclick=()=>{
     try{
       renderer.render(scene,camera);
-      const url = renderer.domElement.toDataURL('image/png');
-      const a = document.createElement('a');
-      const now = new Date();
-      const stamp = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+
-        String(now.getDate()).padStart(2,'0')+'_'+String(now.getHours()).padStart(2,'0')+
-        String(now.getMinutes()).padStart(2,'0');
-      a.href = url;a.download = 'rodoslovnaya_'+stamp+'.png';
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
+      const url=renderer.domElement.toDataURL('image/png');
+      const a=document.createElement('a');const n=new Date();
+      const st=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')+'_'+String(n.getHours()).padStart(2,'0')+String(n.getMinutes()).padStart(2,'0');
+      a.href=url;a.download='rodoslovnaya_'+st+'.png';document.body.appendChild(a);a.click();document.body.removeChild(a);
       toast('PNG сохранён ✓');
     }catch(e){toast('Ошибка: '+e.message)}
   };
 
-  // Фильтр по ветке
   document.getElementById('branchFilter').onchange=function(){
-    activeBranch = this.value;
-    const filtered = filterByBranch(currentData, activeBranch);
-    buildGraph(filtered);computeLayout();buildScene();deselect();
+    activeBranch=this.value;
+    const f=filterByBranch(currentData,activeBranch);
+    buildGraph(f);computeLayout();buildScene();deselect();
     setTimeout(()=>{fit();syncZoomUI()},60);
-    toast('Показано: '+(activeBranch==='__ALL__'?'все ветви':activeBranch)+' · '+filtered.length+' чел.');
+    toast('Показано: '+(activeBranch==='__ALL__'?'все ветви':activeBranch)+' · '+f.length+' чел.');
   };
 
   // Поиск
-  const searchInput = document.getElementById('search');
-  const suggestBox = document.getElementById('suggestBox');
-  function hideSuggest(){ suggestBox.style.display='none'; }
-  function positionSuggestBox(){
-    const r = searchInput.getBoundingClientRect();
-    suggestBox.style.left = r.left+'px';suggestBox.style.top  = (r.bottom+4)+'px';
-  }
+  const searchInput=document.getElementById('search');
+  const suggestBox=document.getElementById('suggestBox');
+  function hideSuggest(){suggestBox.style.display='none'}
+  function positionSuggestBox(){const r=searchInput.getBoundingClientRect();suggestBox.style.left=r.left+'px';suggestBox.style.top=(r.bottom+4)+'px'}
   searchInput.addEventListener('input',()=>{
-    const q = searchInput.value.toLowerCase().trim();
+    const q=searchInput.value.toLowerCase().trim();
     if(!q){hideSuggest();return}
-    const matches = P.filter(x=>nm(x).toLowerCase().includes(q)||String(x.ID).includes(q)).slice(0,12);
-    if(!matches.length){hideSuggest();return}
+    const m=P.filter(x=>nm(x).toLowerCase().includes(q)||String(x.ID).includes(q)).slice(0,12);
+    if(!m.length){hideSuggest();return}
     positionSuggestBox();
-    suggestBox.innerHTML = matches.map(m=>{
-      const p=M.get(m.ID);
-      const branch = (p['Род / Ветка']||'').trim();
-      const years = (p['Дата рождения']?'★'+p['Дата рождения'].toString().slice(0,4):'')+
-                    (p['Дата смерти']?' †'+p['Дата смерти'].toString().slice(0,4):'');
-      return '<div class="sug-item" data-id="'+p.ID+'"><div style="color:#e8eef5">'+nm(p)+' <span style="color:#5d6b78">('+p.ID+')</span></div><div style="font-size:10px;color:#7d8a97">'+years+(branch?' · '+branch:'')+'</div></div>';
+    suggestBox.innerHTML=m.map(x=>{
+      const p=M.get(x.ID);
+      const br=(p['Род / Ветка']||'').trim();
+      const y=(p['Дата рождения']?'★'+p['Дата рождения'].toString().slice(0,4):'')+(p['Дата смерти']?' †'+p['Дата смерти'].toString().slice(0,4):'');
+      return '<div class="sug-item" data-id="'+p.ID+'"><div style="color:#e8eef5">'+nm(p)+' <span style="color:#5d6b78">('+p.ID+')</span></div><div style="font-size:10px;color:#7d8a97">'+y+(br?' · '+br:'')+'</div></div>';
     }).join('');
     suggestBox.style.display='block';
     suggestBox.querySelectorAll('.sug-item').forEach(el=>{
-      el.onmouseenter=()=>el.style.background='#141c26';
-      el.onmouseleave=()=>el.style.background='transparent';
-      el.onclick=()=>{
-        const id2 = parseInt(el.dataset.id,10);
-        searchInput.value = nm(M.get(id2));
-        hideSuggest();select(id2);
-        const pos=positions.get(id2);
-        if(pos){controls.target.copy(pos);camera.position.set(pos.x+250,pos.y+200,pos.z+350);controls.update();syncZoomUI()}
-      };
+      el.onmouseenter=()=>el.style.background='#141c26';el.onmouseleave=()=>el.style.background='transparent';
+      el.onclick=()=>{const id2=parseInt(el.dataset.id,10);searchInput.value=nm(M.get(id2));hideSuggest();select(id2);const pos=positions.get(id2);if(pos){controls.target.copy(pos);camera.position.set(pos.x+250,pos.y+200,pos.z+350);controls.update();syncZoomUI()}};
     });
   });
-  searchInput.addEventListener('blur',()=>{setTimeout(hideSuggest,180)});
-  searchInput.addEventListener('keydown',e=>{
-    if(e.key==='Escape')hideSuggest();
-    if(e.key==='Enter'){const first=suggestBox.querySelector('.sug-item');if(first)first.click()}
-  });
+  searchInput.addEventListener('blur',()=>setTimeout(hideSuggest,180));
+  searchInput.addEventListener('keydown',e=>{if(e.key==='Escape')hideSuggest();if(e.key==='Enter'){const f=suggestBox.querySelector('.sug-item');if(f)f.click()}});
 
   // Зум
-  const zoomRange=document.getElementById('zoomRange');
-  const zoomVal=document.getElementById('zoomVal');
+  const zoomRange=document.getElementById('zoomRange'),zoomVal=document.getElementById('zoomVal');
   let baseDistance=1600;
-  function applyZoomPercent(pct){
-    const dist=baseDistance*(100/Math.max(10,pct));
-    const dir=camera.position.clone().sub(controls.target).normalize();
-    camera.position.copy(controls.target).add(dir.multiplyScalar(dist));controls.update();
-  }
-  function syncZoomUI(){
-    const d=camera.position.distanceTo(controls.target);
-    const pct=Math.round(100*(baseDistance/Math.max(50,d)));
-    const clamped=Math.max(10,Math.min(300,pct));
-    zoomRange.value=clamped;zoomVal.textContent=clamped+'%';
-  }
-  zoomRange.addEventListener('input',()=>{
-    const v=parseInt(zoomRange.value,10);
-    zoomVal.textContent=v+'%';applyZoomPercent(v);
-  });
-  dom.addEventListener('wheel',()=>{setTimeout(syncZoomUI,50)});
+  function applyZoomPercent(pct){const d=baseDistance*(100/Math.max(10,pct));const dir=camera.position.clone().sub(controls.target).normalize();camera.position.copy(controls.target).add(dir.multiplyScalar(d));controls.update()}
+  function syncZoomUI(){const d=camera.position.distanceTo(controls.target);const pct=Math.round(100*(baseDistance/Math.max(50,d)));const cl=Math.max(10,Math.min(300,pct));zoomRange.value=cl;zoomVal.textContent=cl+'%'}
+  zoomRange.addEventListener('input',()=>{const v=parseInt(zoomRange.value,10);zoomVal.textContent=v+'%';applyZoomPercent(v)});
+  dom.addEventListener('wheel',()=>setTimeout(syncZoomUI,50));
 
-  // Импорт XLSX (только для админа)
+  // Импорт XLSX
   document.getElementById('importBtn').onclick=()=>document.getElementById('fileInput').click();
   document.getElementById('fileInput').addEventListener('change',async function(){
-    const file=this.files&&this.files[0];
-    if(!file)return;
+    const file=this.files&&this.files[0];if(!file)return;
     if(typeof XLSX==='undefined'){toast('SheetJS не загрузился');return}
     try{
       showLoading('Читаю файл…');
       const buf=await file.arrayBuffer();
       const wb=XLSX.read(buf,{type:'array',cellDates:true});
-      const sheetName=wb.SheetNames[0];
-      const sheet=wb.Sheets[sheetName];
-      const rows=XLSX.utils.sheet_to_json(sheet,{defval:"",raw:false});
+      const sn=wb.SheetNames[0];const sh=wb.Sheets[sn];
+      const rows=XLSX.utils.sheet_to_json(sh,{defval:'',raw:false});
       const mapped=rows.map(r=>{
-        const o={};
-        Object.keys(r).forEach(k=>{
-          let key=String(k).trim();
-          if(key==='Род/Ветка')key='Род / Ветка';
-          o[key]=r[k]==null?'':String(r[k]).trim();
-        });
-        return o;
+        const o={};Object.keys(r).forEach(k=>{let kk=String(k).trim();if(kk==='Род/Ветка')kk='Род / Ветка';o[kk]=r[k]==null?'':String(r[k]).trim()});return o;
       }).filter(o=>String(o.ID||'').trim()!=='');
-      if(!mapped.length)throw new Error('Нет строк с колонкой ID');
-      mapped.forEach(o=>{
-        ['Дата рождения','Дата смерти'].forEach(k=>{
-          if(o[k]&&o[k].length>10)o[k]=o[k].slice(0,10);
-        });
-      });
+      if(!mapped.length)throw new Error('Нет строк с ID');
+      mapped.forEach(o=>{['Дата рождения','Дата смерти'].forEach(k=>{if(o[k]&&o[k].length>10)o[k]=o[k].slice(0,10)})});
       showLoading('Применяю '+mapped.length+' человек…');
       localStorage.setItem(KEY_DATA,JSON.stringify(mapped));
-      applyData(mapped);
-      hideLoading();
-      toast('Импортировано: '+mapped.length+' человек из «'+sheetName+'»');
-    }catch(err){
-      hideLoading();console.error(err);
-      toast('Ошибка импорта: '+(err.message||err),4000);
-      const el=document.getElementById('err');el.style.display='block';
-      el.textContent='Ошибка импорта XLSX:\n'+(err.stack||err)+'\n';
-    }
+      applyData(mapped);hideLoading();
+      toast('Импортировано: '+mapped.length+' человек');
+    }catch(err){hideLoading();console.error(err);toast('Ошибка: '+(err.message||err),4000);const el=document.getElementById('err');el.style.display='block';el.textContent='Ошибка импорта:\n'+(err.stack||err)}
   });
+  document.getElementById('resetData').onclick=()=>{if(!confirm('Вернуть встроенные данные?'))return;try{localStorage.removeItem(KEY_DATA)}catch(_){}applyData(BUILTIN_P);toast('Восстановлены встроенные')};
 
-  document.getElementById('resetData').onclick=()=>{
-    if(!confirm('Вернуть встроенные данные?'))return;
-    try{localStorage.removeItem(KEY_DATA)}catch(_){}
-    applyData(BUILTIN_P);toast('Восстановлены встроенные данные');
-  };
-
-  // Запуск
-  function filterByBranch(arr, branch){
-    if(!branch || branch==='__ALL__') return arr;
-    return arr.filter(p=>(p['Род / Ветка']||'').trim()===branch);
-  }
+  function filterByBranch(arr,branch){if(!branch||branch==='__ALL__')return arr;return arr.filter(p=>(p['Род / Ветка']||'').trim()===branch)}
 
   function applyData(arr){
-    currentData = arr;
-    const branches = new Set();
-    arr.forEach(p=>{
-      const b = (p['Род / Ветка']||'').trim();
-      if(b) branches.add(b);
-    });
-    const sel = document.getElementById('branchFilter');
+    currentData=arr;
+    const branches=new Set();
+    arr.forEach(p=>{const b=(p['Род / Ветка']||'').trim();if(b)branches.add(b)});
+    const sel=document.getElementById('branchFilter');
     if(sel){
       const sorted=[...branches].sort();
-      sel.innerHTML = '<option value="__ALL__">Все ветви ('+arr.length+')</option>' +
-        sorted.map(b=>{
-          const n = arr.filter(x=>(x['Род / Ветка']||'').trim()===b).length;
-          return '<option value="'+b.replace(/"/g,'&quot;')+'">'+b+' ('+n+')</option>';
-        }).join('');
-      if([...sel.options].some(o=>o.value===activeBranch)){
-        sel.value = activeBranch;
-      } else {
-        activeBranch = '__ALL__';
-        sel.value = '__ALL__';
-      }
+      sel.innerHTML='<option value="__ALL__">Все ветви ('+arr.length+')</option>'+sorted.map(b=>{const n=arr.filter(x=>(x['Род / Ветка']||'').trim()===b).length;return '<option value="'+b.replace(/"/g,'&quot;')+'">'+b+' ('+n+')</option>'}).join('');
+      if([...sel.options].some(o=>o.value===activeBranch))sel.value=activeBranch;else{activeBranch='__ALL__';sel.value='__ALL__'}
     }
-    const filtered = filterByBranch(arr, activeBranch);
-    buildGraph(filtered);computeLayout();buildScene();
+    const f=filterByBranch(arr,activeBranch);
+    buildGraph(f);computeLayout();buildScene();
     setTimeout(()=>{
       fit();syncZoomUI();
-      const m = location.hash.match(/#id=(\d+)/);
-      if(m){
-        const targetId = parseInt(m[1],10);
-        if(M.has(targetId)){
-          select(targetId);
-          const pos = positions.get(targetId);
-          if(pos){controls.target.copy(pos);camera.position.set(pos.x+250,pos.y+200,pos.z+350);controls.update()}
-        }
-      }
+      const m=location.hash.match(/#id=(\d+)/);
+      if(m){const t=parseInt(m[1],10);if(M.has(t)){select(t);const p=positions.get(t);if(p){controls.target.copy(p);camera.position.set(p.x+250,p.y+200,p.z+350);controls.update()}}}
     },120);
   }
 
   addEventListener('resize',()=>{
     camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
     renderer.setSize(innerWidth,innerHeight);
-    if(treeActive) resizeTreeCanvas();
+    if(treeActive){treeSvg.setAttribute('viewBox','0 0 '+treeView.clientWidth+' '+treeView.clientHeight);fitTree()}
   });
 
-  function animate(){
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene,camera);
-  }
+  function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
 
   let initial=BUILTIN_P;
-  try{
-    const stored=localStorage.getItem(KEY_DATA);
-    if(stored){const a=JSON.parse(stored);if(Array.isArray(a)&&a.length)initial=a}
-  }catch(_){}
+  try{const s=localStorage.getItem(KEY_DATA);if(s){const a=JSON.parse(s);if(Array.isArray(a)&&a.length)initial=a}}catch(_){}
   applyData(initial);
   animate();
 
