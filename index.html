@@ -1140,7 +1140,7 @@ try{
 
     // Размеры узлов
     const NODE_W=110,NODE_H=32;
-    const GAP_X=8,GAP_Y=42;
+    const GAP_X=10,GAP_Y=95;               // увеличен зазор по вертикали
     const MAX_ROW_W=window.innerWidth>1000?2000:1400;
 
     const nodePos=new Map();
@@ -1155,14 +1155,12 @@ try{
     let currentY=0;
     lvKeys.forEach(lv=>{
       const arr=byLv.get(lv).slice();
-      // Сортируем: кровные (включая выбранного и путь) — по родителю; остальные в конец
       arr.forEach(id=>{
         const avg=avgParentX(id);
         id._sort = (avg==null) ? (1e9 + id*10) : avg;
       });
       arr.sort((a,b)=>a._sort-b._sort);
 
-      // Разбиение на подстроки
       const rows=[];
       let cur=[],curW=0;
       arr.forEach(id=>{
@@ -1184,7 +1182,8 @@ try{
       currentY += rows.length*(NODE_H+GAP_Y)+GAP_Y*0.5;
     });
 
-    // Рёбра: только кровные (отец→ребёнок, мать→ребёнок)
+    // Рёбра: только кровные (отец→ребёнок и/или мать→ребёнок)
+    // Для каждого ребёнка — только те родители, что есть в дереве
     const edges=[];
     include.forEach(id=>{
       const p=M.get(id);if(!p)return;
@@ -1192,6 +1191,47 @@ try{
         if(par!=null&&include.has(par)&&nodePos.has(par)&&nodePos.has(id)){
           edges.push({from:par,to:id,onPath:pathSet.has(par)&&pathSet.has(id)});
         }
+      });
+    });
+
+    // Группируем детей по родителю — для расчёта шин
+    // busOf[parentId] = {parentId, kidIds:[...], level: index in sorted list of parents}
+    const kidsByParent=new Map();
+    edges.forEach(e=>{
+      if(!kidsByParent.has(e.from))kidsByParent.set(e.from,new Set());
+      kidsByParent.get(e.from).add(e.to);
+    });
+    // Каждому родителю — свой уровень шины (по номеру сверху вниз среди родителей текущего ряда)
+    // Шина должна быть над самым верхним ребёнком. Разные родители — разные уровни.
+    // Сортируем родителей по Y и X: сначала идут те, кто выше и левее.
+    const parentList=[...kidsByParent.keys()].map(pid=>({pid,pos:nodePos.get(pid),kids:[...kidsByParent.get(pid)]}));
+    parentList.sort((a,b)=>{
+      if(Math.abs(a.pos.y-b.pos.y)>1) return a.pos.y-b.pos.y;
+      return a.pos.x-b.pos.x;
+    });
+    // Группируем родителей по ряду (по y родителя) — в каждом ряду свой набор шин
+    const parentsByRowY=new Map();
+    parentList.forEach(pr=>{
+      const y=Math.round(pr.pos.y);
+      if(!parentsByRowY.has(y))parentsByRowY.set(y,[]);
+      parentsByRowY.get(y).push(pr);
+    });
+    // Для каждого родителя считаем yBus
+    // Промежуток между рядами = GAP_Y. Внутри — раскладываем шины.
+    const NODE_GAP_FROM_PARENT = NODE_H/2 + 12; // отступ от родителя до его шины
+    const buses = new Map(); // parentId -> yBus
+    parentsByRowY.forEach((parentsAtRow,yParent)=>{
+      const rowCount=parentsAtRow.length;
+      parentsAtRow.forEach((pr,i)=>{
+        // Разные уровни шин: от чуть ниже родителя (у первого) до чуть выше детей (у последнего)
+        // Дети самого верхнего ребёнка родителя:
+        const kidsY=Math.min(...pr.kids.map(k=>nodePos.get(k).y));
+        const yTop=yParent + NODE_GAP_FROM_PARENT;
+        const yBottom=kidsY - NODE_H/2 - 14;
+        // Раскидываем по индексу: 0 — ближе к родителю, last — ближе к детям
+        const t = rowCount>1 ? i/(rowCount-1) : 0.5;
+        const yBus = yTop + (yBottom-yTop)*t;
+        buses.set(pr.pid, yBus);
       });
     });
 
@@ -1203,7 +1243,7 @@ try{
     });
     const pad=40;minX-=pad;maxX+=pad;minY-=pad;maxY+=pad;
 
-    treeState={include,nodePos,edges,bbox:{minX,maxX,minY,maxY},nodeW:NODE_W,nodeH:NODE_H,panX:0,panY:0,scale:1,pathSet};
+    treeState={include,nodePos,edges,buses,bbox:{minX,maxX,minY,maxY},nodeW:NODE_W,nodeH:NODE_H,panX:0,panY:0,scale:1,pathSet};
 
     // Показать
     treeView.style.display='block';
@@ -1244,24 +1284,69 @@ try{
     g.setAttribute('transform','translate('+st.panX+','+st.panY+') scale('+st.scale+')');
     treeSvg.appendChild(g);
 
-    // Рёбра
+    // Группируем рёбра по родителю, чтобы рисовать шину один раз
+    const byParent=new Map();
     st.edges.forEach(e=>{
-      const a=st.nodePos.get(e.from),b=st.nodePos.get(e.to);
-      if(!a||!b)return;
-      const x1=a.x,y1=a.y+st.nodeH/2;
-      const x2=b.x,y2=b.y-st.nodeH/2;
-      const yMid=(y1+y2)/2;
-      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-      path.setAttribute('d','M'+x1+','+y1+' L'+x1+','+yMid+' L'+x2+','+yMid+' L'+x2+','+y2);
-      path.setAttribute('fill','none');
-      if(e.onPath){
-        path.setAttribute('stroke','#ffb733');
-        path.setAttribute('stroke-width','2.5');
-      } else {
-        path.setAttribute('stroke','#6f8296');
-        path.setAttribute('stroke-width','1.2');
+      if(!byParent.has(e.from))byParent.set(e.from,[]);
+      byParent.get(e.from).push(e);
+    });
+
+    // Рёбра
+    byParent.forEach((list,parentId)=>{
+      const a=st.nodePos.get(parentId);
+      if(!a)return;
+      const yBus = st.buses.get(parentId);
+      const pX = a.x;
+      const pY = a.y + st.nodeH/2;
+
+      // Если у родителя 1 ребёнок — прямая вертикаль от родителя к ребёнку
+      if(list.length===1){
+        const b=st.nodePos.get(list[0].to);
+        if(!b)return;
+        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d','M'+pX+','+pY+' L'+b.x+','+(b.y-st.nodeH/2));
+        path.setAttribute('fill','none');
+        if(list[0].onPath){path.setAttribute('stroke','#ffb733');path.setAttribute('stroke-width','2.5')}
+        else{path.setAttribute('stroke','#6f8296');path.setAttribute('stroke-width','1.2')}
+        g.appendChild(path);
+        return;
       }
-      g.appendChild(path);
+
+      // Несколько детей — используем шину
+      if(yBus==null) return;
+
+      // Вертикаль от родителя к шине
+      const pathUp=document.createElementNS('http://www.w3.org/2000/svg','path');
+      pathUp.setAttribute('d','M'+pX+','+pY+' L'+pX+','+yBus);
+      pathUp.setAttribute('fill','none');
+      pathUp.setAttribute('stroke','#6f8296');
+      pathUp.setAttribute('stroke-width','1.2');
+      g.appendChild(pathUp);
+
+      // Горизонтальная шина
+      const kidXs = list.map(e=>st.nodePos.get(e.to)).filter(Boolean).map(n=>n.x);
+      if(kidXs.length){
+        const x1=Math.min(pX, ...kidXs);
+        const x2=Math.max(pX, ...kidXs);
+        const busPath=document.createElementNS('http://www.w3.org/2000/svg','path');
+        busPath.setAttribute('d','M'+x1+','+yBus+' L'+x2+','+yBus);
+        busPath.setAttribute('fill','none');
+        busPath.setAttribute('stroke','#6f8296');
+        busPath.setAttribute('stroke-width','1.2');
+        g.appendChild(busPath);
+      }
+
+      // Вертикали от шины к каждому ребёнку
+      list.forEach(e=>{
+        const b=st.nodePos.get(e.to);
+        if(!b)return;
+        const pathDown=document.createElementNS('http://www.w3.org/2000/svg','path');
+        pathDown.setAttribute('d','M'+b.x+','+yBus+' L'+b.x+','+(b.y-st.nodeH/2));
+        pathDown.setAttribute('fill','none');
+        if(e.onPath){pathDown.setAttribute('stroke','#ffb733');pathDown.setAttribute('stroke-width','2.5')}
+        else{pathDown.setAttribute('stroke','#6f8296');pathDown.setAttribute('stroke-width','1.2')}
+        g.appendChild(pathDown);
+      });
     });
 
     // Узлы
@@ -1284,7 +1369,6 @@ try{
       rect.onclick=()=>{select(id)};
       g.appendChild(rect);
 
-      // Имя
       const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
       t1.setAttribute('x',x);t1.setAttribute('y',y-(p['Дата рождения']||p['Дата смерти']?3:h/2-11));
       t1.setAttribute('text-anchor','middle');
@@ -1298,7 +1382,6 @@ try{
       t1.textContent=name;
       g.appendChild(t1);
 
-      // Годы
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
       if(b||d){
@@ -1358,7 +1441,7 @@ try{
     cnv.width=W;cnv.height=H;
     const c=cnv.getContext('2d');
     c.fillStyle='#ffffff';c.fillRect(0,0,W,H);
-    // Фон 3D
+    // Фоновое 3D
     try{
       renderer.render(scene,camera);
       c.globalAlpha=0.15;
@@ -1370,7 +1453,6 @@ try{
     const s=Math.min((W-80)/bw,(H-160)/bh,2.5);
     const cx=(st.bbox.minX+st.bbox.maxX)/2,cy=(st.bbox.minY+st.bbox.maxY)/2;
     const panX=W/2-cx*s,panY=H/2-cy*s;
-    // Заголовок
     c.fillStyle='#111';c.font='bold 26px -apple-system,Segoe UI,Arial';c.textAlign='center';
     c.fillText('Древо от '+nm(M.get(treeRootId)),W/2,42);
     c.font='13px -apple-system,Segoe UI,Arial';c.fillStyle='#666';
@@ -1380,13 +1462,40 @@ try{
     c.translate(panX,panY+40);
     c.scale(s,s);
 
-    // Рёбра
+    // Рёбра — та же логика, что в renderTree
+    const byParent=new Map();
     st.edges.forEach(e=>{
-      const a=st.nodePos.get(e.from),b=st.nodePos.get(e.to);if(!a||!b)return;
-      const x1=a.x,y1=a.y+st.nodeH/2,x2=b.x,y2=b.y-st.nodeH/2,yMid=(y1+y2)/2;
-      c.beginPath();c.moveTo(x1,y1);c.lineTo(x1,yMid);c.lineTo(x2,yMid);c.lineTo(x2,y2);
-      if(e.onPath){c.strokeStyle='#c88a00';c.lineWidth=2.4}else{c.strokeStyle='#8899aa';c.lineWidth=1.2}
-      c.stroke();
+      if(!byParent.has(e.from))byParent.set(e.from,[]);
+      byParent.get(e.from).push(e);
+    });
+
+    byParent.forEach((list,parentId)=>{
+      const a=st.nodePos.get(parentId);
+      if(!a)return;
+      const yBus=st.buses.get(parentId);
+      const pX=a.x,pY=a.y+st.nodeH/2;
+      if(list.length===1){
+        const b=st.nodePos.get(list[0].to);if(!b)return;
+        c.beginPath();c.moveTo(pX,pY);c.lineTo(b.x,b.y-st.nodeH/2);
+        if(list[0].onPath){c.strokeStyle='#c88a00';c.lineWidth=2.4}else{c.strokeStyle='#8899aa';c.lineWidth=1.2}
+        c.stroke();return;
+      }
+      if(yBus==null)return;
+      // Вертикаль от родителя к шине
+      c.beginPath();c.moveTo(pX,pY);c.lineTo(pX,yBus);c.strokeStyle='#8899aa';c.lineWidth=1.2;c.stroke();
+      // Шина
+      const kidXs=list.map(e=>st.nodePos.get(e.to)).filter(Boolean).map(n=>n.x);
+      if(kidXs.length){
+        const x1=Math.min(pX,...kidXs),x2=Math.max(pX,...kidXs);
+        c.beginPath();c.moveTo(x1,yBus);c.lineTo(x2,yBus);c.strokeStyle='#8899aa';c.lineWidth=1.2;c.stroke();
+      }
+      // Вертикали к детям
+      list.forEach(e=>{
+        const b=st.nodePos.get(e.to);if(!b)return;
+        c.beginPath();c.moveTo(b.x,yBus);c.lineTo(b.x,b.y-st.nodeH/2);
+        if(e.onPath){c.strokeStyle='#c88a00';c.lineWidth=2.4}else{c.strokeStyle='#8899aa';c.lineWidth=1.2}
+        c.stroke();
+      });
     });
 
     // Узлы
@@ -1399,7 +1508,6 @@ try{
       else if(n.onPath){fill='#ffeebb';stroke='#c89000'}
       else if(p.Пол==='М'){fill='#dbe9f4';stroke='#5a6b7a'}
       else if(p.Пол==='Ж'){fill='#f6dde3';stroke='#7a5a65'}
-      // Скруглённый прямоугольник
       const rr=6;
       c.beginPath();
       c.moveTo(x-w/2+rr,y-h/2);
@@ -1410,11 +1518,9 @@ try{
       c.closePath();
       c.fillStyle=fill;c.fill();
       c.strokeStyle=stroke;c.lineWidth=n.isCenter?2:1.2;c.stroke();
-      // Имя
       c.fillStyle='#1f1c18';c.font='10px -apple-system,Segoe UI,Arial';c.textAlign='center';c.textBaseline='middle';
       let name=nm(p);if(name.length>18)name=name.slice(0,17)+'…';
       c.fillText(name,x,y-3);
-      // Годы
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
       if(b||d){
