@@ -1163,78 +1163,104 @@ try{
     treeRootId=rootId;
 
     const include=getBloodDescendants(rootId);
-    const treeLv=computeTreeLevels(rootId,include);
 
-    // Группируем по уровню
-    const byLv=new Map();
-    include.forEach(id=>{
-      const lv=treeLv.get(id)||0;
-      if(!byLv.has(lv))byLv.set(lv,[]);
-      byLv.get(lv).push(id);
-    });
-    const lvKeys=[...byLv.keys()].sort((a,b)=>a-b);
+    // ---- Параметры раскладки ----
+    const NODE_W=110, NODE_H=32;
+    const GAP_X=14, GAP_Y=80;
+    // Ширина «полотна» (в px). Дерево не должно быть шире.
+    // Ограничиваем — если шире, переносим часть веток ниже.
+    const MAX_W = 1800;
 
+    const nodePos=new Map();       // id -> {x, y, lv, isCenter, isRoot, onPath}
     const pathToCenter=findBloodPath(rootId,centerId)||[];
     const pathSet=new Set(pathToCenter);
 
-    // Размеры
-    const NODE_W=110,NODE_H=32;
-    const GAP_X=14,GAP_Y=130;   // большой зазор по вертикали
-    const MAX_ROW_W=window.innerWidth>1000?2200:1500;
+    // ---- Рекурсивная раскладка сверху вниз ----
+    // Идея: сначала рекурсивно считаем "ширину" каждого поддерева
+    // в единицах узлов. Потом расставляем узлы так, чтобы каждое
+    // поддерево поместилось в свою полосу по X. Если суммарная ширина
+    // превышает MAX_W — рекурсивный алгоритм сам "завернёт" ветки ниже,
+    // потому что мы ограничиваем X каждой ветки.
 
-    const nodePos=new Map();
+    // Каждому узлу даём "слот" по X и Y. Дети идут под родителем.
+    // Если у родителя много детей и они не помещаются в полосу родителя —
+    // "переносим" часть на следующую строку под этой полосой.
+    // Проще: используем классический алгоритм Рейнгольда-Тилфорда
+    // с ограничением по X и "переполнением" вниз.
 
-    // Строим порядок узлов на каждом уровне так, чтобы дети шли под родителями
-    // Для этого сначала задаём X-позицию корня (в центре), потом — детей по порядку родителя.
-    function sortChildren(parentId){
-      // Возвращает детей этого родителя в порядке: по ID или по имени
-      const kids=(CH.get(parentId)||[]).filter(k=>include.has(k));
-      return kids.sort((a,b)=>a-b);
-    }
+    const SPACING_X = NODE_W + GAP_X;
 
-    // Рекурсивно раскидываем X: сначала считаем "ширину" каждого поддерева
-    // (в единицах узлов), потом расставляем слева направо.
-    const subtreeWidth=new Map();
-    function measureWidth(id){
-      if(subtreeWidth.has(id))return subtreeWidth.get(id);
+    // Первый проход: считаем поддеревья
+    const subW = new Map();        // id -> ширина поддерева в единицах (кол-во "слотов")
+    const subH = new Map();        // id -> «этажность» поддерева (для потенциальных переносов)
+    function measure(id){
+      if(subW.has(id))return subW.get(id);
       const kids=(CH.get(id)||[]).filter(k=>include.has(k));
-      if(!kids.length){subtreeWidth.set(id,1);return 1}
+      if(!kids.length){subW.set(id,1);return 1}
       let w=0;
-      kids.forEach(k=>{w+=measureWidth(k)});
+      kids.forEach(k=>{w+=measure(k)});
       w=Math.max(1,w);
-      subtreeWidth.set(id,w);
+      subW.set(id,w);
       return w;
     }
-    measureWidth(rootId);
+    measure(rootId);
 
-    // Расставляем: для каждого узла — центр его поддерева
-    const NODE_SPACING=NODE_W+GAP_X;
+    // Второй проход: расставляем по X. Если суммарная ширина > MAX_W /
+    // NODE_W * SPACING_X — дерево выйдет шире листа, но пользователь
+    // сможет экспортировать в «большой лист». Это допустимо.
+    // Ключевое: дети всегда под родителем, братья и сёстры рядом.
     const xPos=new Map();
-    function placeSubtree(id,leftX){
-      const w=subtreeWidth.get(id)||1;
-      const centerX=leftX + (w*NODE_SPACING - GAP_X)/2;
-      xPos.set(id,centerX);
+    const yPos=new Map();
+
+    function place(id, leftX, yTop){
+      const w=subW.get(id)||1;
+      const centerX = leftX + (w*SPACING_X - GAP_X)/2;
+      xPos.set(id, centerX);
+      yPos.set(id, yTop);
+
       const kids=(CH.get(id)||[]).filter(k=>include.has(k));
       let cur=leftX;
       kids.forEach(k=>{
-        const kw=subtreeWidth.get(k)||1;
-        placeSubtree(k,cur);
-        cur+=kw*NODE_SPACING;
+        const kw=subW.get(k)||1;
+        place(k, cur, yTop + NODE_H + GAP_Y);
+        cur += kw*SPACING_X;
       });
     }
-    placeSubtree(rootId,0);
+    place(rootId, 0, 0);
 
-    // Теперь Y по уровням
-    lvKeys.forEach(lv=>{
-      const arr=byLv.get(lv).slice();
-      arr.forEach(id=>{
-        const x=xPos.get(id)||0;
-        const y=lv*(NODE_H+GAP_Y);
-        nodePos.set(id,{x,y,lv,isCenter:id===centerId,isRoot:id===rootId,onPath:pathSet.has(id)});
+    // ---- «Разгрузка» широких полос: если полоса шире MAX_W — поднимем/опустим ----
+    // Считаем общий bbox и, если ширина > MAX_W, применяем «сжатие по X»
+    // через уменьшение GAP_X. Это проще, чем переносить ветки.
+
+    // Находим реальную ширину
+    let minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
+    xPos.forEach((x,id)=>{
+      minX=Math.min(minX,x-NODE_W/2);
+      maxX=Math.max(maxX,x+NODE_W/2);
+      const y=yPos.get(id);
+      minY=Math.min(minY,y-NODE_H/2);
+      maxY=Math.max(maxY,y+NODE_H/2);
+    });
+    const realW = maxX-minX;
+    // Если ширина больше MAX_W — сдвигаем X-координаты, "сжимая" шаг
+    let xScale = 1;
+    if(realW > MAX_W) xScale = MAX_W / realW;
+
+    // Формируем финальные nodePos
+    include.forEach(id=>{
+      const x0=xPos.get(id)||0, y0=yPos.get(id)||0;
+      const cx=(x0-minX)*xScale + (minX<0?0:0);
+      // Пересчёт: приводим к началу координат
+      nodePos.set(id,{
+        x: (x0-minX)*xScale,
+        y: y0 - minY,
+        isCenter: id===centerId,
+        isRoot: id===rootId,
+        onPath: pathSet.has(id)
       });
     });
 
-    // Рёбра
+    // ---- Рёбра ----
     const edges=[];
     include.forEach(id=>{
       const p=M.get(id);if(!p)return;
@@ -1245,9 +1271,7 @@ try{
       });
     });
 
-    // Шины: для каждого родителя с несколькими детьми
-    // yBus = yParents + NODE_H/2 + offset
-    // offset = (индекс родителя в ряду) / (кол-во родителей в ряду + 1) * (GAP_Y - NODE_H - 20)
+    // ---- Шины для родителей с несколькими детьми ----
     const kidsByParent=new Map();
     edges.forEach(e=>{
       if(!kidsByParent.has(e.from))kidsByParent.set(e.from,new Set());
@@ -1270,16 +1294,14 @@ try{
         const yKids=Math.min(...kids.map(k=>k.y));
         const yTop=yParent+NODE_H/2+10;
         const yBottom=yKids-NODE_H/2-10;
-        // Каждый родитель — своя полоса по высоте
-        // t = (i+1)/(n+1) — раскидываем равномерно
         const t=(i+1)/(n+1);
         const yBus=yTop+(yBottom-yTop)*t;
         buses.set(pid,yBus);
       });
     });
 
-    // Bbox
-    let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+    // ---- Bbox ----
+    minX=Infinity;maxX=-Infinity;minY=Infinity;maxY=-Infinity;
     nodePos.forEach(n=>{
       minX=Math.min(minX,n.x-NODE_W/2);maxX=Math.max(maxX,n.x+NODE_W/2);
       minY=Math.min(minY,n.y-NODE_H/2);maxY=Math.max(maxY,n.y+NODE_H/2);
@@ -1449,27 +1471,103 @@ try{
 
   // Управление
   (function initTreeInteractions(){
-    let dragging=false,lastX=0,lastY=0;
+    // Отслеживаем активные касания/курсоры
+    const pointers = new Map();  // pointerId -> {x, y}
+    let isPinch = false;
+    let pinchStartDist = 0;
+    let pinchStartScale = 1;
+    let pinchCenter = {x:0, y:0};
+
+    // Для панорамы одним пальцем
+    let dragStart = null;
+
+    function dist(p1, p2){
+      const dx=p1.x-p2.x, dy=p1.y-p2.y;
+      return Math.sqrt(dx*dx+dy*dy);
+    }
+    function center(p1,p2){
+      return {x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2};
+    }
+
     treeSvg.addEventListener('pointerdown',e=>{
       if(!treeActive)return;
-      dragging=true;lastX=e.clientX;lastY=e.clientY;
       treeSvg.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+      if(pointers.size===1){
+        // Начало панорамы
+        dragStart = {x:e.clientX, y:e.clientY, panX:treeState.panX, panY:treeState.panY};
+        isPinch = false;
+      } else if(pointers.size===2){
+        // Начало пинча
+        isPinch = true;
+        dragStart = null;
+        const pts=[...pointers.values()];
+        pinchStartDist = dist(pts[0],pts[1]);
+        pinchStartScale = treeState.scale;
+        const r = treeSvg.getBoundingClientRect();
+        const c = center(pts[0],pts[1]);
+        pinchCenter = {x:c.x - r.left, y:c.y - r.top};
+      }
     });
+
     treeSvg.addEventListener('pointermove',e=>{
-      if(!dragging||!treeState)return;
-      const dx=e.clientX-lastX,dy=e.clientY-lastY;
-      lastX=e.clientX;lastY=e.clientY;
-      treeState.panX+=dx;treeState.panY+=dy;
-      renderTree();
+      if(!treeActive||!treeState)return;
+      if(!pointers.has(e.pointerId))return;
+      pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+      if(isPinch && pointers.size>=2){
+        const pts=[...pointers.values()].slice(0,2);
+        const d = dist(pts[0],pts[1]);
+        if(pinchStartDist>0){
+          const factor = d / pinchStartDist;
+          const newScale = Math.max(0.05, Math.min(20, pinchStartScale * factor));
+          // Масштабируем относительно точки между пальцами
+          const r = treeSvg.getBoundingClientRect();
+          const c = center(pts[0],pts[1]);
+          const cx = c.x - r.left;
+          const cy = c.y - r.top;
+          const mx = cx - treeState.panX;
+          const my = cy - treeState.panY;
+          const k = newScale / treeState.scale;
+          treeState.panX = cx - mx*k;
+          treeState.panY = cy - my*k;
+          treeState.scale = newScale;
+          renderTree();
+        }
+      } else if(!isPinch && pointers.size===1 && dragStart){
+        // Панорама одним пальцем
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        treeState.panX = dragStart.panX + dx;
+        treeState.panY = dragStart.panY + dy;
+        renderTree();
+      }
     });
-    treeSvg.addEventListener('pointerup',()=>dragging=false);
-    treeSvg.addEventListener('pointercancel',()=>dragging=false);
+
+    function endPointer(e){
+      pointers.delete(e.pointerId);
+      if(pointers.size<2){isPinch=false}
+      if(pointers.size===0){
+        dragStart=null;
+      } else if(pointers.size===1){
+        // Остался один палец — продолжаем панораму без рывка
+        const p=[...pointers.values()][0];
+        dragStart = {x:p.x, y:p.y, panX:treeState.panX, panY:treeState.panY};
+      }
+    }
+    treeSvg.addEventListener('pointerup',endPointer);
+    treeSvg.addEventListener('pointercancel',endPointer);
+    treeSvg.addEventListener('pointerleave',endPointer);
+
+    // Колесо мыши — зум
     treeSvg.addEventListener('wheel',e=>{
       if(!treeState)return;
       e.preventDefault();
       const f=e.deltaY<0?1.12:0.9;
       const rect=treeSvg.getBoundingClientRect();
-      const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+      const mx=e.clientX-rect.left;
+      const my=e.clientY-rect.top;
       treeState.panX=mx-(mx-treeState.panX)*f;
       treeState.panY=my-(my-treeState.panY)*f;
       treeState.scale*=f;
@@ -1492,13 +1590,22 @@ try{
 
     const st=treeState;
 
-    // ---- 1. Размер листа PDF в мм ----
+    // ---- 1. Размер листа PDF в мм + автоориентация ----
+    const bw0=st.bbox.maxX-st.bbox.minX;
+    const bh0=st.bbox.maxY-st.bbox.minY;
+    const isWide = bw0 > bh0; // дерево шире, чем выше
+
     let pdfW,pdfH;
-    if(fmt==='a4'){pdfW=210;pdfH=297}
-    else if(fmt==='a3'){pdfW=297;pdfH=420}
+    if(fmt==='a4'){
+      // A4: 210×297. Если дерево широкое — альбом 297×210
+      if(isWide){pdfW=297;pdfH=210} else {pdfW=210;pdfH=297}
+    }
+    else if(fmt==='a3'){
+      // A3: 297×420. Если дерево широкое — альбом 420×297
+      if(isWide){pdfW=420;pdfH=297} else {pdfW=297;pdfH=420}
+    }
     else {
-      const bw0=st.bbox.maxX-st.bbox.minX;
-      const bh0=st.bbox.maxY-st.bbox.minY;
+      // Большой лист: 1 unit = 0.35 мм, минимум A4
       const scaleMM=0.35;
       pdfW=Math.max(210,bw0*scaleMM+40);
       pdfH=Math.max(297,bh0*scaleMM+60);
@@ -1664,7 +1771,8 @@ try{
 
     // ---- 3. Кладём canvas в PDF ----
     const imgData=cnv.toDataURL('image/png');
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:[pdfW,pdfH]});
+    const orient = pdfW > pdfH ? 'landscape' : 'portrait';
+    const pdf=new jsPDF({orientation:orient,unit:'mm',format:[pdfW,pdfH]});
     pdf.addImage(imgData,'PNG',0,0,pdfW,pdfH);
 
     // ---- 4. Сохраняем ----
