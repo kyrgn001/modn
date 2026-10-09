@@ -1527,7 +1527,6 @@ try{
     const scale=Math.min(availW/bw,availH/bh);
     // Создаём отдельный SVG с абсолютными координатами
     const svgStr=buildSvgString(st,bw,bh);
-    // Оборачиваем в Blob → просим svg2pdf
     const parser=new DOMParser();
     const svgDoc=parser.parseFromString(svgStr,'image/svg+xml');
     const svgEl=svgDoc.documentElement;
@@ -1535,13 +1534,22 @@ try{
     // Позиционируем в PDF
     const offsetX=15;
     const offsetY=25;
-    pdf.svg(svgEl,{x:offsetX,y:offsetY,width:bw*scale,height:bh*scale});
 
-    // Имя файла
-    const stamp=new Date().toISOString().slice(0,10);
-    const rootName=(M.get(treeRootId).Имя||'root').replace(/\s+/g,'_');
-    pdf.save('tree_'+fmt+'_'+rootName+'_'+stamp+'.pdf');
-    toast('PDF сохранён ✓');
+    // svg2pdf — это ФУНКЦИЯ, а не метод pdf
+    // Вызываем её асинхронно, потом сохраняем
+    const run = (typeof window.svg2pdf==='function')
+      ? ()=>window.svg2pdf(svgEl, pdf, {x:offsetX, y:offsetY, width:bw*scale, height:bh*scale})
+      : ()=>Promise.reject(new Error('svg2pdf не является функцией'));
+
+    Promise.resolve(run()).then(()=>{
+      const stamp=new Date().toISOString().slice(0,10);
+      const rootName=(M.get(treeRootId).Имя||'root').replace(/\s+/g,'_');
+      pdf.save('tree_'+fmt+'_'+rootName+'_'+stamp+'.pdf');
+      toast('PDF сохранён ✓');
+    }).catch(err=>{
+      console.error(err);
+      toast('Ошибка PDF: '+(err.message||err),4000);
+    });
   }
 
   function buildSvgString(st,bw,bh){
