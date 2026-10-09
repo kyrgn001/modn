@@ -155,7 +155,6 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/svg2pdf.js@2.2.0/dist/svg2pdf.umd.min.js"></script>
 <script>
 window.addEventListener('error',e=>{
   const el=document.getElementById('err');el.style.display='block';
@@ -1483,150 +1482,197 @@ try{
   document.getElementById('pdfCancel').onclick=()=>{ pdfMenu.style.display='none' };
   document.getElementById('pdfMake').onclick=()=>{ pdfMenu.style.display='none'; exportTreePDF(); };
 
-  // ---------- PDF (векторный) ----------
+  // ---------- PDF (через canvas) ----------
   function exportTreePDF(){
     if(!treeState){toast('Дерево не открыто');return}
     if(typeof window.jspdf==='undefined'){toast('jsPDF не загрузился');return}
-    if(typeof window.svg2pdf==='undefined'){toast('svg2pdf не загрузился');return}
 
     const fmt=document.querySelector('input[name="pdfFormat"]:checked').value;
     const { jsPDF } = window.jspdf;
 
-    let pdfW,pdfH; // в мм
+    const st=treeState;
+
+    // ---- 1. Размер листа PDF в мм ----
+    let pdfW,pdfH;
     if(fmt==='a4'){pdfW=210;pdfH=297}
     else if(fmt==='a3'){pdfW=297;pdfH=420}
     else {
-      // большой лист — вычисляем по bbox
-      const st=treeState;
-      const bw=st.bbox.maxX-st.bbox.minX;
-      const bh=st.bbox.maxY-st.bbox.minY;
-      // Ориентировочно 1 unit = 0.35 мм
-      const scale=0.35;
-      pdfW=Math.max(210,bw*scale+40);
-      pdfH=Math.max(297,bh*scale+60);
+      const bw0=st.bbox.maxX-st.bbox.minX;
+      const bh0=st.bbox.maxY-st.bbox.minY;
+      const scaleMM=0.35;
+      pdfW=Math.max(210,bw0*scaleMM+40);
+      pdfH=Math.max(297,bh0*scaleMM+60);
     }
 
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:[pdfW,pdfH]});
+    // ---- 2. Рисуем дерево в off-screen canvas (300 dpi) ----
+    const DPI=300;
+    const PX_PER_MM=DPI/25.4;
+    const cnvW=Math.round(pdfW*PX_PER_MM);
+    const cnvH=Math.round(pdfH*PX_PER_MM);
 
-    // Заголовок
-    pdf.setFontSize(18);
-    pdf.text('Древо от '+nm(M.get(treeRootId)),pdfW/2,12,{align:'center'});
-    pdf.setFontSize(10);
-    pdf.setTextColor(120);
-    pdf.text('Всего: '+treeState.include.size+' человек · '+new Date().toLocaleDateString('ru-RU'),pdfW/2,18,{align:'center'});
-    pdf.setTextColor(0);
+    const cnv=document.createElement('canvas');
+    cnv.width=cnvW;
+    cnv.height=cnvH;
+    const c=cnv.getContext('2d');
 
-    // Готовим SVG для PDF: копируем разметку, но с фиксированным viewBox
-    const st=treeState;
+    c.fillStyle='#ffffff';
+    c.fillRect(0,0,cnvW,cnvH);
+
+    const padX=20*PX_PER_MM;
+    const padTop=30*PX_PER_MM;
+    const padBottom=15*PX_PER_MM;
+
+    const availW=cnvW-padX*2;
+    const availH=cnvH-padTop-padBottom;
+
     const bw=st.bbox.maxX-st.bbox.minX;
     const bh=st.bbox.maxY-st.bbox.minY;
-    // Отступ сверху под заголовок
-    const padMM=15;
-    const availW=pdfW-30;
-    const availH=pdfH-40;
-    const scale=Math.min(availW/bw,availH/bh);
-    // Создаём отдельный SVG с абсолютными координатами
-    const svgStr=buildSvgString(st,bw,bh);
-    const parser=new DOMParser();
-    const svgDoc=parser.parseFromString(svgStr,'image/svg+xml');
-    const svgEl=svgDoc.documentElement;
 
-    // Позиционируем в PDF
-    const offsetX=15;
-    const offsetY=25;
+    const scale=Math.min(availW/bw, availH/bh);
 
-    // svg2pdf — это ФУНКЦИЯ, а не метод pdf
-    // Вызываем её асинхронно, потом сохраняем
-    // svg2pdf из UMD-сборки лежит как window.svg2pdf.svg2pdf
-    let fn=null;
-    if(typeof window.svg2pdf==='function') fn=window.svg2pdf;
-    else if(window.svg2pdf && typeof window.svg2pdf.svg2pdf==='function') fn=window.svg2pdf.svg2pdf;
-    else if(window.svg2pdf && typeof window.svg2pdf.default==='function') fn=window.svg2pdf.default;
+    const offsetX=padX + (availW - bw*scale)/2;
+    const offsetY=padTop + (availH - bh*scale)/2;
 
-    if(!fn){
-      console.error('svg2pdf не найден. window.svg2pdf =', window.svg2pdf);
-      toast('svg2pdf: не могу найти функцию. Смотри консоль.',4000);
-      return;
-    }
+    // Заголовок
+    const titleFS=Math.round(14*PX_PER_MM/2.83);
+    c.fillStyle='#111111';
+    c.font='bold '+titleFS+'px -apple-system, "Segoe UI", Arial, sans-serif';
+    c.textAlign='center';
+    c.fillText('Древо от '+nm(M.get(treeRootId)), cnvW/2, Math.round(padTop*0.5));
 
-    const run = ()=>fn(svgEl, pdf, {x:offsetX, y:offsetY, width:bw*scale, height:bh*scale});
+    // Подзаголовок
+    const subFS=Math.round(9*PX_PER_MM/2.83);
+    c.fillStyle='#666666';
+    c.font=subFS+'px -apple-system, "Segoe UI", Arial, sans-serif';
+    c.fillText('Всего: '+st.include.size+' человек · '+new Date().toLocaleDateString('ru-RU'), cnvW/2, Math.round(padTop*0.8));
 
-    Promise.resolve(run()).then(()=>{
-      const stamp=new Date().toISOString().slice(0,10);
-      const rootName=(M.get(treeRootId).Имя||'root').replace(/\s+/g,'_');
-      pdf.save('tree_'+fmt+'_'+rootName+'_'+stamp+'.pdf');
-      toast('PDF сохранён ✓');
-    }).catch(err=>{
-      console.error(err);
-      toast('Ошибка PDF: '+(err.message||err),4000);
-    });
-  }
+    c.save();
+    c.translate(offsetX, offsetY);
+    c.scale(scale, scale);
 
-  function buildSvgString(st,bw,bh){
-    // Строим SVG с началом координат в bbox.minX, bbox.minY
-    const W=bw,H=bh;
-    const X0=st.bbox.minX, Y0=st.bbox.minY;
-    const NODE_W=st.nodeW,NODE_H=st.nodeH;
+    const NODE_W=st.nodeW;
+    const NODE_H=st.nodeH;
 
-    let s='<?xml version="1.0" encoding="UTF-8"?>';
-    s+='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="'+X0+' '+Y0+' '+W+' '+H+'">';
-    s+='<rect x="'+X0+'" y="'+Y0+'" width="'+W+'" height="'+H+'" fill="#ffffff"/>';
-
-    // Рёбра
+    // ---- Рёбра ----
     const byParent=new Map();
     st.edges.forEach(e=>{
       if(!byParent.has(e.from))byParent.set(e.from,[]);
       byParent.get(e.from).push(e);
     });
+
     byParent.forEach((list,parentId)=>{
-      const a=st.nodePos.get(parentId);if(!a)return;
+      const a=st.nodePos.get(parentId);
+      if(!a)return;
       const pX=a.x,pY=a.y+NODE_H/2;
+
       if(list.length===1){
-        const b=st.nodePos.get(list[0].to);if(!b)return;
+        const b=st.nodePos.get(list[0].to);
+        if(!b)return;
+        const isPath=list[0].onPath;
+        c.strokeStyle=isPath?'#c88a00':'#8899aa';
+        c.lineWidth=isPath?2.4:1.2;
+        c.beginPath();
         if(Math.abs(pX-b.x)<0.5){
-          s+='<line x1="'+pX+'" y1="'+pY+'" x2="'+pX+'" y2="'+(b.y-NODE_H/2)+'" stroke="'+(list[0].onPath?'#c88a00':'#8899aa')+'" stroke-width="'+(list[0].onPath?'2.4':'1.2')+'"/>';
+          c.moveTo(pX,pY);
+          c.lineTo(pX,b.y-NODE_H/2);
         } else {
           const yBus=b.y-NODE_H/2-20;
-          s+='<polyline points="'+pX+','+pY+' '+pX+','+yBus+' '+b.x+','+yBus+' '+b.x+','+(b.y-NODE_H/2)+'" fill="none" stroke="'+(list[0].onPath?'#c88a00':'#8899aa')+'" stroke-width="'+(list[0].onPath?'2.4':'1.2')+'"/>';
+          c.moveTo(pX,pY);
+          c.lineTo(pX,yBus);
+          c.lineTo(b.x,yBus);
+          c.lineTo(b.x,b.y-NODE_H/2);
         }
+        c.stroke();
         return;
       }
-      const yBus=st.buses.get(parentId);if(yBus==null)return;
-      s+='<line x1="'+pX+'" y1="'+pY+'" x2="'+pX+'" y2="'+yBus+'" stroke="#8899aa" stroke-width="1.2"/>';
+
+      const yBus=st.buses.get(parentId);
+      if(yBus==null)return;
+
+      c.strokeStyle='#8899aa';
+      c.lineWidth=1.2;
+      c.beginPath();
+      c.moveTo(pX,pY);
+      c.lineTo(pX,yBus);
+      c.stroke();
+
       const kidXs=list.map(e=>st.nodePos.get(e.to)).filter(Boolean).map(n=>n.x);
       if(kidXs.length){
         const x1=Math.min(pX,...kidXs),x2=Math.max(pX,...kidXs);
-        s+='<line x1="'+x1+'" y1="'+yBus+'" x2="'+x2+'" y2="'+yBus+'" stroke="#8899aa" stroke-width="1.2"/>';
+        c.beginPath();
+        c.moveTo(x1,yBus);
+        c.lineTo(x2,yBus);
+        c.stroke();
       }
+
       list.forEach(e=>{
-        const b=st.nodePos.get(e.to);if(!b)return;
-        s+='<line x1="'+b.x+'" y1="'+yBus+'" x2="'+b.x+'" y2="'+(b.y-NODE_H/2)+'" stroke="'+(e.onPath?'#c88a00':'#8899aa')+'" stroke-width="'+(e.onPath?'2.4':'1.2')+'"/>';
+        const b=st.nodePos.get(e.to);
+        if(!b)return;
+        c.strokeStyle=e.onPath?'#c88a00':'#8899aa';
+        c.lineWidth=e.onPath?2.4:1.2;
+        c.beginPath();
+        c.moveTo(b.x,yBus);
+        c.lineTo(b.x,b.y-NODE_H/2);
+        c.stroke();
       });
     });
 
-    // Узлы
+    // ---- Узлы ----
     st.nodePos.forEach((n,id)=>{
       const p=M.get(id);if(!p)return;
       const x=n.x,y=n.y,w=NODE_W,h=NODE_H;
+
       let fill='#eeeae5',stroke='#7a7168';
       if(n.isCenter){fill='#ffffff';stroke='#0099cc'}
       else if(n.isRoot){fill='#ffd966';stroke='#a87000'}
       else if(n.onPath){fill='#ffeebb';stroke='#c89000'}
       else if(p.Пол==='М'){fill='#dbe9f4';stroke='#5a6b7a'}
       else if(p.Пол==='Ж'){fill='#f6dde3';stroke='#7a5a65'}
-      s+='<rect x="'+(x-w/2)+'" y="'+(y-h/2)+'" width="'+w+'" height="'+h+'" rx="6" ry="6" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(n.isCenter?2:1.2)+'"/>';
-      const name=nm(p).slice(0,18);
-      s+='<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" font-size="10" font-family="Arial" fill="#1f1c18">'+escXml(name)+'</text>';
+
+      const rr=6;
+      c.beginPath();
+      c.moveTo(x-w/2+rr,y-h/2);
+      c.arcTo(x+w/2,y-h/2,x+w/2,y+h/2,rr);
+      c.arcTo(x+w/2,y+h/2,x-w/2,y+h/2,rr);
+      c.arcTo(x-w/2,y+h/2,x-w/2,y-h/2,rr);
+      c.arcTo(x-w/2,y-h/2,x+w/2,y-h/2,rr);
+      c.closePath();
+      c.fillStyle=fill;
+      c.fill();
+      c.strokeStyle=stroke;
+      c.lineWidth=n.isCenter?2:1.2;
+      c.stroke();
+
+      c.fillStyle='#1f1c18';
+      c.font=(n.isCenter?'bold ':'')+'10px -apple-system, "Segoe UI", Arial, sans-serif';
+      c.textAlign='center';
+      c.textBaseline='middle';
+      let name=nm(p);
+      if(name.length>18) name=name.slice(0,17)+'…';
+      c.fillText(name, x, y-3);
+
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
       if(b||d){
-        s+='<text x="'+x+'" y="'+(y+14)+'" text-anchor="middle" font-size="8" font-family="Arial" fill="#5c554d">'+escXml(b+(d?'–'+d:''))+'</text>';
+        c.fillStyle='#5c554d';
+        c.font='8px -apple-system, "Segoe UI", Arial, sans-serif';
+        c.fillText(b+(d?'–'+d:''), x, y+11);
       }
     });
-    s+='</svg>';
-    return s;
+
+    c.restore();
+
+    // ---- 3. Кладём canvas в PDF ----
+    const imgData=cnv.toDataURL('image/png');
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:[pdfW,pdfH]});
+    pdf.addImage(imgData,'PNG',0,0,pdfW,pdfH);
+
+    // ---- 4. Сохраняем ----
+    const stamp=new Date().toISOString().slice(0,10);
+    const rootName=(M.get(treeRootId).Имя||'root').replace(/\s+/g,'_');
+    pdf.save('tree_'+fmt+'_'+rootName+'_'+stamp+'.pdf');
+    toast('PDF сохранён ✓');
   }
-  function escXml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
   // ============================================================
   //  КАРТОЧКА ЧЕЛОВЕКА
