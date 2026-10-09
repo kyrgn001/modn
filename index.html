@@ -1338,7 +1338,131 @@ try{
     renderTree();
   }
 
-  // Только вертикальные и горизонтальные линии
+  // ----- Маршрутизация линий: свободные коридоры между узлами -----
+  // Строим сетку занятости. Каждый узел — препятствие (расширяем на 1px).
+  // Для каждой связи ищем путь A* от нижней грани родителя к верхней грани ребёнка.
+
+  function computeRoutes(st){
+    const NODE_W=st.nodeW, NODE_H=st.nodeH;
+    const pad=6;                        // отступ от узла — чтобы линии не касались
+    const STEP=6;                       // шаг сетки в px
+
+    // Границы карты
+    const minX=Math.floor(st.bbox.minX), maxX=Math.ceil(st.bbox.maxX);
+    const minY=Math.floor(st.bbox.minY), maxY=Math.ceil(st.bbox.maxY);
+    const cols=Math.ceil((maxX-minX)/STEP);
+    const rowsN=Math.ceil((maxY-minY)/STEP);
+
+    // Занятость: 0 — свободно, 1 — препятствие
+    const grid=new Uint8Array(cols*rowsN);
+    function markRect(x1,y1,x2,y2){
+      const c1=Math.max(0,Math.floor((x1-minX)/STEP));
+      const c2=Math.min(cols-1,Math.ceil((x2-minX)/STEP));
+      const r1=Math.max(0,Math.floor((y1-minY)/STEP));
+      const r2=Math.min(rowsN-1,Math.ceil((y2-minY)/STEP));
+      for(let r=r1;r<=r2;r++)for(let c=c1;c<=c2;c++)grid[r*cols+c]=1;
+    }
+
+    // Помечаем все узлы
+    st.nodePos.forEach((n,id)=>{
+      markRect(n.x-pad, n.y-pad, n.x+NODE_W+pad, n.y+NODE_H+pad);
+    });
+
+    // Очищаем клетки вокруг родителя и ребёнка — чтобы линия могла стартовать/финишировать
+    function clearRect(x1,y1,x2,y2){
+      const c1=Math.max(0,Math.floor((x1-minX)/STEP));
+      const c2=Math.min(cols-1,Math.ceil((x2-minX)/STEP));
+      const r1=Math.max(0,Math.floor((y1-minY)/STEP));
+      const r2=Math.min(rowsN-1,Math.ceil((y2-minY)/STEP));
+      for(let r=r1;r<=r2;r++)for(let c=c1;c<=c2;c++)grid[r*cols+c]=0;
+    }
+
+    const routes=[];
+
+    st.edges.forEach(e=>{
+      const a=st.nodePos.get(e.from);
+      const b=st.nodePos.get(e.to);
+      if(!a||!b) return;
+
+      // Старт — центр нижней грани родителя
+      const sx=a.x+NODE_W/2;
+      const sy=a.y+NODE_H;
+      // Финиш — центр верхней грани ребёнка
+      const fx=b.x+NODE_W/2;
+      const fy=b.y;
+
+      // Открываем клетки у старта и финиша
+      clearRect(sx-3, sy-3, sx+3, sy+6);
+      clearRect(fx-3, fy-6, fx+3, fy+3);
+
+      // BFS по сетке. 8 направлений → 4 (только ортогонально).
+      const sc=Math.round((sx-minX)/STEP);
+      const sr=Math.round((sy-minY)/STEP);
+      const fc=Math.round((fx-minX)/STEP);
+      const fr=Math.round((fy-minY)/STEP);
+
+      if(sc<0||sc>=cols||sr<0||sr>=rowsN||fc<0||fc>=cols||fr<0||fr>=rowsN){
+        routes.push([{x:sx,y:sy},{x:fx,y:sy},{x:fx,y:fy}]);
+        return;
+      }
+
+      const prev=new Int32Array(cols*rowsN).fill(-1);
+      const q=[sr*cols+sc];
+      prev[sr*cols+sc]=sr*cols+sc;
+      let found=false;
+      let head=0;
+      while(head<q.length){
+        const cur=q[head++];
+        if(cur===fr*cols+fc){ found=true; break; }
+        const r=Math.floor(cur/cols), c=cur%cols;
+        const nb=[[r-1,c],[r+1,c],[r,c-1],[r,c+1]];
+        for(const [nr,nc] of nb){
+          if(nr<0||nr>=rowsN||nc<0||nc>=cols) continue;
+          const idx=nr*cols+nc;
+          if(prev[idx]!==-1) continue;
+          if(grid[idx]===1) continue;
+          prev[idx]=cur;
+          q.push(idx);
+        }
+      }
+
+      if(!found){
+        // Не нашли путь — прямое Г-образное соединение
+        routes.push([{x:sx,y:sy},{x:sx,y:(sy+fy)/2},{x:fx,y:(sy+fy)/2},{x:fx,y:fy}]);
+        return;
+      }
+
+      // Собираем путь
+      const path=[];
+      let cur=fr*cols+fc;
+      while(true){
+        const r=Math.floor(cur/cols), c=cur%cols;
+        path.push({x:minX+c*STEP, y:minY+r*STEP});
+        if(cur===sr*cols+sc) break;
+        cur=prev[cur];
+        if(cur===sr*cols+sc){path.push({x:minX+(cur%cols)*STEP, y:minY+Math.floor(cur/cols)*STEP}); break;}
+      }
+      path.reverse();
+
+      // Упрощаем: убираем лишние промежуточные точки, если идут по прямой
+      const simplified=[path[0]];
+      for(let i=1;i<path.length-1;i++){
+        const p0=simplified[simplified.length-1];
+        const p1=path[i];
+        const p2=path[i+1];
+        const dx1=Math.sign(p1.x-p0.x), dy1=Math.sign(p1.y-p0.y);
+        const dx2=Math.sign(p2.x-p1.x), dy2=Math.sign(p2.y-p1.y);
+        if(dx1!==dx2||dy1!==dy2) simplified.push(p1);
+      }
+      simplified.push(path[path.length-1]);
+
+      // Обрезаем начало и конец, чтобы не торчали в узлы
+      routes.push(simplified);
+    });
+
+    return routes;
+  }
+
   function renderTree(){
     if(!treeState)return;
     const st=treeState;
@@ -1348,90 +1472,39 @@ try{
     g.setAttribute('transform','translate('+st.panX+','+st.panY+') scale('+st.scale+')');
     treeSvg.appendChild(g);
 
-    // Группируем по родителю
-    const byParent=new Map();
-    st.edges.forEach(e=>{
-      if(!byParent.has(e.from))byParent.set(e.from,[]);
-      byParent.get(e.from).push(e);
-    });
-
-    byParent.forEach((list,parentId)=>{
-      const a=st.nodePos.get(parentId);
-      if(!a)return;
-      const pX=a.x,pY=a.y+st.nodeH/2;
-
-      // Один ребёнок — прямая вертикаль
-      if(list.length===1){
-        const b=st.nodePos.get(list[0].to);
-        if(!b)return;
-        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-        path.setAttribute('d','M'+pX+','+pY+' L'+pX+','+(b.y-st.nodeH/2)+' M'+pX+','+(b.y-st.nodeH/2)+' L'+b.x+','+(b.y-st.nodeH/2));
-        // Проще: вертикаль от родителя до ребёнка, но если X отличается —
-        // только вертикальный + горизонтальный в точке перед ребёнком
-        if(Math.abs(pX-b.x)<0.5){
-          path.setAttribute('d','M'+pX+','+pY+' L'+pX+','+(b.y-st.nodeH/2));
-        } else {
-          // Вертикаль к шине, горизонталь к X ребёнка, вертикаль к ребёнку
-          const yBus=b.y-st.nodeH/2-20;
-          path.setAttribute('d','M'+pX+','+pY+' L'+pX+','+yBus+' L'+b.x+','+yBus+' L'+b.x+','+(b.y-st.nodeH/2));
-        }
-        path.setAttribute('fill','none');
-        if(list[0].onPath){path.setAttribute('stroke','#ffb733');path.setAttribute('stroke-width','2.5')}
-        else{path.setAttribute('stroke','#6f8296');path.setAttribute('stroke-width','1.2')}
-        g.appendChild(path);
-        return;
+    // Маршруты линий
+    const routes=computeRoutes(st);
+    st.edges.forEach((e,i)=>{
+      const route=routes[i];
+      if(!route||route.length<2) return;
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      let d='M'+route[0].x+','+route[0].y;
+      for(let k=1;k<route.length;k++) d+=' L'+route[k].x+','+route[k].y;
+      path.setAttribute('d',d);
+      path.setAttribute('fill','none');
+      if(e.onPath){
+        path.setAttribute('stroke','#ffb733');
+        path.setAttribute('stroke-width','2.5');
+      } else {
+        path.setAttribute('stroke','#6f8296');
+        path.setAttribute('stroke-width','1.2');
       }
-
-      // Несколько детей — используем шину
-      const yBus=st.buses.get(parentId);
-      if(yBus==null)return;
-
-      // Вертикаль от родителя к шине
-      const pathUp=document.createElementNS('http://www.w3.org/2000/svg','path');
-      pathUp.setAttribute('d','M'+pX+','+pY+' L'+pX+','+yBus);
-      pathUp.setAttribute('fill','none');
-      pathUp.setAttribute('stroke','#6f8296');
-      pathUp.setAttribute('stroke-width','1.2');
-      g.appendChild(pathUp);
-
-      // Горизонтальная шина
-      const kidXs=list.map(e=>st.nodePos.get(e.to)).filter(Boolean).map(n=>n.x);
-      if(kidXs.length){
-        const x1=Math.min(pX,...kidXs);
-        const x2=Math.max(pX,...kidXs);
-        const busPath=document.createElementNS('http://www.w3.org/2000/svg','path');
-        busPath.setAttribute('d','M'+x1+','+yBus+' L'+x2+','+yBus);
-        busPath.setAttribute('fill','none');
-        busPath.setAttribute('stroke','#6f8296');
-        busPath.setAttribute('stroke-width','1.2');
-        g.appendChild(busPath);
-      }
-
-      // Вертикали от шины к каждому ребёнку
-      list.forEach(e=>{
-        const b=st.nodePos.get(e.to);
-        if(!b)return;
-        const pathDown=document.createElementNS('http://www.w3.org/2000/svg','path');
-        pathDown.setAttribute('d','M'+b.x+','+yBus+' L'+b.x+','+(b.y-st.nodeH/2));
-        pathDown.setAttribute('fill','none');
-        if(e.onPath){pathDown.setAttribute('stroke','#ffb733');pathDown.setAttribute('stroke-width','2.5')}
-        else{pathDown.setAttribute('stroke','#6f8296');pathDown.setAttribute('stroke-width','1.2')}
-        g.appendChild(pathDown);
-      });
+      g.appendChild(path);
     });
 
     // Узлы
     st.nodePos.forEach((n,id)=>{
       const p=M.get(id);if(!p)return;
-      const x=n.x,y=n.y,w=st.nodeW,h=st.nodeH;
-      let fill='#eeeae5',stroke='#7a7168';
+      const x=n.x, y=n.y, w=st.nodeW, h=st.nodeH;
+      let fill='#eeeae5', stroke='#7a7168';
       if(n.isCenter){fill='#ffffff';stroke='#00e5ff'}
       else if(n.isRoot){fill='#ffd966';stroke='#a87000'}
       else if(n.onPath){fill='#ffeebb';stroke='#c89000'}
       else if(p.Пол==='М'){fill='#dbe9f4';stroke='#5a6b7a'}
       else if(p.Пол==='Ж'){fill='#f6dde3';stroke='#7a5a65'}
+
       const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      rect.setAttribute('x',x-w/2);rect.setAttribute('y',y-h/2);
+      rect.setAttribute('x',x);rect.setAttribute('y',y);
       rect.setAttribute('width',w);rect.setAttribute('height',h);
       rect.setAttribute('rx','6');rect.setAttribute('ry','6');
       rect.setAttribute('fill',fill);rect.setAttribute('stroke',stroke);
@@ -1441,8 +1514,11 @@ try{
       g.appendChild(rect);
 
       const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t1.setAttribute('x',x);t1.setAttribute('y',y-(p['Дата рождения']||p['Дата смерти']?3:h/2-11));
+      const hasYears = !!(p['Дата рождения']||p['Дата смерти']);
+      t1.setAttribute('x',x+w/2);
+      t1.setAttribute('y',hasYears?y+h/2-3:y+h/2+1);
       t1.setAttribute('text-anchor','middle');
+      t1.setAttribute('dominant-baseline','middle');
       t1.setAttribute('font-size','10');
       t1.setAttribute('font-family','-apple-system,Segoe UI,Arial');
       t1.setAttribute('fill','#1f1c18');
@@ -1457,7 +1533,8 @@ try{
       const d=(p['Дата смерти']||'').toString().slice(0,4);
       if(b||d){
         const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
-        t2.setAttribute('x',x);t2.setAttribute('y',y+10);
+        t2.setAttribute('x',x+w/2);
+        t2.setAttribute('y',y+h/2+11);
         t2.setAttribute('text-anchor','middle');
         t2.setAttribute('font-size','8');
         t2.setAttribute('font-family','-apple-system,Segoe UI,Arial');
