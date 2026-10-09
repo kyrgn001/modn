@@ -1537,9 +1537,19 @@ try{
 
     // svg2pdf — это ФУНКЦИЯ, а не метод pdf
     // Вызываем её асинхронно, потом сохраняем
-    const run = (typeof window.svg2pdf==='function')
-      ? ()=>window.svg2pdf(svgEl, pdf, {x:offsetX, y:offsetY, width:bw*scale, height:bh*scale})
-      : ()=>Promise.reject(new Error('svg2pdf не является функцией'));
+    // svg2pdf из UMD-сборки лежит как window.svg2pdf.svg2pdf
+    let fn=null;
+    if(typeof window.svg2pdf==='function') fn=window.svg2pdf;
+    else if(window.svg2pdf && typeof window.svg2pdf.svg2pdf==='function') fn=window.svg2pdf.svg2pdf;
+    else if(window.svg2pdf && typeof window.svg2pdf.default==='function') fn=window.svg2pdf.default;
+
+    if(!fn){
+      console.error('svg2pdf не найден. window.svg2pdf =', window.svg2pdf);
+      toast('svg2pdf: не могу найти функцию. Смотри консоль.',4000);
+      return;
+    }
+
+    const run = ()=>fn(svgEl, pdf, {x:offsetX, y:offsetY, width:bw*scale, height:bh*scale});
 
     Promise.resolve(run()).then(()=>{
       const stamp=new Date().toISOString().slice(0,10);
