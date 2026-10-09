@@ -62,6 +62,13 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 .root-item .ri-path{font-size:11px;color:#7d8a97;margin-top:3px}
 .root-item .ri-count{color:#7fd4ff;font-size:11px;margin-top:3px}
 .root-menu-inner .close-btn{margin-top:10px;padding:8px 16px;width:100%}
+.pdf-menu{position:fixed;inset:0;z-index:26;background:#02060acc;display:none;align-items:center;justify-content:center;padding:20px}
+.pdf-menu-inner{background:#0d141b;border:1px solid #1e2a35;border-radius:14px;padding:20px;max-width:420px;width:100%;color:#cfd8e0}
+.pdf-menu-inner h2{margin:0 0 12px;font-size:17px;color:#e8eef5}
+.pdf-menu-inner label{display:block;padding:10px;border:1px solid #1e2a35;border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.pdf-menu-inner label:hover{background:#141c26;border-color:#00e5ff}
+.pdf-menu-inner input{margin-right:8px}
+.pdf-menu-inner .desc{font-size:11px;color:#7d8a97;margin-left:24px;display:block;margin-top:3px}
 
 @media(max-width:800px){
   #ui{left:8px;right:8px;top:8px;gap:6px}
@@ -116,7 +123,7 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
 <div id="treeBar">
   <span class="ttl" id="treeTitle">🌳 Древо</span>
   <span class="hint">колесо — зум · перетаскивание — панорама · клик — карточка</span>
-  <button id="treePng">📄 Экспорт PNG</button>
+  <button id="treePng">📄 Экспорт PDF</button>
   <button id="treeBack">◀ Назад</button>
   <div class="root-tabs" id="rootTabs"></div>
 </div>
@@ -128,12 +135,27 @@ button:hover{background:#1a2733;border-color:#3a4d5e}#stats{margin-left:auto}
     <button class="close-btn" id="rootMenuClose">Отмена</button>
   </div>
 </div>
+<div id="pdfMenu" class="pdf-menu">
+  <div class="pdf-menu-inner">
+    <h2>Экспорт PDF</h2>
+    <label><input type="radio" name="pdfFormat" value="a4" checked> A4 (210×297 мм)
+      <span class="desc">Для деревьев до 60 человек</span></label>
+    <label><input type="radio" name="pdfFormat" value="a3"> A3 (297×420 мм)
+      <span class="desc">Для деревьев 60–150 человек</span></label>
+    <label><input type="radio" name="pdfFormat" value="big"> Большой лист
+      <span class="desc">Для деревьев 150+ человек. Один лист произвольного размера</span></label>
+    <button id="pdfMake" style="margin-top:8px;padding:10px;width:100%;background:#0a4a6b;border-color:#00e5ff;color:#00e5ff;font-weight:bold">Создать PDF</button>
+    <button id="pdfCancel" style="margin-top:6px;padding:8px;width:100%">Отмена</button>
+  </div>
+</div>
 
 <div id="err"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/svg2pdf.js/2.2.0/svg2pdf.umd.min.js"></script>
 <script>
 window.addEventListener('error',e=>{
   const el=document.getElementById('err');el.style.display='block';
@@ -1033,13 +1055,13 @@ try{
   const treeBar=document.getElementById('treeBar');
   const rootMenu=document.getElementById('rootMenu');
   const rootMenuList=document.getElementById('rootMenuList');
+  const pdfMenu=document.getElementById('pdfMenu');
   let treeState=null;
   let treeActive=false;
   let treeCenterId=null;
   let treeRootId=null;
   let allRoots=[];
 
-  // Собираем всех кровных потомков корня (без свойственников)
   function getBloodDescendants(rootId){
     const out=new Set();
     const q=[rootId];
@@ -1055,9 +1077,7 @@ try{
     return out;
   }
 
-  // Путь от корня до выбранного (кровный)
   function findBloodPath(rootId,targetId){
-    // BFS вниз только по кровным
     const prev=new Map();
     prev.set(rootId,null);
     const q=[rootId];
@@ -1075,7 +1095,6 @@ try{
     return path;
   }
 
-  // Находим все корни выбранного — все предки, у которых нет известных родителей
   function findAllRoots(id){
     const roots=new Set();
     const seen=new Set();
@@ -1088,9 +1107,8 @@ try{
       if(!p)continue;
       const hasF=p.father!=null&&M.has(p.father);
       const hasM=p.mother!=null&&M.has(p.mother);
-      if(!hasF&&!hasM){
-        roots.add(x);
-      } else {
+      if(!hasF&&!hasM){roots.add(x)}
+      else{
         if(hasF)stack.push(p.father);
         if(hasM)stack.push(p.mother);
       }
@@ -1103,7 +1121,6 @@ try{
     allRoots=findAllRoots(centerId);
     if(!allRoots.length){toast('У этого человека нет известных предков');return}
     rootMenuList.innerHTML='';
-    // Сортируем корни по «расстоянию» до выбранного
     allRoots.forEach(rid=>{
       const path=findBloodPath(rid,centerId);
       const desc=getBloodDescendants(rid);
@@ -1119,71 +1136,106 @@ try{
     rootMenu.style.display='flex';
   }
 
+  // Считаем уровни от корня — внутри дерева, а не по глобальному L
+  function computeTreeLevels(rootId,include){
+    const levels=new Map();
+    levels.set(rootId,0);
+    const q=[rootId];
+    while(q.length){
+      const x=q.shift();
+      const lv=levels.get(x);
+      (CH.get(x)||[]).forEach(k=>{
+        if(include.has(k)&&!levels.has(k)){
+          levels.set(k,lv+1);
+          q.push(k);
+        }
+      });
+    }
+    // На всякий случай — те, кто не достижим от корня, ставим в конец
+    let maxLv=0;
+    levels.forEach(v=>{if(v>maxLv)maxLv=v});
+    include.forEach(id=>{if(!levels.has(id))levels.set(id,maxLv+1)});
+    return levels;
+  }
+
   function openTreeView(centerId,rootId){
     if(!M.has(centerId)||!M.has(rootId)){toast('Не найдено');return}
     treeCenterId=centerId;
     treeRootId=rootId;
 
     const include=getBloodDescendants(rootId);
-    // Группируем по глобальному уровню L
+    const treeLv=computeTreeLevels(rootId,include);
+
+    // Группируем по уровню
     const byLv=new Map();
     include.forEach(id=>{
-      const lv=L.get(id)||0;
+      const lv=treeLv.get(id)||0;
       if(!byLv.has(lv))byLv.set(lv,[]);
       byLv.get(lv).push(id);
     });
     const lvKeys=[...byLv.keys()].sort((a,b)=>a-b);
 
-    // Путь от корня до выбранного
     const pathToCenter=findBloodPath(rootId,centerId)||[];
     const pathSet=new Set(pathToCenter);
 
-    // Размеры узлов
+    // Размеры
     const NODE_W=110,NODE_H=32;
-    const GAP_X=10,GAP_Y=95;               // увеличен зазор по вертикали
-    const MAX_ROW_W=window.innerWidth>1000?2000:1400;
+    const GAP_X=14,GAP_Y=130;   // большой зазор по вертикали
+    const MAX_ROW_W=window.innerWidth>1000?2200:1500;
 
     const nodePos=new Map();
-    function avgParentX(id){
-      const p=M.get(id);if(!p)return null;
-      const xs=[];
-      [p.father,p.mother].forEach(x=>{if(x!=null&&nodePos.has(x))xs.push(nodePos.get(x).x)});
-      if(!xs.length)return null;
-      return xs.reduce((a,b)=>a+b,0)/xs.length;
+
+    // Строим порядок узлов на каждом уровне так, чтобы дети шли под родителями
+    // Для этого сначала задаём X-позицию корня (в центре), потом — детей по порядку родителя.
+    function sortChildren(parentId){
+      // Возвращает детей этого родителя в порядке: по ID или по имени
+      const kids=(CH.get(parentId)||[]).filter(k=>include.has(k));
+      return kids.sort((a,b)=>a-b);
     }
 
-    let currentY=0;
+    // Рекурсивно раскидываем X: сначала считаем "ширину" каждого поддерева
+    // (в единицах узлов), потом расставляем слева направо.
+    const subtreeWidth=new Map();
+    function measureWidth(id){
+      if(subtreeWidth.has(id))return subtreeWidth.get(id);
+      const kids=(CH.get(id)||[]).filter(k=>include.has(k));
+      if(!kids.length){subtreeWidth.set(id,1);return 1}
+      let w=0;
+      kids.forEach(k=>{w+=measureWidth(k)});
+      w=Math.max(1,w);
+      subtreeWidth.set(id,w);
+      return w;
+    }
+    measureWidth(rootId);
+
+    // Расставляем: для каждого узла — центр его поддерева
+    const NODE_SPACING=NODE_W+GAP_X;
+    const xPos=new Map();
+    function placeSubtree(id,leftX){
+      const w=subtreeWidth.get(id)||1;
+      const centerX=leftX + (w*NODE_SPACING - GAP_X)/2;
+      xPos.set(id,centerX);
+      const kids=(CH.get(id)||[]).filter(k=>include.has(k));
+      let cur=leftX;
+      kids.forEach(k=>{
+        const kw=subtreeWidth.get(k)||1;
+        placeSubtree(k,cur);
+        cur+=kw*NODE_SPACING;
+      });
+    }
+    placeSubtree(rootId,0);
+
+    // Теперь Y по уровням
     lvKeys.forEach(lv=>{
       const arr=byLv.get(lv).slice();
       arr.forEach(id=>{
-        const avg=avgParentX(id);
-        id._sort = (avg==null) ? (1e9 + id*10) : avg;
+        const x=xPos.get(id)||0;
+        const y=lv*(NODE_H+GAP_Y);
+        nodePos.set(id,{x,y,lv,isCenter:id===centerId,isRoot:id===rootId,onPath:pathSet.has(id)});
       });
-      arr.sort((a,b)=>a._sort-b._sort);
-
-      const rows=[];
-      let cur=[],curW=0;
-      arr.forEach(id=>{
-        const w=NODE_W+GAP_X;
-        if(cur.length && curW+w>MAX_ROW_W){rows.push(cur);cur=[];curW=0}
-        cur.push(id);curW+=w;
-      });
-      if(cur.length)rows.push(cur);
-
-      rows.forEach((row,ri)=>{
-        const rowW=row.length*(NODE_W+GAP_X)-GAP_X;
-        const startX=-rowW/2;
-        row.forEach((id,i)=>{
-          const x=startX+i*(NODE_W+GAP_X)+NODE_W/2;
-          const y=currentY+ri*(NODE_H+GAP_Y);
-          nodePos.set(id,{x,y,lv,isCenter:id===centerId,isRoot:id===rootId,onPath:pathSet.has(id)});
-        });
-      });
-      currentY += rows.length*(NODE_H+GAP_Y)+GAP_Y*0.5;
     });
 
-    // Рёбра: только кровные (отец→ребёнок и/или мать→ребёнок)
-    // Для каждого ребёнка — только те родители, что есть в дереве
+    // Рёбра
     const edges=[];
     include.forEach(id=>{
       const p=M.get(id);if(!p)return;
@@ -1194,44 +1246,36 @@ try{
       });
     });
 
-    // Группируем детей по родителю — для расчёта шин
-    // busOf[parentId] = {parentId, kidIds:[...], level: index in sorted list of parents}
+    // Шины: для каждого родителя с несколькими детьми
+    // yBus = yParents + NODE_H/2 + offset
+    // offset = (индекс родителя в ряду) / (кол-во родителей в ряду + 1) * (GAP_Y - NODE_H - 20)
     const kidsByParent=new Map();
     edges.forEach(e=>{
       if(!kidsByParent.has(e.from))kidsByParent.set(e.from,new Set());
       kidsByParent.get(e.from).add(e.to);
     });
-    // Каждому родителю — свой уровень шины (по номеру сверху вниз среди родителей текущего ряда)
-    // Шина должна быть над самым верхним ребёнком. Разные родители — разные уровни.
-    // Сортируем родителей по Y и X: сначала идут те, кто выше и левее.
-    const parentList=[...kidsByParent.keys()].map(pid=>({pid,pos:nodePos.get(pid),kids:[...kidsByParent.get(pid)]}));
-    parentList.sort((a,b)=>{
-      if(Math.abs(a.pos.y-b.pos.y)>1) return a.pos.y-b.pos.y;
-      return a.pos.x-b.pos.x;
-    });
-    // Группируем родителей по ряду (по y родителя) — в каждом ряду свой набор шин
     const parentsByRowY=new Map();
-    parentList.forEach(pr=>{
-      const y=Math.round(pr.pos.y);
-      if(!parentsByRowY.has(y))parentsByRowY.set(y,[]);
-      parentsByRowY.get(y).push(pr);
+    [...kidsByParent.keys()].forEach(pid=>{
+      const pos=nodePos.get(pid);if(!pos)return;
+      const yKey=Math.round(pos.y);
+      if(!parentsByRowY.has(yKey))parentsByRowY.set(yKey,[]);
+      parentsByRowY.get(yKey).push(pid);
     });
-    // Для каждого родителя считаем yBus
-    // Промежуток между рядами = GAP_Y. Внутри — раскладываем шины.
-    const NODE_GAP_FROM_PARENT = NODE_H/2 + 12; // отступ от родителя до его шины
-    const buses = new Map(); // parentId -> yBus
+    const buses=new Map();
     parentsByRowY.forEach((parentsAtRow,yParent)=>{
-      const rowCount=parentsAtRow.length;
-      parentsAtRow.forEach((pr,i)=>{
-        // Разные уровни шин: от чуть ниже родителя (у первого) до чуть выше детей (у последнего)
-        // Дети самого верхнего ребёнка родителя:
-        const kidsY=Math.min(...pr.kids.map(k=>nodePos.get(k).y));
-        const yTop=yParent + NODE_GAP_FROM_PARENT;
-        const yBottom=kidsY - NODE_H/2 - 14;
-        // Раскидываем по индексу: 0 — ближе к родителю, last — ближе к детям
-        const t = rowCount>1 ? i/(rowCount-1) : 0.5;
-        const yBus = yTop + (yBottom-yTop)*t;
-        buses.set(pr.pid, yBus);
+      parentsAtRow.sort((a,b)=>(nodePos.get(a).x||0)-(nodePos.get(b).x||0));
+      const n=parentsAtRow.length;
+      parentsAtRow.forEach((pid,i)=>{
+        const kids=[...kidsByParent.get(pid)].map(k=>nodePos.get(k)).filter(Boolean);
+        if(!kids.length)return;
+        const yKids=Math.min(...kids.map(k=>k.y));
+        const yTop=yParent+NODE_H/2+10;
+        const yBottom=yKids-NODE_H/2-10;
+        // Каждый родитель — своя полоса по высоте
+        // t = (i+1)/(n+1) — раскидываем равномерно
+        const t=(i+1)/(n+1);
+        const yBus=yTop+(yBottom-yTop)*t;
+        buses.set(pid,yBus);
       });
     });
 
@@ -1241,18 +1285,16 @@ try{
       minX=Math.min(minX,n.x-NODE_W/2);maxX=Math.max(maxX,n.x+NODE_W/2);
       minY=Math.min(minY,n.y-NODE_H/2);maxY=Math.max(maxY,n.y+NODE_H/2);
     });
-    const pad=40;minX-=pad;maxX+=pad;minY-=pad;maxY+=pad;
+    const pad=60;minX-=pad;maxX+=pad;minY-=pad;maxY+=pad;
 
     treeState={include,nodePos,edges,buses,bbox:{minX,maxX,minY,maxY},nodeW:NODE_W,nodeH:NODE_H,panX:0,panY:0,scale:1,pathSet};
 
-    // Показать
     treeView.style.display='block';
     treeBar.style.display='flex';
     treeActive=true;
     document.getElementById('treeTitle').textContent='🌳 Древо от '+nm(M.get(rootId));
     renderTree();
     setTimeout(fitTree,30);
-    // 3D-фон
     if(renderer&&renderer.domElement){renderer.domElement.style.opacity='0.2';renderer.domElement.style.transition='opacity .3s'}
   }
 
@@ -1275,6 +1317,7 @@ try{
     renderTree();
   }
 
+  // Только вертикальные и горизонтальные линии
   function renderTree(){
     if(!treeState)return;
     const st=treeState;
@@ -1284,27 +1327,33 @@ try{
     g.setAttribute('transform','translate('+st.panX+','+st.panY+') scale('+st.scale+')');
     treeSvg.appendChild(g);
 
-    // Группируем рёбра по родителю, чтобы рисовать шину один раз
+    // Группируем по родителю
     const byParent=new Map();
     st.edges.forEach(e=>{
       if(!byParent.has(e.from))byParent.set(e.from,[]);
       byParent.get(e.from).push(e);
     });
 
-    // Рёбра
     byParent.forEach((list,parentId)=>{
       const a=st.nodePos.get(parentId);
       if(!a)return;
-      const yBus = st.buses.get(parentId);
-      const pX = a.x;
-      const pY = a.y + st.nodeH/2;
+      const pX=a.x,pY=a.y+st.nodeH/2;
 
-      // Если у родителя 1 ребёнок — прямая вертикаль от родителя к ребёнку
+      // Один ребёнок — прямая вертикаль
       if(list.length===1){
         const b=st.nodePos.get(list[0].to);
         if(!b)return;
         const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-        path.setAttribute('d','M'+pX+','+pY+' L'+b.x+','+(b.y-st.nodeH/2));
+        path.setAttribute('d','M'+pX+','+pY+' L'+pX+','+(b.y-st.nodeH/2)+' M'+pX+','+(b.y-st.nodeH/2)+' L'+b.x+','+(b.y-st.nodeH/2));
+        // Проще: вертикаль от родителя до ребёнка, но если X отличается —
+        // только вертикальный + горизонтальный в точке перед ребёнком
+        if(Math.abs(pX-b.x)<0.5){
+          path.setAttribute('d','M'+pX+','+pY+' L'+pX+','+(b.y-st.nodeH/2));
+        } else {
+          // Вертикаль к шине, горизонталь к X ребёнка, вертикаль к ребёнку
+          const yBus=b.y-st.nodeH/2-20;
+          path.setAttribute('d','M'+pX+','+pY+' L'+pX+','+yBus+' L'+b.x+','+yBus+' L'+b.x+','+(b.y-st.nodeH/2));
+        }
         path.setAttribute('fill','none');
         if(list[0].onPath){path.setAttribute('stroke','#ffb733');path.setAttribute('stroke-width','2.5')}
         else{path.setAttribute('stroke','#6f8296');path.setAttribute('stroke-width','1.2')}
@@ -1313,7 +1362,8 @@ try{
       }
 
       // Несколько детей — используем шину
-      if(yBus==null) return;
+      const yBus=st.buses.get(parentId);
+      if(yBus==null)return;
 
       // Вертикаль от родителя к шине
       const pathUp=document.createElementNS('http://www.w3.org/2000/svg','path');
@@ -1324,10 +1374,10 @@ try{
       g.appendChild(pathUp);
 
       // Горизонтальная шина
-      const kidXs = list.map(e=>st.nodePos.get(e.to)).filter(Boolean).map(n=>n.x);
+      const kidXs=list.map(e=>st.nodePos.get(e.to)).filter(Boolean).map(n=>n.x);
       if(kidXs.length){
-        const x1=Math.min(pX, ...kidXs);
-        const x2=Math.max(pX, ...kidXs);
+        const x1=Math.min(pX,...kidXs);
+        const x2=Math.max(pX,...kidXs);
         const busPath=document.createElementNS('http://www.w3.org/2000/svg','path');
         busPath.setAttribute('d','M'+x1+','+yBus+' L'+x2+','+yBus);
         busPath.setAttribute('fill','none');
@@ -1398,7 +1448,7 @@ try{
     });
   }
 
-  // Панорама и зум в SVG-дереве
+  // Управление
   (function initTreeInteractions(){
     let dragging=false,lastX=0,lastY=0;
     treeSvg.addEventListener('pointerdown',e=>{
@@ -1428,117 +1478,137 @@ try{
     },{passive:false});
   })();
 
-  // Кнопки дерева
   document.getElementById('treeBack').onclick=()=>closeTreeView();
-  document.getElementById('treePng').onclick=()=>exportTreePNG();
+  document.getElementById('treePng').onclick=()=>{ pdfMenu.style.display='flex' };
+  document.getElementById('pdfCancel').onclick=()=>{ pdfMenu.style.display='none' };
+  document.getElementById('pdfMake').onclick=()=>{ pdfMenu.style.display='none'; exportTreePDF(); };
 
-  function exportTreePNG(){
+  // ---------- PDF (векторный) ----------
+  function exportTreePDF(){
     if(!treeState){toast('Дерево не открыто');return}
+    if(typeof window.jspdf==='undefined'){toast('jsPDF не загрузился');return}
+    if(typeof window.svg2pdf==='undefined'){toast('svg2pdf не загрузился');return}
+
+    const fmt=document.querySelector('input[name="pdfFormat"]:checked').value;
+    const { jsPDF } = window.jspdf;
+
+    let pdfW,pdfH; // в мм
+    if(fmt==='a4'){pdfW=210;pdfH=297}
+    else if(fmt==='a3'){pdfW=297;pdfH=420}
+    else {
+      // большой лист — вычисляем по bbox
+      const st=treeState;
+      const bw=st.bbox.maxX-st.bbox.minX;
+      const bh=st.bbox.maxY-st.bbox.minY;
+      // Ориентировочно 1 unit = 0.35 мм
+      const scale=0.35;
+      pdfW=Math.max(210,bw*scale+40);
+      pdfH=Math.max(297,bh*scale+60);
+    }
+
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:[pdfW,pdfH]});
+
+    // Заголовок
+    pdf.setFontSize(18);
+    pdf.text('Древо от '+nm(M.get(treeRootId)),pdfW/2,12,{align:'center'});
+    pdf.setFontSize(10);
+    pdf.setTextColor(120);
+    pdf.text('Всего: '+treeState.include.size+' человек · '+new Date().toLocaleDateString('ru-RU'),pdfW/2,18,{align:'center'});
+    pdf.setTextColor(0);
+
+    // Готовим SVG для PDF: копируем разметку, но с фиксированным viewBox
     const st=treeState;
-    // A4 вертикальный 150 dpi
-    const W=1240,H=1754;
-    const cnv=document.createElement('canvas');
-    cnv.width=W;cnv.height=H;
-    const c=cnv.getContext('2d');
-    c.fillStyle='#ffffff';c.fillRect(0,0,W,H);
-    // Фоновое 3D
-    try{
-      renderer.render(scene,camera);
-      c.globalAlpha=0.15;
-      c.drawImage(renderer.domElement,0,0,W,H);
-      c.globalAlpha=1;
-    }catch(_){}
+    const bw=st.bbox.maxX-st.bbox.minX;
+    const bh=st.bbox.maxY-st.bbox.minY;
+    // Отступ сверху под заголовок
+    const padMM=15;
+    const availW=pdfW-30;
+    const availH=pdfH-40;
+    const scale=Math.min(availW/bw,availH/bh);
+    // Создаём отдельный SVG с абсолютными координатами
+    const svgStr=buildSvgString(st,bw,bh);
+    // Оборачиваем в Blob → просим svg2pdf
+    const parser=new DOMParser();
+    const svgDoc=parser.parseFromString(svgStr,'image/svg+xml');
+    const svgEl=svgDoc.documentElement;
 
-    const bw=st.bbox.maxX-st.bbox.minX,bh=st.bbox.maxY-st.bbox.minY;
-    const s=Math.min((W-80)/bw,(H-160)/bh,2.5);
-    const cx=(st.bbox.minX+st.bbox.maxX)/2,cy=(st.bbox.minY+st.bbox.maxY)/2;
-    const panX=W/2-cx*s,panY=H/2-cy*s;
-    c.fillStyle='#111';c.font='bold 26px -apple-system,Segoe UI,Arial';c.textAlign='center';
-    c.fillText('Древо от '+nm(M.get(treeRootId)),W/2,42);
-    c.font='13px -apple-system,Segoe UI,Arial';c.fillStyle='#666';
-    c.fillText('Всего: '+st.include.size+' человек · '+new Date().toLocaleDateString('ru-RU'),W/2,64);
+    // Позиционируем в PDF
+    const offsetX=15;
+    const offsetY=25;
+    pdf.svg(svgEl,{x:offsetX,y:offsetY,width:bw*scale,height:bh*scale});
 
-    c.save();
-    c.translate(panX,panY+40);
-    c.scale(s,s);
+    // Имя файла
+    const stamp=new Date().toISOString().slice(0,10);
+    const rootName=(M.get(treeRootId).Имя||'root').replace(/\s+/g,'_');
+    pdf.save('tree_'+fmt+'_'+rootName+'_'+stamp+'.pdf');
+    toast('PDF сохранён ✓');
+  }
 
-    // Рёбра — та же логика, что в renderTree
+  function buildSvgString(st,bw,bh){
+    // Строим SVG с началом координат в bbox.minX, bbox.minY
+    const W=bw,H=bh;
+    const X0=st.bbox.minX, Y0=st.bbox.minY;
+    const NODE_W=st.nodeW,NODE_H=st.nodeH;
+
+    let s='<?xml version="1.0" encoding="UTF-8"?>';
+    s+='<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+H+'" viewBox="'+X0+' '+Y0+' '+W+' '+H+'">';
+    s+='<rect x="'+X0+'" y="'+Y0+'" width="'+W+'" height="'+H+'" fill="#ffffff"/>';
+
+    // Рёбра
     const byParent=new Map();
     st.edges.forEach(e=>{
       if(!byParent.has(e.from))byParent.set(e.from,[]);
       byParent.get(e.from).push(e);
     });
-
     byParent.forEach((list,parentId)=>{
-      const a=st.nodePos.get(parentId);
-      if(!a)return;
-      const yBus=st.buses.get(parentId);
-      const pX=a.x,pY=a.y+st.nodeH/2;
+      const a=st.nodePos.get(parentId);if(!a)return;
+      const pX=a.x,pY=a.y+NODE_H/2;
       if(list.length===1){
         const b=st.nodePos.get(list[0].to);if(!b)return;
-        c.beginPath();c.moveTo(pX,pY);c.lineTo(b.x,b.y-st.nodeH/2);
-        if(list[0].onPath){c.strokeStyle='#c88a00';c.lineWidth=2.4}else{c.strokeStyle='#8899aa';c.lineWidth=1.2}
-        c.stroke();return;
+        if(Math.abs(pX-b.x)<0.5){
+          s+='<line x1="'+pX+'" y1="'+pY+'" x2="'+pX+'" y2="'+(b.y-NODE_H/2)+'" stroke="'+(list[0].onPath?'#c88a00':'#8899aa')+'" stroke-width="'+(list[0].onPath?'2.4':'1.2')+'"/>';
+        } else {
+          const yBus=b.y-NODE_H/2-20;
+          s+='<polyline points="'+pX+','+pY+' '+pX+','+yBus+' '+b.x+','+yBus+' '+b.x+','+(b.y-NODE_H/2)+'" fill="none" stroke="'+(list[0].onPath?'#c88a00':'#8899aa')+'" stroke-width="'+(list[0].onPath?'2.4':'1.2')+'"/>';
+        }
+        return;
       }
-      if(yBus==null)return;
-      // Вертикаль от родителя к шине
-      c.beginPath();c.moveTo(pX,pY);c.lineTo(pX,yBus);c.strokeStyle='#8899aa';c.lineWidth=1.2;c.stroke();
-      // Шина
+      const yBus=st.buses.get(parentId);if(yBus==null)return;
+      s+='<line x1="'+pX+'" y1="'+pY+'" x2="'+pX+'" y2="'+yBus+'" stroke="#8899aa" stroke-width="1.2"/>';
       const kidXs=list.map(e=>st.nodePos.get(e.to)).filter(Boolean).map(n=>n.x);
       if(kidXs.length){
         const x1=Math.min(pX,...kidXs),x2=Math.max(pX,...kidXs);
-        c.beginPath();c.moveTo(x1,yBus);c.lineTo(x2,yBus);c.strokeStyle='#8899aa';c.lineWidth=1.2;c.stroke();
+        s+='<line x1="'+x1+'" y1="'+yBus+'" x2="'+x2+'" y2="'+yBus+'" stroke="#8899aa" stroke-width="1.2"/>';
       }
-      // Вертикали к детям
       list.forEach(e=>{
         const b=st.nodePos.get(e.to);if(!b)return;
-        c.beginPath();c.moveTo(b.x,yBus);c.lineTo(b.x,b.y-st.nodeH/2);
-        if(e.onPath){c.strokeStyle='#c88a00';c.lineWidth=2.4}else{c.strokeStyle='#8899aa';c.lineWidth=1.2}
-        c.stroke();
+        s+='<line x1="'+b.x+'" y1="'+yBus+'" x2="'+b.x+'" y2="'+(b.y-NODE_H/2)+'" stroke="'+(e.onPath?'#c88a00':'#8899aa')+'" stroke-width="'+(e.onPath?'2.4':'1.2')+'"/>';
       });
     });
 
     // Узлы
     st.nodePos.forEach((n,id)=>{
       const p=M.get(id);if(!p)return;
-      const x=n.x,y=n.y,w=st.nodeW,h=st.nodeH;
+      const x=n.x,y=n.y,w=NODE_W,h=NODE_H;
       let fill='#eeeae5',stroke='#7a7168';
       if(n.isCenter){fill='#ffffff';stroke='#0099cc'}
       else if(n.isRoot){fill='#ffd966';stroke='#a87000'}
       else if(n.onPath){fill='#ffeebb';stroke='#c89000'}
       else if(p.Пол==='М'){fill='#dbe9f4';stroke='#5a6b7a'}
       else if(p.Пол==='Ж'){fill='#f6dde3';stroke='#7a5a65'}
-      const rr=6;
-      c.beginPath();
-      c.moveTo(x-w/2+rr,y-h/2);
-      c.arcTo(x+w/2,y-h/2,x+w/2,y+h/2,rr);
-      c.arcTo(x+w/2,y+h/2,x-w/2,y+h/2,rr);
-      c.arcTo(x-w/2,y+h/2,x-w/2,y-h/2,rr);
-      c.arcTo(x-w/2,y-h/2,x+w/2,y-h/2,rr);
-      c.closePath();
-      c.fillStyle=fill;c.fill();
-      c.strokeStyle=stroke;c.lineWidth=n.isCenter?2:1.2;c.stroke();
-      c.fillStyle='#1f1c18';c.font='10px -apple-system,Segoe UI,Arial';c.textAlign='center';c.textBaseline='middle';
-      let name=nm(p);if(name.length>18)name=name.slice(0,17)+'…';
-      c.fillText(name,x,y-3);
+      s+='<rect x="'+(x-w/2)+'" y="'+(y-h/2)+'" width="'+w+'" height="'+h+'" rx="6" ry="6" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+(n.isCenter?2:1.2)+'"/>';
+      const name=nm(p).slice(0,18);
+      s+='<text x="'+x+'" y="'+(y+3)+'" text-anchor="middle" font-size="10" font-family="Arial" fill="#1f1c18">'+escXml(name)+'</text>';
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
       if(b||d){
-        c.fillStyle='#5c554d';c.font='8px -apple-system,Segoe UI,Arial';
-        c.fillText(b+(d?'–'+d:''),x,y+11);
+        s+='<text x="'+x+'" y="'+(y+14)+'" text-anchor="middle" font-size="8" font-family="Arial" fill="#5c554d">'+escXml(b+(d?'–'+d:''))+'</text>';
       }
     });
-    c.restore();
-
-    const url=cnv.toDataURL('image/png');
-    const a=document.createElement('a');
-    const stamp=new Date().toISOString().slice(0,10);
-    a.href=url;a.download='tree_A4_'+stamp+'.png';
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    toast('PNG A4 сохранён ✓');
+    s+='</svg>';
+    return s;
   }
-
-  document.getElementById('rootMenuClose').onclick=()=>{rootMenu.style.display='none'};
+  function escXml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
   // ============================================================
   //  КАРТОЧКА ЧЕЛОВЕКА
