@@ -1645,10 +1645,27 @@ try{
 
   function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
 
-  let initial=BUILTIN_P;
-  try{const s=localStorage.getItem(KEY_DATA);if(s){const a=JSON.parse(s);if(Array.isArray(a)&&a.length)initial=a}}catch(_){}
-  applyData(initial);
+  // Сначала показываем встроенные данные (чтобы интерфейс не был пустым),
+  // потом асинхронно подгружаем data.json и, если он есть, переключаемся на него.
+  applyData(BUILTIN_P);
   animate();
+
+  fetch('data.json')
+    .then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(arr => {
+      if (!Array.isArray(arr) || !arr.length) throw new Error('пустой массив');
+      // Кэшируем в localStorage, чтобы при следующем открытии сразу показать
+      try { localStorage.setItem(KEY_DATA, JSON.stringify(arr)); } catch(_){}
+      applyData(arr);
+      toast('Загружено: ' + arr.length + ' человек из data.json');
+    })
+    .catch(err => {
+      console.warn('data.json не загрузился, используем встроенные данные:', err);
+      toast('data.json не загрузился: ' + err.message, 4000);
+    });
 
 }catch(err){
   const el=document.getElementById('err');
