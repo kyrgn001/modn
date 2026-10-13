@@ -513,7 +513,7 @@ p._halo=hs;spheresGroup.add(hs);
     const cKids=CH.get(c.ID)||[];
     if(cKids.includes(o.ID))return o.Пол==='М'?'сын':'дочь';
     const cKidsSet=new Set(cKids);let shared=false;(CH.get(o.ID)||[]).forEach(k=>{if(cKidsSet.has(k))shared=true});
-    if(shared)return o.Пол==='М'?'муж':'жена';
+    if(shared)return o.Пол==='М'?'отец ребёнка':'мать ребёнка';
     const anc=ancestors(centerId);
     if(anc.has(otherId)){
       let minUp=null;const q=[{id:centerId,d:0}],seen=new Set();
@@ -603,7 +603,58 @@ p._halo=hs;spheresGroup.add(hs);
         return male?prefix+' брат':prefix+' сестра';
       }
     }
+    // === СВОЙСТВЕННИКИ ЧЕРЕЗ БРАК ===
+    // Родители мужа/жены (если у самого человека брак известен через общего ребёнка)
+    const cKidsAll=(CH.get(c.ID)||[]).map(id=>M.get(id)).filter(Boolean);
+    const oKidsAll=(CH.get(o.ID)||[]).map(id=>M.get(id)).filter(Boolean);
+    // Ищем супруга/супругу "c" — человека, с которым есть общий ребёнок
+    const cSpouses=new Set();
+    cKidsAll.forEach(k=>{[k.father,k.mother].forEach(x=>{if(x!=null&&x!==c.ID&&M.has(x))cSpouses.add(x)})});
+    const oSpouses=new Set();
+    oKidsAll.forEach(k=>{[k.father,k.mother].forEach(x=>{if(x!=null&&x!==o.ID&&M.has(x))oSpouses.add(x)})});
 
+    // Если o — родитель супруга/супруги c
+    for(const spId of cSpouses){
+      const sp=M.get(spId);if(!sp)continue;
+      if(o.ID===sp.father){
+        // тесть — если c мужчина и sp — его жена; свёкор — если c женщина и sp — её муж
+        if(c.Пол==='М')return 'тесть';
+        if(c.Пол==='Ж')return 'свёкор';
+        return 'отец супруга';
+      }
+      if(o.ID===sp.mother){
+        if(c.Пол==='М')return 'тёща';
+        if(c.Пол==='Ж')return 'свекровь';
+        return 'мать супруга';
+      }
+    }
+    // Если o — супруг(а) ребёнка c
+    for(const kidId of (CH.get(c.ID)||[])){
+      const kid=M.get(kidId);if(!kid)continue;
+      const kidSpouses=new Set();
+      [kid.father,kid.mother].forEach(x=>{if(x!=null&&x!==c.ID&&M.has(x))kidSpouses.add(x)});
+      if(kidSpouses.has(o.ID)){
+        if(kid.Пол==='Ж')return 'зять';       // муж дочери
+        if(kid.Пол==='М')return 'невестка';   // жена сына
+        return 'супруг(а) ребёнка';
+      }
+    }
+    // Брат/сестра супруга
+    for(const spId of cSpouses){
+      const sp=M.get(spId);if(!sp)continue;
+      const spParents=[sp.father,sp.mother].filter(x=>x!=null);
+      const oParents=[o.father,o.mother].filter(x=>x!=null);
+      if(spParents.some(p=>oParents.includes(p))){
+        // o — брат/сестра супруга c
+        if(c.Пол==='М'){
+          // для мужа: брат жены = свояк, сестра жены = свояченица
+          return o.Пол==='М'?'свояк':'свояченица';
+        } else {
+          // для жены: брат мужа = деверь, сестра мужа = золовка
+          return o.Пол==='М'?'деверь':'золовка';
+        }
+      }
+    }
     return 'родственник';
   }
 
