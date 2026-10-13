@@ -283,7 +283,7 @@ try{
   scene.fog=new THREE.FogExp2(0x02060a,0.00022);
   const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,1,30000);
   camera.position.set(0,700,1600);
-  const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+  const renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setSize(innerWidth,innerHeight);
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
   document.body.appendChild(renderer.domElement);
@@ -440,8 +440,9 @@ try{
       spr.position.copy(pos.clone().add(new THREE.Vector3(0,r+18,0)));
       spr.userData.id=p.ID;labelsGroup.add(spr);labels.set(p.ID,spr);
       const hmat=new THREE.SpriteMaterial({map:haloTex,color:col.clone().multiplyScalar(1.4),transparent:true,opacity:0.55,blending:THREE.AdditiveBlending,depthWrite:false});
-      const hs=new THREE.Sprite(hmat);hs.scale.set(r*6,r*6,1);hs.position.copy(pos);hs.userData.id=p.ID;
-      p._halo=hs;spheresGroup.add(hs);
+const hs=new THREE.Sprite(hmat);hs.scale.set(r*6,r*6,1);hs.position.copy(pos);hs.userData.id=p.ID;
+hs.userData.baseColor=hmat.color.clone();   // ← НОВАЯ СТРОКА
+p._halo=hs;spheresGroup.add(hs);
     });
     edgeDefs=[];
     P.forEach(c=>{par(c).forEach(pid=>edgeDefs.push({from:pid,to:c.ID,type:'parent'}))});
@@ -501,6 +502,11 @@ try{
   function inLawAncestors(id){const inLaws=inLawCloud(id);const out=new Set();inLaws.forEach(lawId=>{ancestors(lawId).forEach(a=>{if(!out.has(a))out.add(a)})});const ownBlood=new Set([id,...ancestors(id),...descendants(id),...inLaws]);const filtered=new Set();out.forEach(a=>{if(!ownBlood.has(a))filtered.add(a)});return filtered}
 
   function relationLabel(centerId,otherId){
+    function ordinal(n){
+    // 1 → двоюродный, 2 → троюродный, 3 → четвероюродный, ...
+    const names=['','двоюродный','троюродный','четвероюродный','пятиюродный','шестиюродный','семиюродный','восьмиюродный','девятиюродный','десятиюродный'];
+    return names[n]||n+'-юродный';
+    }
     const c=M.get(centerId),o=M.get(otherId);if(!c||!o)return '';
     if(centerId===otherId)return 'это он(а)';
     if(o.ID===c.father)return 'отец';if(o.ID===c.mother)return 'мать';
@@ -526,7 +532,78 @@ try{
     for(const pid of cParents){const parP=M.get(pid);if(!parP)continue;const pParents=[parP.father,parP.mother].filter(x=>x!=null);if(pParents.some(pp=>oParents.includes(pp)))return o.Пол==='М'?'дядя':'тётя'}
     const sibs=new Set();
     P.forEach(x=>{if(x.ID===c.ID)return;const xP=[x.father,x.mother].filter(y=>y!=null);if(xP.some(p=>cParents.includes(p)))sibs.add(x.ID)});
-    for(const sid of sibs){if((CH.get(sid)||[]).includes(otherId))return o.Пол==='М'?'племянник':'племянница'}
+        for(const sid of sibs){if((CH.get(sid)||[]).includes(otherId))return o.Пол==='М'?'племянник':'племянница'}
+
+    // === ДВОЮРОДНЫЕ ===
+    // Ищем ближайшего общего предка и считаем шаги вверх от каждого.
+    const ancC=new Map(),ancO=new Map();
+    (function fill(map,startId){
+      const q=[{id:startId,d:0}],seen=new Set();
+      while(q.length){
+        const {id,d}=q.shift();
+        if(seen.has(id))continue;
+        seen.add(id);
+        const per=M.get(id);if(!per)continue;
+        [per.father,per.mother].forEach(x=>{
+          if(x!=null&&M.has(x)){map.set(x,Math.min(map.get(x)??999,d+1));q.push({id:x,d:d+1})}
+        });
+      }
+    })(ancC,c.ID);
+    (function fill(map,startId){
+      const q=[{id:startId,d:0}],seen=new Set();
+      while(q.length){
+        const {id,d}=q.shift();
+        if(seen.has(id))continue;
+        seen.add(id);
+        const per=M.get(id);if(!per)continue;
+        [per.father,per.mother].forEach(x=>{
+          if(x!=null&&M.has(x)){map.set(x,Math.min(map.get(x)??999,d+1));q.push({id:x,d:d+1})}
+        });
+      }
+    })(ancO,o.ID);
+
+    // Общие предки
+    let bestCommon=null,bestUpC=0,bestUpO=0,bestSum=999;
+    ancC.forEach((upC,ancId)=>{
+      if(!ancO.has(ancId))return;
+      const upO=ancO.get(ancId);
+      const sum=upC+upO;
+      if(sum<bestSum){bestSum=sum;bestCommon=ancId;bestUpC=upC;bestUpO=upO}
+    });
+
+    if(bestCommon!=null){
+      const male=o.Пол==='М';
+      // Двоюродные: оба родителя отошли от общего предка на 1, а сами на 2 шага вверх
+      if(bestUpC===2&&bestUpO===2){
+        return male?'двоюродный брат':'двоюродная сестра';
+      }
+      // Троюродные: оба на 3 шага
+      if(bestUpC===3&&bestUpO===3){
+        return male?'троюродный брат':'троюродная сестра';
+      }
+      // Двоюродный дядя/тётя: общий предок на 2 от меня и на 1 от него
+      if(bestUpC===2&&bestUpO===1){
+        return male?'двоюродный дядя':'двоюродная тётя';
+      }
+      // Двоюродный племянник: общий предок на 1 от меня и на 2 от него
+      if(bestUpC===1&&bestUpO===2){
+        return male?'двоюродный племянник':'двоюродная племянница';
+      }
+      // Троюродный дядя/тётя и племянник
+      if(bestUpC===3&&bestUpO===1){
+        return male?'троюродный дядя':'троюродная тётя';
+      }
+      if(bestUpC===1&&bestUpO===3){
+        return male?'троюродный племянник':'троюродная племянница';
+      }
+      // Обобщение для N-юродных на одном уровне
+      if(bestUpC>=4&&bestUpC===bestUpO){
+        const n=bestUpC-1;
+        const prefix=ordinal(n);   // "четвероюродный" и т.д.
+        return male?prefix+' брат':prefix+' сестра';
+      }
+    }
+
     return 'родственник';
   }
 
@@ -565,9 +642,13 @@ try{
 
   const dom=renderer.domElement;
   dom.addEventListener('pointerdown',e=>{if(e.button!==0)return;downPos={x:e.clientX,y:e.clientY}});
-  dom.addEventListener('pointermove',e=>{
-    if(!downPos)return;
-    const moved=Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y);
+  let lastPointerMoveTime=0;
+dom.addEventListener('pointermove',e=>{
+  const now=performance.now();
+  if(now-lastPointerMoveTime<30)return;
+  lastPointerMoveTime=now;
+  if(!downPos)return;
+  const moved=Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y);
     if(!dragState){
       if(moved<4)return;
       mouse.x=(downPos.x/innerWidth)*2-1;mouse.y=-(downPos.y/innerHeight)*2+1;
@@ -642,7 +723,7 @@ try{
       m.material.emissiveIntensity=1;m.material.opacity=1;m.material.transparent=false;
       const s=m.userData.baseScale;m.scale.set(s,s,s);
       const lb=labels.get(id);if(lb)lb.material.opacity=0.85;
-      const p=M.get(id);if(p&&p._halo){p._halo.material.opacity=0.55;p._halo.material.color.copy(p.userData_baseHalo||p._halo.material.color)}
+      const p=M.get(id);if(p&&p._halo){p._halo.material.opacity=0.55;p._halo.material.color.copy(p._halo.userData.baseColor)}
     });
     lineObjects.forEach(g=>{g.traverse(o=>{if(o.material&&o.userData._baseColor){o.material.color.copy(o.userData._baseColor);o.material.opacity=o.userData._baseOpacity}})});
   }
@@ -650,8 +731,7 @@ try{
     clearHighlight();
     const anc=ancestors(id),desc=descendants(id),inLaws=inLawCloud(id),lawAnc=inLawAncestors(id);
     const all=new Set([id,...anc,...desc,...inLaws,...lawAnc]);
-    spheres.forEach((m,mid)=>{const p=M.get(mid);if(p&&p._halo&&!p.userData_baseHalo)p.userData_baseHalo=p._halo.material.color.clone()});
-    spheres.forEach((m,mid)=>{
+      spheres.forEach((m,mid)=>{
       const p=M.get(mid);const halo=p&&p._halo;
       if(mid===id){m.material.color.set(COLOR.selected);m.material.emissive.set(COLOR.selectedGlow);m.material.emissiveIntensity=1.6;const s=m.userData.baseScale;m.scale.set(s*1.6,s*1.6,s*1.6);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.selectedGlow)}}
       else if(anc.has(mid)){m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.ancEmissive);m.material.emissiveIntensity=1.1;const s=m.userData.baseScale;m.scale.set(s*1.18,s*1.18,s*1.18);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.ancGlow)}}
