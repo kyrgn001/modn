@@ -241,7 +241,7 @@ try{
   let savedPositions={};
   try{savedPositions=JSON.parse(localStorage.getItem(KEY_POS)||'{}')}catch(e){}
 
-  const nm=p=>[p.Фамилия,p.Имя,p.Отчество].filter(Boolean).join(' ')||('ID '+p.ID);
+  const nm=p=>[p.Фамилия,p.Имя].filter(Boolean).join(' ')||('ID '+p.ID);
   const par=p=>[p.father,p.mother].filter(x=>x!=null&&M.has(x));
 
   function buildGraph(arr){
@@ -1270,10 +1270,9 @@ dom.addEventListener('pointermove',e=>{
       rect.onclick=()=>{select(id)};
       g.appendChild(rect);
 
-      const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
-      const hasYears=!!(p['Дата рождения']||p['Дата смерти']);
+            const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
       t1.setAttribute('x',x+w/2);
-      t1.setAttribute('y',hasYears?y+h/2-3:y+h/2+1);
+      t1.setAttribute('y',y+h/2-3);
       t1.setAttribute('text-anchor','middle');
       t1.setAttribute('dominant-baseline','middle');
       t1.setAttribute('font-size','10');
@@ -1288,7 +1287,9 @@ dom.addEventListener('pointermove',e=>{
 
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
-      if(b||d){
+      // Живой → только год рождения. Умерший → годы жизни через тире.
+      const years = b && d ? (b + '–' + d) : (b || '');
+      if(years){
         const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
         t2.setAttribute('x',x+w/2);
         t2.setAttribute('y',y+h/2+11);
@@ -1297,7 +1298,7 @@ dom.addEventListener('pointermove',e=>{
         t2.setAttribute('font-family','-apple-system,Segoe UI,Arial');
         t2.setAttribute('fill','#5c554d');
         t2.style.pointerEvents='none';
-        t2.textContent=b+(d?'–'+d:'');
+        t2.textContent=years;
         g.appendChild(t2);
       }
     });
@@ -1518,21 +1519,22 @@ dom.addEventListener('pointermove',e=>{
       c.lineWidth=n.isCenter?2:1.2;
       c.stroke();
 
-      c.fillStyle='#1f1c18';
+           c.fillStyle='#1f1c18';
       c.font=(n.isCenter?'bold ':'')+'10px -apple-system, "Segoe UI", Arial, sans-serif';
       c.textAlign='center';
       c.textBaseline='middle';
       let name=nm(p);
       if(name.length>18) name=name.slice(0,17)+'…';
-      const hasYears=!!(p['Дата рождения']||p['Дата смерти']);
-      c.fillText(name, x+w/2, hasYears?y+h/2-3:y+h/2+1);
+      c.fillText(name, x+w/2, y+h/2-3);
 
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
-      if(b||d){
+      // Живой → только год рождения. Умерший → годы жизни через тире.
+      const years = b && d ? (b + '–' + d) : (b || '');
+      if(years){
         c.fillStyle='#5c554d';
         c.font='8px -apple-system, "Segoe UI", Arial, sans-serif';
-        c.fillText(b+(d?'–'+d:''), x+w/2, y+h/2+11);
+        c.fillText(years, x+w/2, y+h/2+11);
       }
     });
 
