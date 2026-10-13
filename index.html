@@ -150,6 +150,10 @@ window.addEventListener('error',e=>{
   const el=document.getElementById('err');el.style.display='block';
   el.textContent+='[ERR] '+(e.message||e.error)+' @ '+(e.filename||'')+':'+(e.lineno||'')+'\n';
 });
+window.addEventListener('unhandledrejection',e=>{
+  const el=document.getElementById('err');el.style.display='block';
+  el.textContent+='[PROMISE] '+(e.reason&&e.reason.message?e.reason.message:e.reason)+'\n';
+});
 function toast(msg,ms){
   const t=document.getElementById('toast');
   t.textContent=msg;t.style.display='block';
@@ -166,56 +170,56 @@ function hideLoading(){document.getElementById('loading').style.display='none'}
 <script>
 // ============ ДАННЫЕ ============
 const BUILTIN_P=[
-{"ID":1,"Фамилия":"","Имя":"Маҗр","Отчество":"","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":2,"Фамилия":"Маджаров","Имя":"Санҗ","Отчество":"","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"1","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":3,"Фамилия":"Маджаров","Имя":"Боова (Бүбе) 1864","Отчество":"Санджиевич?","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"2","ID Матери":"","Дата рождения":"1864","Место рождения":"","Дата смерти":""},
-{"ID":4,"Фамилия":"Маджаров","Имя":"Басң","Отчество":"Санджиевич?","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"2","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":5,"Фамилия":"","Имя":"Эренджен","Отчество":"Боован","Пол":"М","Род / Ветка":"","ID Отца":"3","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":6,"Фамилия":"Эрендженов","Имя":"Николай","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"5","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":7,"Фамилия":"Басангов","Имя":"Манҗ","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"4","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":8,"Фамилия":"","Имя":"Кевельджен","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":9,"Фамилия":"","Имя":"Йисн","Отчество":"Кевельдженовна","Пол":"Ж","Род / Ветка":"","ID Отца":"8","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":10,"Фамилия":"","Имя":"Эльзятя","Отчество":"","Пол":"Ж","Род / Ветка":"","ID Отца":"4","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":11,"Фамилия":"","Имя":"Баатр","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":12,"Фамилия":"","Имя":"Чувиг","Отчество":"Баатрн","Пол":"М","Род / Ветка":"","ID Отца":"11","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":13,"Фамилия":"Басангов","Имя":"Эрдни","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"7","ID Матери":"9","Дата рождения":"1913","Место рождения":"","Дата смерти":"1965"},
-{"ID":14,"Фамилия":"Басангов","Имя":"Бүдә","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"7","ID Матери":"9","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":15,"Фамилия":"Басангова","Имя":"Бульдин","Отчество":"","Пол":"Ж","Род / Ветка":"","ID Отца":"7","ID Матери":"9","Дата рождения":"1922","Место рождения":"","Дата смерти":"1994"},
-{"ID":16,"Фамилия":"Басангов","Имя":"Церен","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"7","ID Матери":"9","Дата рождения":"1937","Место рождения":"","Дата смерти":"1973"},
-{"ID":17,"Фамилия":"Батыров","Имя":"Чериг","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"12","ID Матери":"273","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":18,"Фамилия":"","Имя":"Серәтр","Отчество":"","Пол":"М","Род / Ветка":"Дунд хурла","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":19,"Фамилия":"Сератирова","Имя":"Төвкә","Отчество":"","Пол":"Ж","Род / Ветка":"Дунд хурла","ID Отца":"18","ID Матери":"","Дата рождения":"1918","Место рождения":"","Дата смерти":"1973"},
-{"ID":20,"Фамилия":"Буджаев","Имя":"Хееч","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":21,"Фамилия":"Буджаева","Имя":"Кермен","Отчество":"","Пол":"Ж","Род / Ветка":"","ID Отца":"20","ID Матери":"","Дата рождения":"1941","Место рождения":"","Дата смерти":"1987"},
-{"ID":22,"Фамилия":"Басангов","Имя":"Николай","Отчество":"Эрдниевич","Пол":"М","Род / Ветка":"","ID Отца":"13","ID Матери":"19","Дата рождения":"1952","Место рождения":"","Дата смерти":""},
-{"ID":23,"Фамилия":"Басангов","Имя":"Борис","Отчество":"Эрдниевич","Пол":"М","Род / Ветка":"","ID Отца":"13","ID Матери":"19","Дата рождения":"1954","Место рождения":"","Дата смерти":""},
-{"ID":24,"Фамилия":"","Имя":"Михаил (Мишка)","Отчество":"","Пол":"М","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":25,"Фамилия":"Мешкеев","Имя":"Чапун (Петр)","Отчество":"Михайлович","Пол":"М","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"24","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":26,"Фамилия":"Мешкеев","Имя":"Сергей","Отчество":"Петрович","Пол":"М","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"25","ID Матери":"108","Дата рождения":"1934","Место рождения":"","Дата смерти":"1996"},
-{"ID":27,"Фамилия":"Мешкеев","Имя":"Захар","Отчество":"Петрович","Пол":"М","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"25","ID Матери":"108","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":28,"Фамилия":"Мешкеева","Имя":"Мария","Отчество":"Сергеевна","Пол":"Ж","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"26","ID Матери":"154","Дата рождения":"1956","Место рождения":"","Дата смерти":""},
-{"ID":29,"Фамилия":"","Имя":"Ноһан","Отчество":"","Пол":"Ж","Род / Ветка":"","ID Отца":"","ID Матери":"15","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":30,"Фамилия":"","Имя":"Хонгр","Отчество":"","Пол":"М","Род / Ветка":"","ID Отца":"","ID Матери":"15","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":31,"Фамилия":"Басангова","Имя":"Галина","Отчество":"Цереновна","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
-{"ID":32,"Фамилия":"Басангова","Имя":"Вера","Отчество":"Цереновна","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
-{"ID":33,"Фамилия":"Басангова","Имя":"Роза","Отчество":"Цереновна","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
-{"ID":34,"Фамилия":"Басангов","Имя":"Санал","Отчество":"Церенович","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
-{"ID":35,"Фамилия":"Басангов","Имя":"Басанг (Канур)","Отчество":"Церенович","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
-{"ID":36,"Фамилия":"Басангова","Имя":"Ольга","Отчество":"Борисовна","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"23","ID Матери":"28","Дата рождения":"1980","Место рождения":"Хар-Толга","Дата смерти":""},
-{"ID":37,"Фамилия":"Басангов","Имя":"Церен","Отчество":"Борисович","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"23","ID Матери":"28","Дата рождения":"1982","Место рождения":"Хар-Толга","Дата смерти":""},
-{"ID":38,"Фамилия":"Басангов","Имя":"Юрий","Отчество":"Борисович","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"23","ID Матери":"28","Дата рождения":"1987","Место рождения":"Элиста","Дата смерти":""},
-{"ID":39,"Фамилия":"Басангова","Имя":"Екатерина","Отчество":"Александровна","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"","ID Матери":"36","Дата рождения":"2000","Место рождения":"Элиста","Дата смерти":"2018"},
-{"ID":40,"Фамилия":"Басангов","Имя":"Давид","Отчество":"","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"","ID Матери":"36","Дата рождения":"2016","Место рождения":"Элиста","Дата смерти":""},
-{"ID":41,"Фамилия":"Басангов","Имя":"Цецен","Отчество":"Церенович","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"37","ID Матери":"44","Дата рождения":"2012","Место рождения":"Волгоград","Дата смерти":""},
-{"ID":42,"Фамилия":"Басангова","Имя":"Даяна","Отчество":"Юрьевна","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"38","ID Матери":"45","Дата рождения":"2013","Место рождения":"Элиста","Дата смерти":""},
-{"ID":43,"Фамилия":"Басангов","Имя":"Аян","Отчество":"Юрьевич","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"38","ID Матери":"45","Дата рождения":"2015","Место рождения":"Элиста","Дата смерти":""},
-{"ID":44,"Фамилия":"Гавгаева","Имя":"Наталья","Отчество":"Вячеславовна","Пол":"Ж","Род / Ветка":"","ID Отца":"274","ID Матери":"275","Дата рождения":"1983","Место рождения":"Цаган-Нур","Дата смерти":""},
-{"ID":45,"Фамилия":"Абушинова","Имя":"Надежда","Отчество":"","Пол":"Ж","Род / Ветка":"","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"Бурата","Дата смерти":""},
-{"ID":46,"Фамилия":"Савлданов","Имя":"Валентин","Отчество":"","Пол":"М","Род / Ветка":"Керяд","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":47,"Фамилия":"Савлданов","Имя":"Станислав","Отчество":"Валентинович","Пол":"М","Род / Ветка":"Керяд","ID Отца":"46","ID Матери":"29","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":48,"Фамилия":"Савлданов","Имя":"Чингиз","Отчество":"Валентинович","Пол":"М","Род / Ветка":"Керяд","ID Отца":"46","ID Матери":"29","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":49,"Фамилия":"","Имя":"Баатр","Отчество":"Хонгрович","Пол":"М","Род / Ветка":"","ID Отца":"30","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
-{"ID":50,"Фамилия":"","Имя":"Эльза","Отчество":"Хонгровна","Пол":"Ж","Род / Ветка":"","ID Отца":"30","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""}
+{"ID":1,"Фамилия":"","Имя":"Маҗр","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":2,"Фамилия":"Маджаров","Имя":"Санҗ","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"1","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":3,"Фамилия":"Маджаров","Имя":"Боова (Бүбе) 1864","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"2","ID Матери":"","Дата рождения":"1864","Место рождения":"","Дата смерти":""},
+{"ID":4,"Фамилия":"Маджаров","Имя":"Басң","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"2","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":5,"Фамилия":"","Имя":"Эренджен","Пол":"М","Род / Ветка":"","ID Отца":"3","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":6,"Фамилия":"Эрендженов","Имя":"Николай","Пол":"М","Род / Ветка":"","ID Отца":"5","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":7,"Фамилия":"Басангов","Имя":"Манҗ","Пол":"М","Род / Ветка":"","ID Отца":"4","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":8,"Фамилия":"","Имя":"Кевельджен","Пол":"М","Род / Ветка":"","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":9,"Фамилия":"","Имя":"Йисн","Пол":"Ж","Род / Ветка":"","ID Отца":"8","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":10,"Фамилия":"","Имя":"Эльзятя","Пол":"Ж","Род / Ветка":"","ID Отца":"4","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":11,"Фамилия":"","Имя":"Баатр","Пол":"М","Род / Ветка":"","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":12,"Фамилия":"","Имя":"Чувиг","Пол":"М","Род / Ветка":"","ID Отца":"11","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":13,"Фамилия":"Басангов","Имя":"Эрдни","Пол":"М","Род / Ветка":"","ID Отца":"7","ID Матери":"9","Дата рождения":"1913","Место рождения":"","Дата смерти":"1965"},
+{"ID":14,"Фамилия":"Басангов","Имя":"Бүдә","Пол":"М","Род / Ветка":"","ID Отца":"7","ID Матери":"9","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":15,"Фамилия":"Басангова","Имя":"Бульдин","Пол":"Ж","Род / Ветка":"","ID Отца":"7","ID Матери":"9","Дата рождения":"1922","Место рождения":"","Дата смерти":"1994"},
+{"ID":16,"Фамилия":"Басангов","Имя":"Церен","Пол":"М","Род / Ветка":"","ID Отца":"7","ID Матери":"9","Дата рождения":"1937","Место рождения":"","Дата смерти":"1973"},
+{"ID":17,"Фамилия":"Батыров","Имя":"Чериг","Пол":"М","Род / Ветка":"","ID Отца":"12","ID Матери":"273","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":18,"Фамилия":"","Имя":"Серәтр","Пол":"М","Род / Ветка":"Дунд хурла","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":19,"Фамилия":"Сератирова","Имя":"Төвкә","Пол":"Ж","Род / Ветка":"Дунд хурла","ID Отца":"18","ID Матери":"","Дата рождения":"1918","Место рождения":"","Дата смерти":"1973"},
+{"ID":20,"Фамилия":"Буджаев","Имя":"Хееч","Пол":"М","Род / Ветка":"","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":21,"Фамилия":"Буджаева","Имя":"Кермен","Пол":"Ж","Род / Ветка":"","ID Отца":"20","ID Матери":"","Дата рождения":"1941","Место рождения":"","Дата смерти":"1987"},
+{"ID":22,"Фамилия":"Басангов","Имя":"Николай","Пол":"М","Род / Ветка":"","ID Отца":"13","ID Матери":"19","Дата рождения":"1952","Место рождения":"","Дата смерти":""},
+{"ID":23,"Фамилия":"Басангов","Имя":"Борис","Пол":"М","Род / Ветка":"","ID Отца":"13","ID Матери":"19","Дата рождения":"1954","Место рождения":"","Дата смерти":""},
+{"ID":24,"Фамилия":"","Имя":"Михаил (Мишка)","Пол":"М","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":25,"Фамилия":"Мешкеев","Имя":"Чапун (Петр)","Пол":"М","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"24","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":26,"Фамилия":"Мешкеев","Имя":"Сергей","Пол":"М","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"25","ID Матери":"108","Дата рождения":"1934","Место рождения":"","Дата смерти":"1996"},
+{"ID":27,"Фамилия":"Мешкеев","Имя":"Захар","Пол":"М","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"25","ID Матери":"108","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":28,"Фамилия":"Мешкеева","Имя":"Мария","Пол":"Ж","Род / Ветка":"Ик Хурул, бурл арвн","ID Отца":"26","ID Матери":"154","Дата рождения":"1956","Место рождения":"","Дата смерти":""},
+{"ID":29,"Фамилия":"","Имя":"Ноһан","Пол":"Ж","Род / Ветка":"","ID Отца":"","ID Матери":"15","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":30,"Фамилия":"","Имя":"Хонгр","Пол":"М","Род / Ветка":"","ID Отца":"","ID Матери":"15","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":31,"Фамилия":"Басангова","Имя":"Галина","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
+{"ID":32,"Фамилия":"Басангова","Имя":"Вера","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
+{"ID":33,"Фамилия":"Басангова","Имя":"Роза","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
+{"ID":34,"Фамилия":"Басангов","Имя":"Санал","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
+{"ID":35,"Фамилия":"Басангов","Имя":"Басанг (Канур)","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"16","ID Матери":"21","Дата рождения":"","Место рождения":"Аршань-Зельмень","Дата смерти":""},
+{"ID":36,"Фамилия":"Басангова","Имя":"Ольга","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"23","ID Матери":"28","Дата рождения":"1980","Место рождения":"Хар-Толга","Дата смерти":""},
+{"ID":37,"Фамилия":"Басангов","Имя":"Церен","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"23","ID Матери":"28","Дата рождения":"1982","Место рождения":"Хар-Толга","Дата смерти":""},
+{"ID":38,"Фамилия":"Басангов","Имя":"Юрий","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"23","ID Матери":"28","Дата рождения":"1987","Место рождения":"Элиста","Дата смерти":""},
+{"ID":39,"Фамилия":"Басангова","Имя":"Екатерина","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"","ID Матери":"36","Дата рождения":"2000","Место рождения":"Элиста","Дата смерти":"2018"},
+{"ID":40,"Фамилия":"Басангов","Имя":"Давид","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"","ID Матери":"36","Дата рождения":"2016","Место рождения":"Элиста","Дата смерти":""},
+{"ID":41,"Фамилия":"Басангов","Имя":"Цецен","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"37","ID Матери":"44","Дата рождения":"2012","Место рождения":"Волгоград","Дата смерти":""},
+{"ID":42,"Фамилия":"Басангова","Имя":"Даяна","Пол":"Ж","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"38","ID Матери":"45","Дата рождения":"2013","Место рождения":"Элиста","Дата смерти":""},
+{"ID":43,"Фамилия":"Басангов","Имя":"Аян","Пол":"М","Род / Ветка":"Ик Хурул, анҗасуд арвн","ID Отца":"38","ID Матери":"45","Дата рождения":"2015","Место рождения":"Элиста","Дата смерти":""},
+{"ID":44,"Фамилия":"Гавгаева","Имя":"Наталья","Пол":"Ж","Род / Ветка":"","ID Отца":"274","ID Матери":"275","Дата рождения":"1983","Место рождения":"Цаган-Нур","Дата смерти":""},
+{"ID":45,"Фамилия":"Абушинова","Имя":"Надежда","Пол":"Ж","Род / Ветка":"","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"Бурата","Дата смерти":""},
+{"ID":46,"Фамилия":"Савлданов","Имя":"Валентин","Пол":"М","Род / Ветка":"Керяд","ID Отца":"","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":47,"Фамилия":"Савлданов","Имя":"Станислав","Пол":"М","Род / Ветка":"Керяд","ID Отца":"46","ID Матери":"29","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":48,"Фамилия":"Савлданов","Имя":"Чингиз","Пол":"М","Род / Ветка":"Керяд","ID Отца":"46","ID Матери":"29","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":49,"Фамилия":"","Имя":"Баатр","Пол":"М","Род / Ветка":"","ID Отца":"30","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""},
+{"ID":50,"Фамилия":"","Имя":"Эльза","Пол":"Ж","Род / Ветка":"","ID Отца":"30","ID Матери":"","Дата рождения":"","Место рождения":"","Дата смерти":""}
 ];
 </script>
 
@@ -440,9 +444,9 @@ try{
       spr.position.copy(pos.clone().add(new THREE.Vector3(0,r+18,0)));
       spr.userData.id=p.ID;labelsGroup.add(spr);labels.set(p.ID,spr);
       const hmat=new THREE.SpriteMaterial({map:haloTex,color:col.clone().multiplyScalar(1.4),transparent:true,opacity:0.55,blending:THREE.AdditiveBlending,depthWrite:false});
-const hs=new THREE.Sprite(hmat);hs.scale.set(r*6,r*6,1);hs.position.copy(pos);hs.userData.id=p.ID;
-hs.userData.baseColor=hmat.color.clone();   // ← НОВАЯ СТРОКА
-p._halo=hs;spheresGroup.add(hs);
+      const hs=new THREE.Sprite(hmat);hs.scale.set(r*6,r*6,1);hs.position.copy(pos);hs.userData.id=p.ID;
+      hs.userData.baseColor=hmat.color.clone();
+      p._halo=hs;spheresGroup.add(hs);
     });
     edgeDefs=[];
     P.forEach(c=>{par(c).forEach(pid=>edgeDefs.push({from:pid,to:c.ID,type:'parent'}))});
@@ -501,12 +505,12 @@ p._halo=hs;spheresGroup.add(hs);
   function inLawCloud(id){const cloud=bloodCloud(id);const inLaws=new Set();(CH.get(id)||[]).forEach(k=>{const kp=M.get(k);if(!kp)return;[kp.father,kp.mother].forEach(pp=>{if(pp!=null&&M.has(pp)&&!cloud.has(pp))inLaws.add(pp)})});return inLaws}
   function inLawAncestors(id){const inLaws=inLawCloud(id);const out=new Set();inLaws.forEach(lawId=>{ancestors(lawId).forEach(a=>{if(!out.has(a))out.add(a)})});const ownBlood=new Set([id,...ancestors(id),...descendants(id),...inLaws]);const filtered=new Set();out.forEach(a=>{if(!ownBlood.has(a))filtered.add(a)});return filtered}
 
-  function relationLabel(centerId,otherId){
-    function ordinal(n){
-    // 1 → двоюродный, 2 → троюродный, 3 → четвероюродный, ...
+  function ordinal(n){
     const names=['','двоюродный','троюродный','четвероюродный','пятиюродный','шестиюродный','семиюродный','восьмиюродный','девятиюродный','десятиюродный'];
     return names[n]||n+'-юродный';
-    }
+  }
+
+  function relationLabel(centerId,otherId){
     const c=M.get(centerId),o=M.get(otherId);if(!c||!o)return '';
     if(centerId===otherId)return 'это он(а)';
     if(o.ID===c.father)return 'отец';if(o.ID===c.mother)return 'мать';
@@ -532,12 +536,10 @@ p._halo=hs;spheresGroup.add(hs);
     for(const pid of cParents){const parP=M.get(pid);if(!parP)continue;const pParents=[parP.father,parP.mother].filter(x=>x!=null);if(pParents.some(pp=>oParents.includes(pp)))return o.Пол==='М'?'дядя':'тётя'}
     const sibs=new Set();
     P.forEach(x=>{if(x.ID===c.ID)return;const xP=[x.father,x.mother].filter(y=>y!=null);if(xP.some(p=>cParents.includes(p)))sibs.add(x.ID)});
-        for(const sid of sibs){if((CH.get(sid)||[]).includes(otherId))return o.Пол==='М'?'племянник':'племянница'}
+    for(const sid of sibs){if((CH.get(sid)||[]).includes(otherId))return o.Пол==='М'?'племянник':'племянница'}
 
-    // === ДВОЮРОДНЫЕ ===
-    // Ищем ближайшего общего предка и считаем шаги вверх от каждого.
     const ancC=new Map(),ancO=new Map();
-    (function fill(map,startId){
+    function fillAnc(map,startId){
       const q=[{id:startId,d:0}],seen=new Set();
       while(q.length){
         const {id,d}=q.shift();
@@ -548,21 +550,9 @@ p._halo=hs;spheresGroup.add(hs);
           if(x!=null&&M.has(x)){map.set(x,Math.min(map.get(x)??999,d+1));q.push({id:x,d:d+1})}
         });
       }
-    })(ancC,c.ID);
-    (function fill(map,startId){
-      const q=[{id:startId,d:0}],seen=new Set();
-      while(q.length){
-        const {id,d}=q.shift();
-        if(seen.has(id))continue;
-        seen.add(id);
-        const per=M.get(id);if(!per)continue;
-        [per.father,per.mother].forEach(x=>{
-          if(x!=null&&M.has(x)){map.set(x,Math.min(map.get(x)??999,d+1));q.push({id:x,d:d+1})}
-        });
-      }
-    })(ancO,o.ID);
+    }
+    fillAnc(ancC,c.ID);fillAnc(ancO,o.ID);
 
-    // Общие предки
     let bestCommon=null,bestUpC=0,bestUpO=0,bestSum=999;
     ancC.forEach((upC,ancId)=>{
       if(!ancO.has(ancId))return;
@@ -573,51 +563,26 @@ p._halo=hs;spheresGroup.add(hs);
 
     if(bestCommon!=null){
       const male=o.Пол==='М';
-      // Двоюродные: оба родителя отошли от общего предка на 1, а сами на 2 шага вверх
-      if(bestUpC===2&&bestUpO===2){
-        return male?'двоюродный брат':'двоюродная сестра';
-      }
-      // Троюродные: оба на 3 шага
-      if(bestUpC===3&&bestUpO===3){
-        return male?'троюродный брат':'троюродная сестра';
-      }
-      // Двоюродный дядя/тётя: общий предок на 2 от меня и на 1 от него
-      if(bestUpC===2&&bestUpO===1){
-        return male?'двоюродный дядя':'двоюродная тётя';
-      }
-      // Двоюродный племянник: общий предок на 1 от меня и на 2 от него
-      if(bestUpC===1&&bestUpO===2){
-        return male?'двоюродный племянник':'двоюродная племянница';
-      }
-      // Троюродный дядя/тётя и племянник
-      if(bestUpC===3&&bestUpO===1){
-        return male?'троюродный дядя':'троюродная тётя';
-      }
-      if(bestUpC===1&&bestUpO===3){
-        return male?'троюродный племянник':'троюродная племянница';
-      }
-      // Обобщение для N-юродных на одном уровне
+      if(bestUpC===2&&bestUpO===2)return male?'двоюродный брат':'двоюродная сестра';
+      if(bestUpC===3&&bestUpO===3)return male?'троюродный брат':'троюродная сестра';
+      if(bestUpC===2&&bestUpO===1)return male?'двоюродный дядя':'двоюродная тётя';
+      if(bestUpC===1&&bestUpO===2)return male?'двоюродный племянник':'двоюродная племянница';
+      if(bestUpC===3&&bestUpO===1)return male?'троюродный дядя':'троюродная тётя';
+      if(bestUpC===1&&bestUpO===3)return male?'троюродный племянник':'троюродная племянница';
       if(bestUpC>=4&&bestUpC===bestUpO){
         const n=bestUpC-1;
-        const prefix=ordinal(n);   // "четвероюродный" и т.д.
+        const prefix=ordinal(n);
         return male?prefix+' брат':prefix+' сестра';
       }
     }
-    // === СВОЙСТВЕННИКИ ЧЕРЕЗ БРАК ===
-    // Родители мужа/жены (если у самого человека брак известен через общего ребёнка)
+
     const cKidsAll=(CH.get(c.ID)||[]).map(id=>M.get(id)).filter(Boolean);
-    const oKidsAll=(CH.get(o.ID)||[]).map(id=>M.get(id)).filter(Boolean);
-    // Ищем супруга/супругу "c" — человека, с которым есть общий ребёнок
     const cSpouses=new Set();
     cKidsAll.forEach(k=>{[k.father,k.mother].forEach(x=>{if(x!=null&&x!==c.ID&&M.has(x))cSpouses.add(x)})});
-    const oSpouses=new Set();
-    oKidsAll.forEach(k=>{[k.father,k.mother].forEach(x=>{if(x!=null&&x!==o.ID&&M.has(x))oSpouses.add(x)})});
 
-    // Если o — родитель супруга/супруги c
     for(const spId of cSpouses){
       const sp=M.get(spId);if(!sp)continue;
       if(o.ID===sp.father){
-        // тесть — если c мужчина и sp — его жена; свёкор — если c женщина и sp — её муж
         if(c.Пол==='М')return 'тесть';
         if(c.Пол==='Ж')return 'свёкор';
         return 'отец супруга';
@@ -628,31 +593,23 @@ p._halo=hs;spheresGroup.add(hs);
         return 'мать супруга';
       }
     }
-    // Если o — супруг(а) ребёнка c
     for(const kidId of (CH.get(c.ID)||[])){
       const kid=M.get(kidId);if(!kid)continue;
       const kidSpouses=new Set();
       [kid.father,kid.mother].forEach(x=>{if(x!=null&&x!==c.ID&&M.has(x))kidSpouses.add(x)});
       if(kidSpouses.has(o.ID)){
-        if(kid.Пол==='Ж')return 'зять';       // муж дочери
-        if(kid.Пол==='М')return 'невестка';   // жена сына
+        if(kid.Пол==='Ж')return 'зять';
+        if(kid.Пол==='М')return 'невестка';
         return 'супруг(а) ребёнка';
       }
     }
-    // Брат/сестра супруга
     for(const spId of cSpouses){
       const sp=M.get(spId);if(!sp)continue;
       const spParents=[sp.father,sp.mother].filter(x=>x!=null);
-      const oParents=[o.father,o.mother].filter(x=>x!=null);
-      if(spParents.some(p=>oParents.includes(p))){
-        // o — брат/сестра супруга c
-        if(c.Пол==='М'){
-          // для мужа: брат жены = свояк, сестра жены = свояченица
-          return o.Пол==='М'?'свояк':'свояченица';
-        } else {
-          // для жены: брат мужа = деверь, сестра мужа = золовка
-          return o.Пол==='М'?'деверь':'золовка';
-        }
+      const oParents2=[o.father,o.mother].filter(x=>x!=null);
+      if(spParents.some(p=>oParents2.includes(p))){
+        if(c.Пол==='М')return o.Пол==='М'?'свояк':'свояченица';
+        else return o.Пол==='М'?'деверь':'золовка';
       }
     }
     return 'родственник';
@@ -694,12 +651,12 @@ p._halo=hs;spheresGroup.add(hs);
   const dom=renderer.domElement;
   dom.addEventListener('pointerdown',e=>{if(e.button!==0)return;downPos={x:e.clientX,y:e.clientY}});
   let lastPointerMoveTime=0;
-dom.addEventListener('pointermove',e=>{
-  const now=performance.now();
-  if(now-lastPointerMoveTime<30)return;
-  lastPointerMoveTime=now;
-  if(!downPos)return;
-  const moved=Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y);
+  dom.addEventListener('pointermove',e=>{
+    const now=performance.now();
+    if(now-lastPointerMoveTime<30)return;
+    lastPointerMoveTime=now;
+    if(!downPos)return;
+    const moved=Math.hypot(e.clientX-downPos.x,e.clientY-downPos.y);
     if(!dragState){
       if(moved<4)return;
       mouse.x=(downPos.x/innerWidth)*2-1;mouse.y=-(downPos.y/innerHeight)*2+1;
@@ -782,7 +739,7 @@ dom.addEventListener('pointermove',e=>{
     clearHighlight();
     const anc=ancestors(id),desc=descendants(id),inLaws=inLawCloud(id),lawAnc=inLawAncestors(id);
     const all=new Set([id,...anc,...desc,...inLaws,...lawAnc]);
-      spheres.forEach((m,mid)=>{
+    spheres.forEach((m,mid)=>{
       const p=M.get(mid);const halo=p&&p._halo;
       if(mid===id){m.material.color.set(COLOR.selected);m.material.emissive.set(COLOR.selectedGlow);m.material.emissiveIntensity=1.6;const s=m.userData.baseScale;m.scale.set(s*1.6,s*1.6,s*1.6);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.selectedGlow)}}
       else if(anc.has(mid)){m.material.color.copy(m.userData.baseColor);m.material.emissive.set(COLOR.ancEmissive);m.material.emissiveIntensity=1.1;const s=m.userData.baseScale;m.scale.set(s*1.18,s*1.18,s*1.18);const lb=labels.get(mid);if(lb)lb.material.opacity=1;if(halo){halo.material.opacity=1;halo.material.color.set(COLOR.ancGlow)}}
@@ -888,7 +845,7 @@ dom.addEventListener('pointermove',e=>{
   function deselect(){clearHighlight();const i=document.getElementById('info');i.style.display='none';i.classList.remove('collapsed')}
 
   // ============================================================
-  //  ПЛОСКОЕ ДЕРЕВО — детерминированная трассировка
+  //  ПЛОСКОЕ ДЕРЕВО — с адаптивной шириной карточек
   // ============================================================
   const treeView=document.getElementById('treeView');
   const treeSvg=document.getElementById('treeSvg');
@@ -900,6 +857,31 @@ dom.addEventListener('pointermove',e=>{
   let treeActive=false;
   let treeRoutesCache=null;
 
+  // ---- Измерение текста и размеров карточек ----
+  const _measureCanvas=document.createElement('canvas');
+  const _measureCtx=_measureCanvas.getContext('2d');
+  function textWidth(str,fontPx,bold){
+    _measureCtx.font=(bold?'bold ':'')+fontPx+'px -apple-system, "Segoe UI", Arial, sans-serif';
+    return _measureCtx.measureText(str).width;
+  }
+
+  // Размер карточки под конкретного человека
+  function measureNode(p,isCenter){
+    const nameStr=nm(p);
+    const b=(p['Дата рождения']||'').toString().slice(0,4);
+    const d=(p['Дата смерти']||'').toString().slice(0,4);
+    const years=b&&d?(b+'–'+d):(b||'');
+    const FONT_NAME=10;
+    const FONT_YEARS=8;
+    const PAD_X=12;
+    const nameW=textWidth(nameStr,FONT_NAME,isCenter);
+    const yearsW=years?textWidth(years,FONT_YEARS,false):0;
+    const maxTextW=Math.max(nameW,yearsW);
+    const w=Math.max(60,Math.ceil(maxTextW)+PAD_X*2);
+    const h=years?34:24;
+    return {w,h,nameStr,years};
+  }
+
   function getBloodDescendants(rootId){
     const out=new Set();
     const q=[rootId];
@@ -908,23 +890,18 @@ dom.addEventListener('pointermove',e=>{
       if(out.has(x))continue;
       out.add(x);
       const kids=CH.get(x)||[];
-      for(const k of kids){
-        if(M.has(k)&&!out.has(k))q.push(k);
-      }
+      for(const k of kids){if(M.has(k)&&!out.has(k))q.push(k)}
     }
     return out;
   }
   function findBloodPath(rootId,targetId){
-    const prev=new Map();
-    prev.set(rootId,null);
+    const prev=new Map();prev.set(rootId,null);
     const q=[rootId];
     while(q.length){
       const c=q.shift();
       if(c===targetId)break;
       const kids=CH.get(c)||[];
-      for(const k of kids){
-        if(M.has(k)&&!prev.has(k)){prev.set(k,c);q.push(k)}
-      }
+      for(const k of kids){if(M.has(k)&&!prev.has(k)){prev.set(k,c);q.push(k)}}
     }
     if(!prev.has(targetId))return null;
     const path=[];let x=targetId;
@@ -932,22 +909,15 @@ dom.addEventListener('pointermove',e=>{
     return path;
   }
   function findAllRoots(id){
-    const roots=new Set();
-    const seen=new Set();
-    const stack=[id];
+    const roots=new Set();const seen=new Set();const stack=[id];
     while(stack.length){
       const x=stack.pop();
-      if(seen.has(x))continue;
-      seen.add(x);
-      const p=M.get(x);
-      if(!p)continue;
+      if(seen.has(x))continue;seen.add(x);
+      const p=M.get(x);if(!p)continue;
       const hasF=p.father!=null&&M.has(p.father);
       const hasM=p.mother!=null&&M.has(p.mother);
-      if(!hasF&&!hasM){roots.add(x)}
-      else{
-        if(hasF)stack.push(p.father);
-        if(hasM)stack.push(p.mother);
-      }
+      if(!hasF&&!hasM)roots.add(x);
+      else{if(hasF)stack.push(p.father);if(hasM)stack.push(p.mother)}
     }
     return [...roots];
   }
@@ -975,36 +945,28 @@ dom.addEventListener('pointermove',e=>{
     rootMenu.style.display='flex';
   }
 
-  // ---------- КРОВНОЕ ДРЕВО: компактная укладка без пересечений основного каркаса ----------
-  // Для раскладки у каждого потомка выбирается один родитель-каркас.
-  // Второй родитель (если он тоже входит в дерево) остаётся отдельной кровной связью.
-  function layoutTree(rootId, include, NODE_W, NODE_H, GAP_X, GAP_Y){
-    const depth = new Map([[rootId, 0]]);
-    const primaryParent = new Map();
-    const primaryChildren = new Map();
-    const q = [rootId];
-
-    // Строим остов от выбранного предка. Каждый человек попадает в каркас один раз.
+  // ---------- Укладка дерева с индивидуальными размерами ----------
+  function layoutTree(rootId,include,measureFn,NODE_H,GAP_X,GAP_Y){
+    const depth=new Map([[rootId,0]]);
+    const primaryParent=new Map();
+    const primaryChildren=new Map();
+    const q=[rootId];
     while(q.length){
-      const parentId = q.shift();
-      const kids = (CH.get(parentId) || []).filter(id => include.has(id) && M.has(id));
-      kids.sort((a,b) => a-b);
+      const parentId=q.shift();
+      const kids=(CH.get(parentId)||[]).filter(id=>include.has(id)&&M.has(id));
+      kids.sort((a,b)=>a-b);
       for(const childId of kids){
-        if(depth.has(childId)) continue;
-        depth.set(childId, depth.get(parentId) + 1);
-        primaryParent.set(childId, parentId);
-        if(!primaryChildren.has(parentId)) primaryChildren.set(parentId, []);
+        if(depth.has(childId))continue;
+        depth.set(childId,depth.get(parentId)+1);
+        primaryParent.set(childId,parentId);
+        if(!primaryChildren.has(parentId))primaryChildren.set(parentId,[]);
         primaryChildren.get(parentId).push(childId);
         q.push(childId);
       }
     }
+    let maxDepth=Math.max(0,...depth.values());
+    include.forEach(id=>{if(!depth.has(id))depth.set(id,++maxDepth)});
 
-    // Защитный проход для записей, которые по ошибке не попали в обход.
-    let maxDepth = Math.max(0, ...depth.values());
-    include.forEach(id => { if(!depth.has(id)) depth.set(id, ++maxDepth); });
-
-    // Если оба родителя присутствуют в древе, ребёнок должен находиться ниже ОБОИХ.
-    // Уточняем уровни по всем кровным связям, чтобы ни одна линия не шла вверх.
     for(let pass=0;pass<include.size;pass++){
       let changed=false;
       include.forEach(childId=>{
@@ -1012,53 +974,58 @@ dom.addEventListener('pointermove',e=>{
         const parentIds=[child.father,child.mother].filter(pid=>pid!=null&&include.has(pid)&&depth.has(pid));
         if(!parentIds.length)return;
         const required=Math.max(...parentIds.map(pid=>depth.get(pid)))+1;
-        if((depth.get(childId)||0)<required){depth.set(childId,required);changed=true;}
+        if((depth.get(childId)||0)<required){depth.set(childId,required);changed=true}
       });
       if(!changed)break;
     }
 
-    // Ширина поддерева рассчитывается снизу вверх; соседние поддеревья не накладываются.
-    const subtreeWidth = new Map();
-    const visiting = new Set();
+    // Индивидуальные размеры
+    const sizes=new Map();
+    include.forEach(id=>{
+      const p=M.get(id);
+      if(!p){sizes.set(id,{w:60,h:NODE_H});return}
+      sizes.set(id,measureFn(p,id===rootId));
+    });
+
+    const subtreeWidth=new Map();
+    const visiting=new Set();
     function measure(id){
-      if(subtreeWidth.has(id)) return subtreeWidth.get(id);
-      if(visiting.has(id)) return NODE_W; // защита от некорректного циклического ввода
+      if(subtreeWidth.has(id))return subtreeWidth.get(id);
+      if(visiting.has(id))return sizes.get(id)?.w||60;
       visiting.add(id);
-      const kids = primaryChildren.get(id) || [];
-      const widths = kids.map(measure);
-      const childrenWidth = widths.reduce((sum,w)=>sum+w,0) + Math.max(0,kids.length-1)*GAP_X;
-      const width = Math.max(NODE_W, childrenWidth);
+      const kids=primaryChildren.get(id)||[];
+      const widths=kids.map(measure);
+      const childrenWidth=widths.reduce((s,w)=>s+w,0)+Math.max(0,kids.length-1)*GAP_X;
+      const myW=sizes.get(id)?.w||60;
+      const width=Math.max(myW,childrenWidth);
       visiting.delete(id);
       subtreeWidth.set(id,width);
       return width;
     }
     measure(rootId);
 
-    const centerX = new Map();
+    const centerX=new Map();
     function place(id,left){
-      const width = subtreeWidth.get(id) || NODE_W;
+      const width=subtreeWidth.get(id)||60;
       centerX.set(id,left+width/2);
-      const kids = primaryChildren.get(id) || [];
-      const widths = kids.map(k=>subtreeWidth.get(k)||NODE_W);
-      const total = widths.reduce((sum,w)=>sum+w,0)+Math.max(0,kids.length-1)*GAP_X;
-      let cursor = left+(width-total)/2;
-      kids.forEach((kid,i)=>{
-        place(kid,cursor);
-        cursor += widths[i]+GAP_X;
-      });
+      const kids=primaryChildren.get(id)||[];
+      const widths=kids.map(k=>subtreeWidth.get(k)||60);
+      const total=widths.reduce((s,w)=>s+w,0)+Math.max(0,kids.length-1)*GAP_X;
+      let cursor=left+(width-total)/2;
+      kids.forEach((kid,i)=>{place(kid,cursor);cursor+=widths[i]+GAP_X});
     }
     place(rootId,0);
 
-    const maxD = Math.max(0,...depth.values());
-    const nodes = new Map();
+    const nodes=new Map();
     include.forEach(id=>{
-      const d = depth.get(id) || 0;
-      const cx = centerX.has(id) ? centerX.get(id) : NODE_W/2;
-      nodes.set(id,{x:cx-NODE_W/2,y:d*(NODE_H+GAP_Y)});
+      const d=depth.get(id)||0;
+      const cx=centerX.has(id)?centerX.get(id):60;
+      const sz=sizes.get(id)||{w:60,h:NODE_H};
+      nodes.set(id,{x:cx-sz.w/2,y:d*(NODE_H+GAP_Y),w:sz.w,h:sz.h});
     });
     let minX=Infinity,maxX=-Infinity,maxY=0;
-    nodes.forEach(n=>{minX=Math.min(minX,n.x);maxX=Math.max(maxX,n.x+NODE_W);maxY=Math.max(maxY,n.y+NODE_H)});
-    nodes.forEach(n=>{n.x-=minX;});
+    nodes.forEach(n=>{minX=Math.min(minX,n.x);maxX=Math.max(maxX,n.x+n.w);maxY=Math.max(maxY,n.y+n.h)});
+    nodes.forEach(n=>{n.x-=minX});
     return {nodes,w:maxX-minX,h:maxY};
   }
 
@@ -1071,19 +1038,18 @@ dom.addEventListener('pointermove',e=>{
     const pathToCenter=findBloodPath(rootId,centerId)||[];
     const pathSet=new Set(pathToCenter);
 
-    const NODE_W=140, NODE_H=34;
-    const GAP_X=40, GAP_Y=120;
+    const NODE_H=34;
+    const GAP_X=24,GAP_Y=110;
 
-    const block = layoutTree(rootId, include, NODE_W, NODE_H, GAP_X, GAP_Y);
+    const block=layoutTree(rootId,include,measureNode,NODE_H,GAP_X,GAP_Y);
 
     const nodePos=new Map();
     block.nodes.forEach((pos,id)=>{
       nodePos.set(id,{
-        x: pos.x,
-        y: pos.y,
-        isCenter: id===centerId,
-        isRoot: id===rootId,
-        onPath: pathSet.has(id)
+        x:pos.x,y:pos.y,w:pos.w,h:pos.h,
+        isCenter:id===centerId,
+        isRoot:id===rootId,
+        onPath:pathSet.has(id)
       });
     });
 
@@ -1099,19 +1065,19 @@ dom.addEventListener('pointermove',e=>{
 
     let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
     nodePos.forEach(n=>{
-      minX=Math.min(minX, n.x);
-      maxX=Math.max(maxX, n.x+NODE_W);
-      minY=Math.min(minY, n.y);
-      maxY=Math.max(maxY, n.y+NODE_H);
+      minX=Math.min(minX,n.x);
+      maxX=Math.max(maxX,n.x+n.w);
+      minY=Math.min(minY,n.y);
+      maxY=Math.max(maxY,n.y+n.h);
     });
     const pad=60;
-    minX-=pad; maxX+=pad; minY-=pad; maxY+=pad;
+    minX-=pad;maxX+=pad;minY-=pad;maxY+=pad;
 
     treeState={
-      include, nodePos, edges,
+      include,nodePos,edges,
       bbox:{minX,maxX,minY,maxY},
-      nodeW:NODE_W, nodeH:NODE_H,
-      panX:0, panY:0, scale:1,
+      nodeH:NODE_H,
+      panX:0,panY:0,scale:1,
       pathSet
     };
     treeRoutesCache=null;
@@ -1147,52 +1113,6 @@ dom.addEventListener('pointermove',e=>{
     renderTree();
   }
 
-  // ---------- ПРОКЛАДКА КРОВНЫХ СВЯЗЕЙ ----------
-  // Основные линии идут общим коридором от родителя к его детям,
-  // вместо отдельных диагональных/ломаных линий, которые пересекались между собой.
-  function orthRoute(a, b, NODE_W, NODE_H, allNodes, idFrom, idTo, usedSegments, childIndex, totalChildren, busY){
-    const sx = a.x + NODE_W/2;
-    const sy = a.y + NODE_H;
-    const fx = b.x + NODE_W/2;
-    const fy = b.y;
-    const laneY = Number.isFinite(busY) ? busY : sy + Math.max(10,(fy-sy)/2);
-    return [{x:sx,y:sy},{x:sx,y:laneY},{x:fx,y:laneY},{x:fx,y:fy}];
-  }
-
-  // Скруглённый путь
-  function roundedPath(points, r){
-    if(points.length<2) return '';
-    const pts = [points[0]];
-    for (let i = 1; i < points.length; i++) {
-      const prev = pts[pts.length - 1];
-      if (Math.abs(points[i].x - prev.x) > 0.5 || Math.abs(points[i].y - prev.y) > 0.5) {
-        pts.push(points[i]);
-      }
-    }
-    if (pts.length < 2) return 'M' + pts[0].x + ',' + pts[0].y;
-    let d = 'M' + pts[0].x + ',' + pts[0].y;
-    for (let i = 1; i < pts.length - 1; i++) {
-      const p0 = pts[i-1], p1 = pts[i], p2 = pts[i+1];
-      const d1x = p1.x - p0.x, d1y = p1.y - p0.y;
-      const d2x = p2.x - p1.x, d2y = p2.y - p1.y;
-      const l1 = Math.hypot(d1x, d1y);
-      const l2 = Math.hypot(d2x, d2y);
-      const rr = Math.min(r, l1 / 2, l2 / 2);
-      if (rr < 0.5 || l1 < 0.5 || l2 < 0.5) {
-        d += ' L' + p1.x + ',' + p1.y;
-      } else {
-        const u1x = d1x / l1, u1y = d1y / l1;
-        const u2x = d2x / l2, u2y = d2y / l2;
-        const bx = p1.x - u1x * rr, by = p1.y - u1y * rr;
-        const cx = p1.x + u2x * rr, cy = p1.y + u2y * rr;
-        d += ' L' + bx + ',' + by + ' Q' + p1.x + ',' + p1.y + ' ' + cx + ',' + cy;
-      }
-    }
-    const last = pts[pts.length-1];
-    d += ' L' + last.x + ',' + last.y;
-    return d;
-  }
-
   function renderTree(){
     if(!treeState)return;
     const st=treeState;
@@ -1202,13 +1122,10 @@ dom.addEventListener('pointermove',e=>{
     g.setAttribute('transform','translate('+st.panX+','+st.panY+') scale('+st.scale+')');
     treeSvg.appendChild(g);
 
-    const NODE_W=st.nodeW, NODE_H=st.nodeH;
-    const allNodes=st.nodePos;
-    // Группируем связи по родителю и рисуем общий горизонтальный коридор для детей.
-    // Супруги здесь не соединяются: отображаются только связи «родитель — ребёнок».
-    const edgesByParent = new Map();
+    // ---- Связи ----
+    const edgesByParent=new Map();
     st.edges.forEach(e=>{
-      if(!edgesByParent.has(e.from)) edgesByParent.set(e.from,[]);
+      if(!edgesByParent.has(e.from))edgesByParent.set(e.from,[]);
       edgesByParent.get(e.from).push(e);
     });
     const parentIds=[...edgesByParent.keys()].sort((a,b)=>{
@@ -1221,12 +1138,11 @@ dom.addEventListener('pointermove',e=>{
       const list=edgesByParent.get(parentId).filter(e=>st.nodePos.has(e.to));
       list.sort((p,q)=>st.nodePos.get(p.to).x-st.nodePos.get(q.to).x);
       if(!list.length)return;
-      const sy=a.y+NODE_H;
+      const sx=a.x+a.w/2;
+      const sy=a.y+a.h;
       const childY=Math.min(...list.map(e=>st.nodePos.get(e.to).y));
-      // Коридор держим между поколениями. Соседние поддеревья получают отдельные X-диапазоны.
       const laneY=sy+Math.max(8,Math.min(24,(childY-sy)/3));
-      const xs=list.map(e=>st.nodePos.get(e.to).x+NODE_W/2);
-      const sx=a.x+NODE_W/2;
+      const xs=list.map(e=>st.nodePos.get(e.to).x+st.nodePos.get(e.to).w/2);
       const busLeft=Math.min(sx,...xs),busRight=Math.max(sx,...xs);
       const pathData='M'+sx+','+sy+' L'+sx+','+laneY+
         (Math.abs(busRight-busLeft)>0.5?' L'+busLeft+','+laneY+' L'+busRight+','+laneY:'');
@@ -1238,7 +1154,7 @@ dom.addEventListener('pointermove',e=>{
       g.appendChild(trunk);
       list.forEach(e=>{
         const b=st.nodePos.get(e.to);if(!b)return;
-        const x=b.x+NODE_W/2;
+        const x=b.x+b.w/2;
         const path=document.createElementNS('http://www.w3.org/2000/svg','path');
         path.setAttribute('d','M'+x+','+laneY+' L'+x+','+b.y);
         path.setAttribute('fill','none');
@@ -1249,11 +1165,11 @@ dom.addEventListener('pointermove',e=>{
       });
     });
 
-    // Узлы
+    // ---- Узлы ----
     st.nodePos.forEach((n,id)=>{
       const p=M.get(id);if(!p)return;
-      const x=n.x, y=n.y, w=st.nodeW, h=st.nodeH;
-      let fill='#eeeae5', stroke='#7a7168';
+      const x=n.x,y=n.y,w=n.w,h=n.h;
+      let fill='#eeeae5',stroke='#7a7168';
       if(n.isCenter){fill='#ffffff';stroke='#00e5ff'}
       else if(n.isRoot){fill='#ffd966';stroke='#a87000'}
       else if(n.onPath){fill='#ffeebb';stroke='#c89000'}
@@ -1270,29 +1186,29 @@ dom.addEventListener('pointermove',e=>{
       rect.onclick=()=>{select(id)};
       g.appendChild(rect);
 
-            const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t1.setAttribute('x',x+w/2);
-      t1.setAttribute('y',y+h/2-3);
-      t1.setAttribute('text-anchor','middle');
-      t1.setAttribute('dominant-baseline','middle');
-      t1.setAttribute('font-size','10');
-      t1.setAttribute('font-family','-apple-system,Segoe UI,Arial');
-      t1.setAttribute('fill','#1f1c18');
-      if(n.isCenter)t1.setAttribute('font-weight','bold');
-      t1.style.pointerEvents='none';
-      let name=nm(p);
-      if(name.length>18)name=name.slice(0,17)+'…';
-      t1.textContent=name;
-      g.appendChild(t1);
-
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
-      // Живой → только год рождения. Умерший → годы жизни через тире.
-      const years = b && d ? (b + '–' + d) : (b || '');
+      const years=b&&d?(b+'–'+d):(b||'');
+      const name=nm(p);
+
       if(years){
+        // Имя сверху, годы снизу
+        const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
+        t1.setAttribute('x',x+w/2);
+        t1.setAttribute('y',y+h/2-4);
+        t1.setAttribute('text-anchor','middle');
+        t1.setAttribute('dominant-baseline','middle');
+        t1.setAttribute('font-size','10');
+        t1.setAttribute('font-family','-apple-system,Segoe UI,Arial');
+        t1.setAttribute('fill','#1f1c18');
+        if(n.isCenter)t1.setAttribute('font-weight','bold');
+        t1.style.pointerEvents='none';
+        t1.textContent=name;
+        g.appendChild(t1);
+
         const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
         t2.setAttribute('x',x+w/2);
-        t2.setAttribute('y',y+h/2+11);
+        t2.setAttribute('y',y+h/2+10);
         t2.setAttribute('text-anchor','middle');
         t2.setAttribute('font-size','8');
         t2.setAttribute('font-family','-apple-system,Segoe UI,Arial');
@@ -1300,6 +1216,20 @@ dom.addEventListener('pointermove',e=>{
         t2.style.pointerEvents='none';
         t2.textContent=years;
         g.appendChild(t2);
+      } else {
+        // Только имя по центру
+        const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
+        t1.setAttribute('x',x+w/2);
+        t1.setAttribute('y',y+h/2);
+        t1.setAttribute('text-anchor','middle');
+        t1.setAttribute('dominant-baseline','middle');
+        t1.setAttribute('font-size','10');
+        t1.setAttribute('font-family','-apple-system,Segoe UI,Arial');
+        t1.setAttribute('fill','#1f1c18');
+        if(n.isCenter)t1.setAttribute('font-weight','bold');
+        t1.style.pointerEvents='none';
+        t1.textContent=name;
+        g.appendChild(t1);
       }
     });
   }
@@ -1334,8 +1264,7 @@ dom.addEventListener('pointermove',e=>{
       if(!treeActive||!treeState)return;
       if(!pointers.has(e.pointerId))return;
       pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-
-      if(isPinch && pointers.size>=2){
+      if(isPinch&&pointers.size>=2){
         const pts=[...pointers.values()].slice(0,2);
         const d=dist(pts[0],pts[1]);
         if(pinchStartDist>0){
@@ -1343,15 +1272,15 @@ dom.addEventListener('pointermove',e=>{
           const newScale=Math.max(0.05,Math.min(20,pinchStartScale*factor));
           const r=treeSvg.getBoundingClientRect();
           const c=center(pts[0],pts[1]);
-          const cx=c.x-r.left, cy=c.y-r.top;
-          const mx=cx-treeState.panX, my=cy-treeState.panY;
+          const cx=c.x-r.left,cy=c.y-r.top;
+          const mx=cx-treeState.panX,my=cy-treeState.panY;
           const k=newScale/treeState.scale;
           treeState.panX=cx-mx*k;
           treeState.panY=cy-my*k;
           treeState.scale=newScale;
           renderTree();
         }
-      } else if(!isPinch && pointers.size===1 && dragStart){
+      } else if(!isPinch&&pointers.size===1&&dragStart){
         const dx=e.clientX-dragStart.x;
         const dy=e.clientY-dragStart.y;
         treeState.panX=dragStart.panX+dx;
@@ -1452,52 +1381,57 @@ dom.addEventListener('pointermove',e=>{
     c.translate(offsetX, offsetY);
     c.scale(scale, scale);
 
-    const NODE_W=st.nodeW, NODE_H=st.nodeH;
-    const allNodes = st.nodePos;
-    const usedSegments = [];
-    const edgesSorted = st.edges.map((e, i) => ({ edge: e, index: i }))
-      .sort((p, q) => {
-        const ap = st.nodePos.get(p.edge.from), bp = st.nodePos.get(q.edge.from);
-        if ((ap?.y || 0) !== (bp?.y || 0)) return (ap?.y || 0) - (bp?.y || 0);
-        if ((ap?.x || 0) !== (bp?.x || 0)) return (ap?.x || 0) - (bp?.x || 0);
-        const ac = st.nodePos.get(p.edge.to), bc = st.nodePos.get(q.edge.to);
-        return (ac?.x || 0) - (bc?.x || 0);
-      });
-
-    const edgesByParent = new Map();
-    edgesSorted.forEach(({ edge: e }) => {
-      if (!edgesByParent.has(e.from)) edgesByParent.set(e.from, []);
+    // Группируем связи по родителю — рисуем общий коридор
+    const edgesByParent=new Map();
+    st.edges.forEach(e=>{
+      if(!edgesByParent.has(e.from))edgesByParent.set(e.from,[]);
       edgesByParent.get(e.from).push(e);
     });
-    edgesByParent.forEach((list) => {
-      list.sort((p, q) => {
-        const ap = st.nodePos.get(p.to), bp = st.nodePos.get(q.to);
-        return (ap?.x || 0) - (bp?.x || 0);
+    const parentIds=[...edgesByParent.keys()].sort((a,b)=>{
+      const ap=st.nodePos.get(a),bp=st.nodePos.get(b);
+      return (ap?.y||0)-(bp?.y||0)||(ap?.x||0)-(bp?.x||0);
+    });
+
+    parentIds.forEach(parentId=>{
+      const a=st.nodePos.get(parentId);
+      if(!a)return;
+      const list=edgesByParent.get(parentId).filter(e=>st.nodePos.has(e.to));
+      list.sort((p,q)=>st.nodePos.get(p.to).x-st.nodePos.get(q.to).x);
+      if(!list.length)return;
+      const sx=a.x+a.w/2;
+      const sy=a.y+a.h;
+      const childY=Math.min(...list.map(e=>st.nodePos.get(e.to).y));
+      const laneY=sy+Math.max(8,Math.min(24,(childY-sy)/3));
+      const xs=list.map(e=>st.nodePos.get(e.to).x+st.nodePos.get(e.to).w/2);
+      const busLeft=Math.min(sx,...xs),busRight=Math.max(sx,...xs);
+
+      c.strokeStyle=list.some(e=>e.onPath)?'#c88a00':'#8899aa';
+      c.lineWidth=list.some(e=>e.onPath)?2.4:1.2;
+      c.beginPath();
+      c.moveTo(sx,sy);
+      c.lineTo(sx,laneY);
+      if(Math.abs(busRight-busLeft)>0.5){
+        c.lineTo(busLeft,laneY);
+        c.lineTo(busRight,laneY);
+      }
+      c.stroke();
+
+      list.forEach(e=>{
+        const b=st.nodePos.get(e.to);if(!b)return;
+        const x=b.x+b.w/2;
+        c.strokeStyle=e.onPath?'#c88a00':'#8899aa';
+        c.lineWidth=e.onPath?2.4:1.2;
+        c.beginPath();
+        c.moveTo(x,laneY);
+        c.lineTo(x,b.y);
+        c.stroke();
       });
     });
 
-    edgesSorted.forEach(({ edge: e }) => {
-      const a = st.nodePos.get(e.from);
-      const b = st.nodePos.get(e.to);
-      if (!a || !b) return;
-      const siblings = edgesByParent.get(e.from) || [];
-      const childIndex = siblings.indexOf(e);
-      const totalChildren = siblings.length;
-      const pts = orthRoute(a, b, NODE_W, NODE_H, allNodes, e.from, e.to, usedSegments, childIndex, totalChildren);
-      for (let i = 0; i < pts.length - 1; i++) {
-        usedSegments.push({ x1: pts[i].x, y1: pts[i].y, x2: pts[i+1].x, y2: pts[i+1].y });
-      }
-      c.strokeStyle = e.onPath ? '#c88a00' : '#8899aa';
-      c.lineWidth = e.onPath ? 2.4 : 1.2;
-      c.beginPath();
-      c.moveTo(pts[0].x, pts[0].y);
-      for (let k = 1; k < pts.length; k++) c.lineTo(pts[k].x, pts[k].y);
-      c.stroke();
-    });
-
+    // Узлы
     st.nodePos.forEach((n,id)=>{
       const p=M.get(id);if(!p)return;
-      const x=n.x,y=n.y,w=NODE_W,h=NODE_H;
+      const x=n.x,y=n.y,w=n.w,h=n.h;
       let fill='#eeeae5',stroke='#7a7168';
       if(n.isCenter){fill='#ffffff';stroke='#0099cc'}
       else if(n.isRoot){fill='#ffd966';stroke='#a87000'}
@@ -1513,28 +1447,27 @@ dom.addEventListener('pointermove',e=>{
       c.arcTo(x,y+h,x,y,rr);
       c.arcTo(x,y,x+w,y,rr);
       c.closePath();
-      c.fillStyle=fill;
-      c.fill();
-      c.strokeStyle=stroke;
-      c.lineWidth=n.isCenter?2:1.2;
-      c.stroke();
-
-           c.fillStyle='#1f1c18';
-      c.font=(n.isCenter?'bold ':'')+'10px -apple-system, "Segoe UI", Arial, sans-serif';
-      c.textAlign='center';
-      c.textBaseline='middle';
-      let name=nm(p);
-      if(name.length>18) name=name.slice(0,17)+'…';
-      c.fillText(name, x+w/2, y+h/2-3);
+      c.fillStyle=fill;c.fill();
+      c.strokeStyle=stroke;c.lineWidth=n.isCenter?2:1.2;c.stroke();
 
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
-      // Живой → только год рождения. Умерший → годы жизни через тире.
-      const years = b && d ? (b + '–' + d) : (b || '');
+      const years=b&&d?(b+'–'+d):(b||'');
+      const name=nm(p);
+
+      c.textAlign='center';
+      c.textBaseline='middle';
       if(years){
+        c.fillStyle='#1f1c18';
+        c.font=(n.isCenter?'bold ':'')+'10px -apple-system, "Segoe UI", Arial, sans-serif';
+        c.fillText(name,x+w/2,y+h/2-4);
         c.fillStyle='#5c554d';
         c.font='8px -apple-system, "Segoe UI", Arial, sans-serif';
-        c.fillText(years, x+w/2, y+h/2+11);
+        c.fillText(years,x+w/2,y+h/2+10);
+      } else {
+        c.fillStyle='#1f1c18';
+        c.font=(n.isCenter?'bold ':'')+'10px -apple-system, "Segoe UI", Arial, sans-serif';
+        c.fillText(name,x+w/2,y+h/2);
       }
     });
 
@@ -1569,11 +1502,10 @@ dom.addEventListener('pointermove',e=>{
 
     const parn=x=>x&&M.has(x)?nm(M.get(x)):'';
     const allRows=[
-      ['ID',p.ID],['ФИО',nm(p)],['Пол',p.Пол||''],['Род / ветка',p['Род / Ветка']||''],
+      ['ФИО',nm(p)],['Пол',p.Пол||''],['Род / ветка',p['Род / Ветка']||''],
       ['Отец',parn(p.father)],['Мать',parn(p.mother)],
-      ['Рождение',(p['Дата рождения']||'').toString().slice(0,10)],
-      ['Место',p['Место рождения']||''],
-      ['Смерть',(p['Дата смерти']||'').toString().slice(0,10)]
+      ['Рождение',(p['Дата рождения']||'').toString().slice(0,4)],
+      ['Смерть',(p['Дата смерти']||'').toString().slice(0,4)]
     ];
     const rows=allRows.filter(r=>r[1]!==undefined&&r[1]!==null&&String(r[1]).trim()!=='');
 
@@ -1778,8 +1710,6 @@ dom.addEventListener('pointermove',e=>{
 
   function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
 
-  // Сначала показываем встроенные данные (чтобы интерфейс не был пустым),
-  // потом асинхронно подгружаем data.json и, если он есть, переключаемся на него.
   applyData(BUILTIN_P);
   animate();
 
@@ -1790,7 +1720,6 @@ dom.addEventListener('pointermove',e=>{
     })
     .then(arr => {
       if (!Array.isArray(arr) || !arr.length) throw new Error('пустой массив');
-      // Кэшируем в localStorage, чтобы при следующем открытии сразу показать
       try { localStorage.setItem(KEY_DATA, JSON.stringify(arr)); } catch(_){}
       applyData(arr);
       toast('Загружено: ' + arr.length + ' человек из data.json');
