@@ -866,20 +866,37 @@ try{
   }
 
   // Размер карточки под конкретного человека
-  function measureNode(p,isCenter){
-    const nameStr=nm(p);
+    function measureNode(p,isCenter){
+    // Разбиваем на три строки: Фамилия / Имя / Годы
+    const surname=(p.Фамилия||'').trim();
+    const givenName=(p.Имя||'').trim();
     const b=(p['Дата рождения']||'').toString().slice(0,4);
     const d=(p['Дата смерти']||'').toString().slice(0,4);
     const years=b&&d?(b+'–'+d):(b||'');
+
     const FONT_NAME=10;
     const FONT_YEARS=8;
     const PAD_X=12;
-    const nameW=textWidth(nameStr,FONT_NAME,isCenter);
-    const yearsW=years?textWidth(years,FONT_YEARS,false):0;
-    const maxTextW=Math.max(nameW,yearsW);
+    const LINE_H=12;   // высота одной строки текста
+    const PAD_Y=5;     // отступ сверху и снизу
+
+    // Считаем ширину каждой строки
+    const wSurname=surname?textWidth(surname,FONT_NAME,isCenter):0;
+    const wName=givenName?textWidth(givenName,FONT_NAME,isCenter):0;
+    const wYears=years?textWidth(years,FONT_YEARS,false):0;
+    const maxTextW=Math.max(wSurname,wName,wYears);
+
+    // Считаем количество строк и высоту
+    let lines=0;
+    if(surname)lines++;
+    if(givenName)lines++;
+    if(years)lines++;
+    if(lines===0)lines=1; // совсем пустая карточка — одна строка
+
     const w=Math.max(60,Math.ceil(maxTextW)+PAD_X*2);
-    const h=years?34:24;
-    return {w,h,nameStr,years};
+    const h=Math.max(20,lines*LINE_H+PAD_Y*2);
+
+    return {w,h,surname,givenName,years,lines};
   }
 
   function getBloodDescendants(rootId){
@@ -1165,7 +1182,7 @@ try{
       });
     });
 
-    // ---- Узлы ----
+        // ---- Узлы ----
     st.nodePos.forEach((n,id)=>{
       const p=M.get(id);if(!p)return;
       const x=n.x,y=n.y,w=n.w,h=n.h;
@@ -1186,51 +1203,38 @@ try{
       rect.onclick=()=>{select(id)};
       g.appendChild(rect);
 
+      // Готовим строки
+      const surname=(p.Фамилия||'').trim();
+      const givenName=(p.Имя||'').trim();
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
       const years=b&&d?(b+'–'+d):(b||'');
-      const name=nm(p);
 
-      if(years){
-        // Имя сверху, годы снизу
-        const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
-        t1.setAttribute('x',x+w/2);
-        t1.setAttribute('y',y+h/2-4);
-        t1.setAttribute('text-anchor','middle');
-        t1.setAttribute('dominant-baseline','middle');
-        t1.setAttribute('font-size','10');
-        t1.setAttribute('font-family','-apple-system,Segoe UI,Arial');
-        t1.setAttribute('fill','#1f1c18');
-        if(n.isCenter)t1.setAttribute('font-weight','bold');
-        t1.style.pointerEvents='none';
-        t1.textContent=name;
-        g.appendChild(t1);
+      const lines=[];
+      if(surname)lines.push({text:surname,size:10,bold:!!n.isCenter,color:'#1f1c18'});
+      if(givenName)lines.push({text:givenName,size:10,bold:!!n.isCenter,color:'#1f1c18'});
+      if(years)lines.push({text:years,size:8,bold:false,color:'#5c554d'});
+      if(!lines.length)lines.push({text:nm(p),size:10,bold:!!n.isCenter,color:'#1f1c18'});
 
-        const t2=document.createElementNS('http://www.w3.org/2000/svg','text');
-        t2.setAttribute('x',x+w/2);
-        t2.setAttribute('y',y+h/2+10);
-        t2.setAttribute('text-anchor','middle');
-        t2.setAttribute('font-size','8');
-        t2.setAttribute('font-family','-apple-system,Segoe UI,Arial');
-        t2.setAttribute('fill','#5c554d');
-        t2.style.pointerEvents='none';
-        t2.textContent=years;
-        g.appendChild(t2);
-      } else {
-        // Только имя по центру
-        const t1=document.createElementNS('http://www.w3.org/2000/svg','text');
-        t1.setAttribute('x',x+w/2);
-        t1.setAttribute('y',y+h/2);
-        t1.setAttribute('text-anchor','middle');
-        t1.setAttribute('dominant-baseline','middle');
-        t1.setAttribute('font-size','10');
-        t1.setAttribute('font-family','-apple-system,Segoe UI,Arial');
-        t1.setAttribute('fill','#1f1c18');
-        if(n.isCenter)t1.setAttribute('font-weight','bold');
-        t1.style.pointerEvents='none';
-        t1.textContent=name;
-        g.appendChild(t1);
-      }
+      // Рисуем каждую строку, центрируя по вертикали
+      const LINE_H=12;
+      const totalH=lines.length*LINE_H;
+      const startY=y+h/2-totalH/2+LINE_H/2;
+
+      lines.forEach((ln,i)=>{
+        const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('x',x+w/2);
+        t.setAttribute('y',startY+i*LINE_H);
+        t.setAttribute('text-anchor','middle');
+        t.setAttribute('dominant-baseline','middle');
+        t.setAttribute('font-size',String(ln.size));
+        t.setAttribute('font-family','-apple-system,Segoe UI,Arial');
+        t.setAttribute('fill',ln.color);
+        if(ln.bold)t.setAttribute('font-weight','bold');
+        t.style.pointerEvents='none';
+        t.textContent=ln.text;
+        g.appendChild(t);
+      });
     });
   }
 
@@ -1439,7 +1443,7 @@ try{
       else if(p.Пол==='М'){fill='#dbe9f4';stroke='#5a6b7a'}
       else if(p.Пол==='Ж'){fill='#f6dde3';stroke='#7a5a65'}
 
-      const rr=6;
+            const rr=6;
       c.beginPath();
       c.moveTo(x+rr,y);
       c.arcTo(x+w,y,x+w,y+h,rr);
@@ -1450,25 +1454,30 @@ try{
       c.fillStyle=fill;c.fill();
       c.strokeStyle=stroke;c.lineWidth=n.isCenter?2:1.2;c.stroke();
 
+      // Готовим строки: Фамилия / Имя / Годы
+      const surname=(p.Фамилия||'').trim();
+      const givenName=(p.Имя||'').trim();
       const b=(p['Дата рождения']||'').toString().slice(0,4);
       const d=(p['Дата смерти']||'').toString().slice(0,4);
       const years=b&&d?(b+'–'+d):(b||'');
-      const name=nm(p);
+
+      const lines=[];
+      if(surname)lines.push({text:surname,size:10,bold:!!n.isCenter,color:'#1f1c18'});
+      if(givenName)lines.push({text:givenName,size:10,bold:!!n.isCenter,color:'#1f1c18'});
+      if(years)lines.push({text:years,size:8,bold:false,color:'#5c554d'});
+      if(!lines.length)lines.push({text:nm(p),size:10,bold:!!n.isCenter,color:'#1f1c18'});
+
+      const LINE_H=12;
+      const totalH=lines.length*LINE_H;
+      const startY=y+h/2-totalH/2+LINE_H/2;
 
       c.textAlign='center';
       c.textBaseline='middle';
-      if(years){
-        c.fillStyle='#1f1c18';
-        c.font=(n.isCenter?'bold ':'')+'10px -apple-system, "Segoe UI", Arial, sans-serif';
-        c.fillText(name,x+w/2,y+h/2-4);
-        c.fillStyle='#5c554d';
-        c.font='8px -apple-system, "Segoe UI", Arial, sans-serif';
-        c.fillText(years,x+w/2,y+h/2+10);
-      } else {
-        c.fillStyle='#1f1c18';
-        c.font=(n.isCenter?'bold ':'')+'10px -apple-system, "Segoe UI", Arial, sans-serif';
-        c.fillText(name,x+w/2,y+h/2);
-      }
+      lines.forEach((ln,i)=>{
+        c.fillStyle=ln.color;
+        c.font=(ln.bold?'bold ':'')+ln.size+'px -apple-system, "Segoe UI", Arial, sans-serif';
+        c.fillText(ln.text,x+w/2,startY+i*LINE_H);
+      });
     });
 
     c.restore();
